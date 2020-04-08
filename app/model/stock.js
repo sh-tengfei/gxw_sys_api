@@ -1,0 +1,17 @@
+
+'use strict';
+module.exports = app => {
+	const uniqueValidator = require('mongoose-unique-validator');
+	const mongoose = app.mongoose;
+	const stock = new mongoose.Schema({
+		product: { type: String, ref: 'product', unique: true },
+		stockNumber: { type: Number, required: true },
+		stockId: { type: Number, required: true, unique: true },
+	}, {
+		versionKey: false,
+		timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
+	})
+	stock.plugin(uniqueValidator);
+	let ret = mongoose.model('Stock', stock);
+	return ret
+}
