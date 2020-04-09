@@ -12,6 +12,6 @@ module.exports = app => {
 		timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
 	})
 	Admin.plugin(uniqueValidator);
-	let ret = mongoose.model('SystemAdmin', Admin);
+	let ret = mongoose.model('admin', Admin);
 	return ret
 }

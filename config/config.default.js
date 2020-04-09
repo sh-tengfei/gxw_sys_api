@@ -24,9 +24,9 @@ module.exports = appInfo => {
   }
 
   config.mongoose = {
-    url: 'mongodb://39.100.114.184:9001/newDevelop',
+    url: 'mongodb://127.0.0.1:9001/newDevelop',
     options: {
-      user: 'newDevelop1',
+      user: 'newDevelop',
       pass: '!develop123',
       config: { autoIndex: false },
       useNewUrlParser: true,
