@@ -5,10 +5,9 @@ class AdminService extends Service {
   async find() {
 
   }
-  async findOne(username, password) {
+  async findOne(query) {
     const { ctx } = this;
-    let user = await ctx.model.Admin.findOne({ username })
-    
+    let user = await ctx.model.Admin.findOne(query)
     return user;
   }
   async create(data) {

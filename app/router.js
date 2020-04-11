@@ -5,8 +5,10 @@
  */
 module.exports = app => {
   const { router, controller, jwt } = app;
-  // /console.log(jwt);
-  router.get('/', jwt, controller.admin.home.index);
   router.post('/admin/login', controller.admin.login.login);
+  router.post('/admin/logout', controller.admin.login.logout);
+  
   router.post('/admin/add', controller.admin.login.addAdmin);
+  
+  router.get('/admin/userInfo', jwt, controller.admin.user.userInfo);
 };
