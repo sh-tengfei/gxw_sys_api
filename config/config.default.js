@@ -51,7 +51,16 @@ module.exports = appInfo => {
 
   // add your user config here
   const userConfig = {
-    // myAppName: 'egg',
+    qiniuConf: {
+      accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
+      secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
+    },
+    config: {
+      cdn: '//static.gxianwang.cn/',
+      qiniu: {
+        upSite: '//up-z1.qiniup.com'
+      }
+    },
   };
 
   return {

@@ -4,7 +4,8 @@ module.exports = app => {
 	const uniqueValidator = require('mongoose-unique-validator');
 	const mongoose = app.mongoose;
 	const stock = new mongoose.Schema({
-		product: { type: String, ref: 'product', unique: true },
+		productId: { type: Number, unique: true, required: true },
+		productName: { type: String, unique: true, required: true },
 		stockNumber: { type: Number, required: true },
 		stockId: { type: Number, required: true, unique: true },
 	}, {

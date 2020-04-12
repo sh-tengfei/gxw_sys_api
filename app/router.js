@@ -5,10 +5,26 @@
  */
 module.exports = app => {
   const { router, controller, jwt } = app;
+
+  router.get('/small/index', controller.miniprogram.index.index);
+
+  router.get('/admin/qnToken', jwt, controller.admin.user.getQnToken);
+
   router.post('/admin/login', controller.admin.login.login);
   router.post('/admin/logout', controller.admin.login.logout);
-  
   router.post('/admin/add', controller.admin.login.addAdmin);
   
   router.get('/admin/userInfo', jwt, controller.admin.user.userInfo);
+  router.get('/admin/dashboard', jwt, controller.admin.user.dashboard);
+  router.get('/admin/salesData', jwt, controller.admin.sales.salesData);
+  router.get('/admin/agentList', jwt, controller.admin.agent.agentList);
+  router.get('/admin/order', jwt, controller.admin.order.orderList);
+
+  router.post('/admin/product', jwt, controller.admin.product.createProduct);
+  router.get('/admin/product', jwt, controller.admin.product.getProducts);
+  router.get('/admin/product/:id', jwt, controller.admin.product.getProduct);
+  router.put('/admin/product/:id', jwt, controller.admin.product.update);
+
+  router.get('/admin/stock', jwt, controller.admin.stock.getStock);
+  router.post('/admin/stock', jwt, controller.admin.stock.createStock);
 };

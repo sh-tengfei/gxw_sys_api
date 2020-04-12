@@ -1,8 +1,9 @@
 'use strict';
 
 const Controller = require('egg').Controller;
+const qiniu = require('qiniu');
 
-class HomeController extends Controller {
+class UserController extends Controller {
   async userInfo() {
     let { ctx, app } = this
     let { userId: adminId } = ctx.state.user
@@ -11,8 +12,29 @@ class HomeController extends Controller {
       ctx.body = { code: 401, msg: '非法访问' }
       return
     }
-    ctx.body = { code: 200, msg: '', data: data }
+    let { config } = app.config
+    ctx.body = { code: 200, msg: '', data: { user: data, config }}
+  }
+  async dashboard() {
+    let { ctx, app } = this
+    ctx.body = { code: 200, msg: '', data: {
+      user: 1000,
+      product: 100,
+      order: 100,
+      quota: 10000,
+    } }
+  }
+  async getQnToken() {
+    let { ctx, app } = this
+    let { accessKey, secretKey } = app.config.qiniuConf
+    let mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
+    let options = {
+      scope: 'gxianwang' //七牛资源目录
+    }
+    let putPolicy = new qiniu.rs.PutPolicy(options);
+    let uploadToken = putPolicy.uploadToken(mac);
+    ctx.body = { code: 200, data: { uploadToken }}
   }
 }
 
-module.exports = HomeController;
+module.exports = UserController;
