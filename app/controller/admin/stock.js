@@ -32,13 +32,27 @@ class StockController extends Controller {
     	ctx.body = { code: 201, msg: '创建失败，该商品已存在库存', data: pro }
     	return
     }
-
+    req.body.totalStock = req.body.stockNumber
     const stock = await ctx.service.stocks.create(req.body)
     if (!stock.stockId) {
     	ctx.body = { code: 201, msg: '创建失败', data: stock }
     	return
     }
     ctx.body = { code: 200, msg: '', data: stock }
+  }
+  async putStock() {
+    const { ctx, app } = this
+    const { request: req, params } = ctx
+    const stock = await ctx.service.stocks.findOne({ stockId: params.id })
+    if (!stock) {
+    	ctx.body = { code: 201, msg: '修改失败，库存不存在', data: stock }
+    	return
+    }
+    let option = { $push: { stockHistory: req.body.stockNumber } }
+
+    const newStock = await ctx.service.stocks.updateOne(params.id, option)
+
+    ctx.body = { code: 200, msg: '', data: newStock }
   }
 }
 

@@ -27,4 +27,10 @@ module.exports = app => {
 
   router.get('/admin/stock', jwt, controller.admin.stock.getStock);
   router.post('/admin/stock', jwt, controller.admin.stock.createStock);
+  router.put('/admin/stock/:id', jwt, controller.admin.stock.putStock);
+  
+  router.get('/admin/slider', jwt, controller.admin.slider.getSlider);
+  router.post('/admin/slider', jwt, controller.admin.slider.createSlider);
+  router.put('/admin/slider/:id', jwt, controller.admin.slider.putSlider);
+  
 };

@@ -5,22 +5,30 @@ class IndexController extends Controller {
   async index() {
     const { ctx } = this
 
-    let query = {
-      'sellerOfType.code': 100
+    const localQuery = {
+      'sellerOfType.code': 100,
+      'limit': 10,
     }
-    let sliderQuery = {
-
+    const sliderQuery = {
+      'sellerOfType.code': 101,
+      'limit': 10,
     }
-
-    let product = await ctx.service.product.find(query)
-    // let slider = await ctx.service.slider.find(sliderQuery)
+    const speciQuery = {
+      'sellerOfType.code': 102,
+      'limit': 10,
+    }
+    const local = await ctx.service.product.find(localQuery)
+    const direct = await ctx.service.product.find(sliderQuery)
+    const speci = await ctx.service.product.find(speciQuery)
 
     ctx.body = {
     	msg: '' , 
     	code: 200, 
     	data: {
 	    	slider: [],
-	    	product,
+        local,
+        direct,
+        speci,
     	}
     }
   }

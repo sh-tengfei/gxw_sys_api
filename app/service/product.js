@@ -18,11 +18,19 @@ class ProductService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({updateTime: 0})
+    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
     })
+    for (const item of list) {
+      const curStock = await ctx.model.Stock.findOne({ productId: item.productId })
+      if (curStock) {
+        item.stockNumber = curStock.stockNumber
+      } else {
+        item.stockNumber = null
+      }
+    }
     const total = await ctx.model.Product.find(query).count()
 
     return {
@@ -50,7 +58,14 @@ class ProductService extends Service {
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { ctx } = this;
-    return await ctx.model.Product.findOne(query, other)
+    const product = await ctx.model.Product.findOne(query, other)
+    product.stockNumber = null
+    
+    const curStock = await ctx.model.Stock.findOne({ productId: product.productId })
+    if (curStock) {
+      product.stockNumber = curStock.stockNumber
+    }
+    return product
   }
   async updateOne(productId, data) {
     const { ctx } = this;

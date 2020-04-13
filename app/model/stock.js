@@ -8,6 +8,9 @@ module.exports = app => {
 		productName: { type: String, unique: true, required: true },
 		stockNumber: { type: Number, required: true },
 		stockId: { type: Number, required: true, unique: true },
+		stockHistory: [
+			{ type: Number }
+		],
 	}, {
 		versionKey: false,
 		timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

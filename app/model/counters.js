@@ -6,18 +6,12 @@ module.exports = app => {
 	const counter = new mongoose.Schema({
 		productId: { type: String, required: true, unique: true },
 		orderId: {type: String, required:true, unique: true },
-		customerId: {type: String, required:true, unique: true },
-		addressId: {type: String, required:true, unique: true },
 		adminId: {type: String, required:true, unique: true },
 		agentId: {type: String, required:true, unique: true },
 		userId: {type: String, required:true, unique: true },
-		sellerId: {type: String, required:true, unique: true },
-		partnerId: {type: String, required:true, unique: true },
 		stockId: {type: String, required:true, unique: true },
-		questionId: {type: String, required:true, unique: true },
 		activityId: {type: String, required:true, unique: true },
-		slidesId: {type: String, required:true, unique: true },
-		supermId: {type: String, required:true, unique: true },
+		sliderId: {type: String, required:true, unique: true },
 	}, {
 		versionKey: false,
 		timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
