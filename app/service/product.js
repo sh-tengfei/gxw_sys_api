@@ -5,7 +5,7 @@ import moment from 'moment'
 class ProductService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this;
-    const { limit = 100, skip = 0 } = option
+    const { limit = 10, skip = 0 } = option
 
     if (!query.state) {
       query.state = 2

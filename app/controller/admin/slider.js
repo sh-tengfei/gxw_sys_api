@@ -41,16 +41,15 @@ class SliderController extends Controller {
   async putSlider() {
     const { ctx, app } = this
     const { request: req, params } = ctx
-    const stock = await ctx.service.stocks.findOne({ stockId: params.id })
-    if (!stock) {
-    	ctx.body = { code: 201, msg: '修改失败，库存不存在', data: stock }
+    const slider = await ctx.service.slider.findOne({ sliderId: params.id })
+    if (!slider) {
+    	ctx.body = { code: 201, msg: '轮播图修改失败', data: slider }
     	return
     }
-    let option = { $push: { stockHistory: req.body.stockNumber } }
 
-    const newStock = await ctx.service.stocks.updateOne(params.id, option)
+    const newSlider = await ctx.service.slider.updateOne(params.id, { state: req.body.state })
 
-    ctx.body = { code: 200, msg: '', data: newStock }
+    ctx.body = { code: 200, msg: '修改成功', data: newSlider }
   }
 }
 

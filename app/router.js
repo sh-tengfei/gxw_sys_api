@@ -33,4 +33,8 @@ module.exports = app => {
   router.post('/admin/slider', jwt, controller.admin.slider.createSlider);
   router.put('/admin/slider/:id', jwt, controller.admin.slider.putSlider);
   
+  router.get('/admin/active', jwt, controller.admin.activity.getActives);
+  router.post('/admin/active', jwt, controller.admin.activity.createActive);
+  router.put('/admin/active/:id', jwt, controller.admin.activity.putActive);
+  
 };

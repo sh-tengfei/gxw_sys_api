@@ -4,7 +4,7 @@ import moment from 'moment'
 class StockService extends Service {
   async find(query, option = {}, other = { _id: 0 }) {
   	const { ctx } = this;
-    const { limit = 100, skip = 0 } = option
+    const { limit = 10, skip = 0 } = option
     const list = await ctx.model.Stock.find(query, other).skip(+skip).limit(+limit).lean().sort({updateTime: 0})
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')

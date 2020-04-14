@@ -9,7 +9,7 @@ class IndexController extends Controller {
       'sellerOfType.code': 100,
       'limit': 10,
     }
-    const sliderQuery = {
+    const directQuery = {
       'sellerOfType.code': 101,
       'limit': 10,
     }
@@ -17,15 +17,21 @@ class IndexController extends Controller {
       'sellerOfType.code': 102,
       'limit': 10,
     }
+    const sliderQuery = {
+      'state': 2,
+      'limit': 6
+    }
+
     const local = await ctx.service.product.find(localQuery)
-    const direct = await ctx.service.product.find(sliderQuery)
+    const direct = await ctx.service.product.find(directQuery)
     const speci = await ctx.service.product.find(speciQuery)
+    const slider = await ctx.service.slider.find(sliderQuery)
 
     ctx.body = {
     	msg: '' , 
     	code: 200, 
     	data: {
-	    	slider: [],
+	    	slider,
         local,
         direct,
         speci,

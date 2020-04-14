@@ -2,16 +2,20 @@ import { Service } from 'egg'
 import moment from 'moment'
 
 class SliderService extends Service {
-  async find(query = {}, option = {}, other = { _id: 0 }) {
+  async find(query = {}, other = { _id: 0 }) {
   	const { ctx } = this;
-    let { limit = 100, skip = 0 } = option
-    const list = await ctx.model.Slider.find(query, other).skip(+skip).limit(+limit).lean().sort({updateTime: 0})
+    let { limit = 10, skip = 0 } = query
+
+    delete query.limit
+    delete query.skip
+
+    const list = await ctx.model.Slider.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
     })
     const total = await ctx.model.Slider.find(query).countDocuments()
-
+    console.log(query);
     return {
       list,
       total
@@ -28,7 +32,13 @@ class SliderService extends Service {
     data.sliderId = await ctx.service.counters.findAndUpdate(sliderId)
     try{
       newSlider = await ctx.model.Slider.create(data)
-      delete newSlider._id
+      if (data.jumpType === 1) {
+        await ctx.model.Product.updateOne({ 
+          productId: data.productId 
+        }, { 
+          locking: 1 
+        })
+      }
     }catch (e) {
       console.log(e);
       return e
