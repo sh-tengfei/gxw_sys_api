@@ -11,7 +11,6 @@ class ActivityController extends Controller {
     const { ctx, app } = this;
     const { query, request, service } = ctx
     let retBody = await service.activity.create(request.body)
-    delete retBody._id
     ctx.body = retBody
   }
   async putActive() {

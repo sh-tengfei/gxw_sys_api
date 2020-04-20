@@ -28,7 +28,6 @@ class ProductController extends Controller {
     const query = {
       productId: params.id,
     }
-    console.log(query);
     let pro = await service.product.findOne(query)
     ctx.body = { code: 200, msg: '', data: pro }
   }

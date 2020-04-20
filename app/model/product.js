@@ -4,7 +4,7 @@ module.exports = app => {
 	const uniqueValidator = require('mongoose-unique-validator');
 	const mongoose = app.mongoose;
 	const product = new mongoose.Schema({
-		productId: { type: Number, required: true, unique: true },
+		productId: { type: String, required: true, unique: true },
 		name: { type: String, required: true, unique: true },
 		slide: [{
 			url: { type: String, required: true }, // 图片的相对路径
