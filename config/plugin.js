@@ -10,6 +10,10 @@ module.exports = {
 	  enable: true,
 	  package: 'egg-jwt'
 	},
+	curl: {
+    enable: true,
+    package: 'egg-curl'
+  },
 	mongoose: {
 		enable: true,
 		package: 'egg-mongoose',

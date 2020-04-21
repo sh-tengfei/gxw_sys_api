@@ -15,7 +15,6 @@ class SliderService extends Service {
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
     })
     const total = await ctx.model.Slider.find(query).countDocuments()
-    console.log(query);
     return {
       list,
       total

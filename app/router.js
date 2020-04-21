@@ -7,6 +7,9 @@ module.exports = app => {
   const { router, controller, jwt } = app;
 
   router.get('/small/index', controller.miniprogram.index.index);
+  router.post('/small/login', controller.miniprogram.login.getUser);
+  
+  router.get('/small/product/:id', jwt, controller.admin.product.getProduct);
 
   router.get('/admin/qnToken', jwt, controller.admin.user.getQnToken);
 

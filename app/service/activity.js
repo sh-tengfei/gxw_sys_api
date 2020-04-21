@@ -27,6 +27,11 @@ class ActivityService extends Service {
     let activity = await ctx.model.Activity.findOne({activityId})
     return activity;
   }
+  async findOneName(query) {
+    const { ctx } = this;
+    let activity = await ctx.model.Activity.findOne(query)
+    return activity;
+  }
   async create(data) {
   	const { ctx } = this;
    
@@ -43,7 +48,7 @@ class ActivityService extends Service {
   }
   async updateOne(activityId, data) {
     const { ctx } = this;
-    let newActivity = await ctx.model.Activity.updateOne({activityId}, data, { _id: 0, new: true})
+    let newActivity = await ctx.model.Activity.findOneAndUpdate({activityId}, data, { _id: 0, new: true})
     return newActivity;
   }
   async delete(activityId) {

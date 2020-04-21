@@ -26,6 +26,22 @@ class IndexController extends Controller {
     const direct = await ctx.service.product.find(directQuery)
     const speci = await ctx.service.product.find(speciQuery)
     const slider = await ctx.service.slider.find(sliderQuery)
+    // 本地商品 权重排序
+    local.list.sort((a, b) => {
+      return b.weight - a.weight
+    })
+    // 产地直供 
+    direct.list.sort((a, b) => {
+      return b.weight - a.weight
+    })
+    // 本地特产
+    speci.list.sort((a, b) => {
+      return b.weight - a.weight
+    })
+    // 轮播图权重排序
+    slider.list.sort((a, b) => {
+      return b.weight - a.weight
+    })
 
     ctx.body = {
     	msg: '' , 

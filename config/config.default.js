@@ -55,11 +55,23 @@ module.exports = appInfo => {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
       secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
     },
-    config: {
+    qiniuConfig: {
       cdn: '//static.gxianwang.cn/',
       qiniu: {
         upSite: '//up-z1.qiniup.com'
       }
+    },
+    adminWxConfig: {
+      AppID: "wx724926f4b76057bc",
+      AppSecret: "b441cc3f90ac09308f12d2389a632c20"
+    },
+    mallWxConfig: {
+      AppID: 'wxf81bdc08e2056b8f',
+      AppSecret: '3c63da837b2d3b3e52bdc22bc4147f9a',
+    },
+    mallMiniprogram: {
+      AppID: 'wxc57433b341246d35',
+      AppSecret: 'a511f73c0f4658b733328bc7eca6ffdb',
     },
   };
 

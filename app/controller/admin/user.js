@@ -12,8 +12,8 @@ class UserController extends Controller {
       ctx.body = { code: 401, msg: '非法访问' }
       return
     }
-    let { config } = app.config
-    ctx.body = { code: 200, msg: '', data: { user: data, config }}
+    let { qiniuConfig } = app.config
+    ctx.body = { code: 200, msg: '', data: { user: data, config: qiniuConfig }}
   }
   async dashboard() {
     let { ctx, app } = this
