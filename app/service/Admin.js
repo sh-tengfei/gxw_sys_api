@@ -23,7 +23,6 @@ class AdminService extends Service {
       if (e.errors) {
         console.log(e.errors);
       }
-
       return e._message
     }
     return newAdmin;
