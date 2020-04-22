@@ -10,7 +10,7 @@ class StockService extends Service {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
     })
-    const total = await ctx.model.Stock.find(query).count()
+    const total = await ctx.model.Stock.find(query).countDocuments()
 
     return {
       list,

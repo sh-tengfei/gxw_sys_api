@@ -31,7 +31,7 @@ class ProductService extends Service {
         item.stockNumber = null
       }
     }
-    const total = await ctx.model.Product.find(query).count()
+    const total = await ctx.model.Product.find(query).countDocuments()
 
     return {
       list,

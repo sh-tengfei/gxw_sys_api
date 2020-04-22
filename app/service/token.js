@@ -1,11 +1,11 @@
 import { Service } from 'egg'
 
 class TokenService extends Service {
-  async getWebToken() {
+  async getWebToken(code) {
   	const { ctx, app } = this;
   	let token = await ctx.model.WebToken.findOne({})
   	if (!token) {
-  		token = await this.requestWebToken()
+  		token = await this.requestWebToken(code)
   	}
   	// token 过期
   	// if (token) {
@@ -16,7 +16,7 @@ class TokenService extends Service {
   async requestWebToken(code) {
     const url = this.getUrl('web', code)
     // 非基础token 不做缓存
-    let accessToken = await ctx.getWebSite(url)
+    let accessToken = await this.ctx.getWebSite(url)
     if (accessToken.errcode && accessToken.errcode === '40029') {
       accessToken = await this.refreshAccessToken() // 刷新AccessToken
     }
@@ -24,7 +24,7 @@ class TokenService extends Service {
   }
   async refreshAccessToken() {
   	const url = this.getUrl()
-    let tokenData = await ctx.getWebSite(url)
+    let tokenData = await this.ctx.getWebSite(url)
     if (tokenData.errcode && tokenData.errcode === '40029') {
       return this.refreshAccessToken()
     }

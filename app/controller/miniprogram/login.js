@@ -5,12 +5,13 @@ class LoginController extends Controller {
   async getUser() {
     const { ctx, app } = this;
     const { code, href } = ctx.request.body
-    if (!code)
-      return ctx.sendJson({msg: '参数错误联系管理员', data: code})
 
-    let { unionid, openid, } = await app.getCode2Session({code}, this) // 获取网页授权的认证的 access_token
-    if (!unionid || !openid) {
-      return ctx.sendJson({msg: '回话过期重新登录', data: { unionid, openid }, code: 401 })
+    if (!code)
+      return ctx.body = { msg: '参数错误联系管理员', code: 201, data: code }
+
+    const userInfo = await ctx.service.token.getWebToken(code) // 获取网页授权的认证的 access_token
+    if (!userInfo) {
+      return ctx.body = { msg: '回话过期重新登录', data: userInfo, code: 401 }
     }
 
     let user = await ctx.service.user.findOne(unionid, 'unionid') // 不传unionid 默认是用userId
