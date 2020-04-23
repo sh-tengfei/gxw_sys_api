@@ -6,13 +6,15 @@
 module.exports = app => {
   const { router, controller, jwt } = app;
 
+  // 小程序 api
   router.get('/small/index', controller.miniprogram.index.index);
   router.post('/small/login', controller.miniprogram.login.getUser);
-  
+  router.get('/small/userInfo',jwt, controller.miniprogram.login.getUserInfo);
+  router.put('/small/userInfo',jwt, controller.miniprogram.login.updateInfo);
   router.get('/small/product/:id', jwt, controller.admin.product.getProduct);
 
+  // 后台系统 api
   router.get('/admin/qnToken', jwt, controller.admin.user.getQnToken);
-
   router.post('/admin/login', controller.admin.login.login);
   router.post('/admin/logout', controller.admin.login.logout);
   router.post('/admin/add', controller.admin.login.addAdmin);

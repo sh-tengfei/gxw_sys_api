@@ -10,12 +10,13 @@ module.exports = app => {
     mobile: { type: Number, default: 0 },
     unionid: { type: String, required: true, unique: true },
     openid: { type: String, required: true, unique: true },
+    picture: { type: String, default: '' },
     shareRecord: {
       totalIncome: { type: Number, default: 0},
       waitIncome: { type: Number, default: 0},
     },
     username: { type: String, default: '' },
-    userInfo: {
+    source: {
       nickName: { type: String, default: '' },
       avatarUrl: { type: String, default: ''  },
       city: { type: String, default: '' },

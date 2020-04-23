@@ -1,27 +1,15 @@
 import { Service } from 'egg'
 
 class TokenService extends Service {
-  async getWebToken(code) {
-  	const { ctx, app } = this;
-  	let token = await ctx.model.WebToken.findOne({})
-  	if (!token) {
-  		token = await this.requestWebToken(code)
-      console.log(token, code, 'user')
-  	}
-  	// token 过期
-  	// if (token) {
-  		// token = this.refreshAccessToken()
-  	// }
-  	return token
+  async getCode2Session(code) {
+  	let baseInfo = await this.reqSessionKey(code)
+  	return baseInfo
   }
-  async requestWebToken(code) {
-    const url = this.getUrl('web', code)
-    // 非基础token 不做缓存
-    let accessToken = await this.ctx.getWebSite(url)
-    if (accessToken.errcode && accessToken.errcode === '40029') {
-      accessToken = await this.refreshAccessToken() // 刷新AccessToken
-    }
-    return accessToken
+  async reqSessionKey(code) {
+    const { mallMiniprogram: conf } = this.app.config
+    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${conf.AppID}&secret=${conf.AppSecret}&js_code=${code}&grant_type=authorization_code`
+    let user = await this.ctx.getWebSite(url)
+    return user
   }
   async refreshAccessToken() {
   	const url = this.getUrl()
@@ -35,7 +23,6 @@ class TokenService extends Service {
     const { mallWxConfig: conf } = this.app.config
     let url
     if (type === 'web') {
-    	url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.AppID}&secret=${conf.AppSecret}&code=${code}&grant_type=authorization_code`;
     } else {
     	url = `https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=${conf.AppID}&grant_type=refresh_token&refresh_token=REFRESH_TOKEN`
     }
