@@ -6,6 +6,7 @@ class TokenService extends Service {
   	let token = await ctx.model.WebToken.findOne({})
   	if (!token) {
   		token = await this.requestWebToken(code)
+      console.log(token, code, 'user')
   	}
   	// token 过期
   	// if (token) {

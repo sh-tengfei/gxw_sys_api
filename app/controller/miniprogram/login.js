@@ -10,28 +10,29 @@ class LoginController extends Controller {
       return ctx.body = { msg: '参数错误联系管理员', code: 201, data: code }
 
     const userInfo = await ctx.service.token.getWebToken(code) // 获取网页授权的认证的 access_token
+
     if (!userInfo) {
       return ctx.body = { msg: '回话过期重新登录', data: userInfo, code: 401 }
     }
 
-    let user = await ctx.service.user.findOne(unionid, 'unionid') // 不传unionid 默认是用userId
+    let user = await ctx.service.user.findOne({ unionid: userInfo.unionid })
 
     if (user === null) {
       // 不存在 创建
       try {
         user = await ctx.service.user.create({
-          openid,
-          unionid,
+          openid: userInfo.openid,
+          unionid: userInfo.unionid,
           userInfo: null,
         })
-        delete user._id
-        delete user.createTime
-        delete user.updateTime
-
-        this.createToken(user)
+        if (!user) {
+          ctx.body = { msg: '保存失败，联系管理员', data: user }
+          return
+        }
+        ctx.body = { code: 200, msg:'登陆成功！', data: { token: this.createToken(user) } }
         return
       } catch (e) {
-        return ctx.sendJson({msg: '登陆失败，联系管理员', data: e })
+        return ctx.body = { msg: '登陆失败，联系管理员', data: e }
       }
     }
 
@@ -45,15 +46,10 @@ class LoginController extends Controller {
 
     let user = await ctx.service.user.findOne(userId, 'userId')
   }
-  async createToken(user) {
-    const { ctx, app } = this
-    const { userId } = user
-    const token = app.jwt.sign({ userId }, app.config.jwt.secret) // 生成token
-
-    ctx.sendJson({msg: '登陆成功', data: {
-      token,
-      user: user,
-    }, code: 200})
+  // 创建token
+  async createToken({ userId }) {
+    const token = this.app.jwt.sign({ userId }, this.app.config.jwt.secret) // 生成token
+    return token
   }
   // 更新
   async updateUserInfo() {
