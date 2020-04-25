@@ -11,7 +11,8 @@ module.exports = app => {
   router.post('/small/login', controller.miniprogram.login.getUser);
   router.get('/small/userInfo',jwt, controller.miniprogram.login.getUserInfo);
   router.put('/small/userInfo',jwt, controller.miniprogram.login.updateInfo);
-  router.get('/small/product/:id', jwt, controller.admin.product.getProduct);
+  router.get('/small/product/:id', jwt, controller.miniprogram.product.getProduct);
+  router.post('/small/order', jwt, controller.miniprogram.order.makeOrder);
 
   // 后台系统 api
   router.get('/admin/qnToken', jwt, controller.admin.user.getQnToken);
