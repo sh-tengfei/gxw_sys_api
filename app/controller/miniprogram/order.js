@@ -5,11 +5,15 @@ class OrderController extends Controller {
   async makeOrder() {
     const { ctx, app } = this;
     const { request: req, service, params } = ctx
-    const body = {
+    const data = {
       ...req.body,
     }
-    const order = await service.order.create(body)
+
+    console.log(data, 1);
+    ctx.logger.error(data)
+    const order = await service.order.create(data)
     if (!order.orderId) {
+      ctx.logger.error({ code: 201, msg: '订单创建失败', data: order })
       ctx.body = { code: 201, msg: '订单创建失败', data: order }
       return
     }

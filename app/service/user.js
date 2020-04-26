@@ -29,6 +29,7 @@ class UserService extends Service {
   async delete(userId) {
 
   }
+
 }
 
 module.exports = UserService;
