@@ -46,7 +46,7 @@ class ProductController extends Controller {
         isAgentSendOnlineMsg,
         rebate,
         weight,
-        unit,
+        priceUnit,
         address
       } = request.body
     if (!name) {
@@ -71,7 +71,7 @@ class ProductController extends Controller {
       isAgentSendOnlineMsg,
       rebate,
       weight,
-      unit,
+      priceUnit,
       address
     }
     let newPro = await service.product.create(opt)

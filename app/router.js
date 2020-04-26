@@ -42,5 +42,4 @@ module.exports = app => {
   router.get('/admin/active', jwt, controller.admin.activity.getActives);
   router.post('/admin/active', jwt, controller.admin.activity.createActive);
   router.put('/admin/active/:id', jwt, controller.admin.activity.putActive);
-  
 };
