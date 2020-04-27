@@ -15,11 +15,11 @@ module.exports = app => {
         buyNum: { type: Number, required: true },
         mallPrice: { type: Number, required: true },
         cover: { type: String, required: true },
-        unit: { type: String, required: true },
+        priceUnit: { type: String, required: true }
       }
     ],
     payResult: { // 微信签名信息
-      appid: { type: String },
+      app_id: { type: String },
       bank_type: { type: String },
       cash_fee: { type: String },
       fee_type: { type: String },
@@ -37,8 +37,8 @@ module.exports = app => {
       transaction_id: { type: String },
       resultXml: { type: String },
     },
-    payType: { type: String, default: 'wx' }, //支付类型 默认wx 微信wx 支付宝 zfb
-    delivMethod: { // 交付方法
+    payType: { type: String, default: 'wx' }, // 支付类型 默认wx 微信wx 支付宝 zfb
+    deliverMethod: { // 交付方法
       type: { type: Number, default: 1, required: true }, // 1.提货点提货 2.快递配送
       extractId: { type: String }, // type 为1，提货点有值
       expressNo: { type: String } // type 为2，物流号单发货后有值
@@ -48,7 +48,7 @@ module.exports = app => {
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Number, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Number, default: -1, required: true }, // 支付时间
-    totalMoney: { type: Number, required: true },
+    total: { type: Number, required: true },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

@@ -7,13 +7,49 @@ class OrderService extends Service {
   async findOne(username) {
 
   }
-  async create(data) {
+  async create({ products, payType, extractId }) {
     const { ctx } = this;
-    let newOrder, orderId = 'orderId'
-    data.orderId = await ctx.service.counters.findAndUpdate(orderId)
-    console.log(data, 1)
+    const { service } = ctx
+
+    let total = 0
+    let error = []
+    let productList = []
+
+    for (const i of products) {
+      let p = await service.product.findOne({ productId: i.productId })
+      // 商品不存在
+      if (p === null) {
+        error.push({ code: 201, msg: '购买商品不存在', productId: i.productId })
+      }
+      total += p.mallPrice * p.buyNum
+      productList.push({
+        productId: p.productId,
+        name: p.name,
+        desc: p.desc,
+        buyNum: i.buyNum,
+        mallPrice: p.mallPrice,
+        cover: p.cover,
+        priceUnit: p.priceUnit,
+        total: p.mallPrice * p.buyNum
+      })
+    }
+    if (error.length) {
+      return { code: 201, msg: '商品不可购买', error }
+    }
+    if (payType !== 'wx' || payType !== 'zfb') {
+      return { code: 201, msg: '支付方式不正确', error }
+    }
+
+    let order = {
+      total,
+      products: productList,
+
+    }
+    let orderId = 'orderId', newOrder
+    data.orderId = await service.counters.findAndUpdate(orderId)
+
     try{
-      newOrder = await ctx.model.Order.create(data)
+      newOrder = await ctx.model.Order.create(order)
     }catch (e) {
       ctx.logger.warn({ msg: '订单创建错误', data: e })
       console.log(e);
