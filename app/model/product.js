@@ -16,7 +16,7 @@ module.exports = app => {
     costPrice: { type: Number, required: true }, // 成本价
     mallPrice: { type: Number, required: true }, // 商城价
     rebate: { type: Number, required: true }, // 代理回扣
-    priceUnit: { type: String, required: true }, // 产品单位
+    unitValue: { type: String, required: true }, // 产品单位
     locking: { type: Number, default: 0 }, // 非0即是商品被占用
     cover: { type: String, required: true }, // 缩略图
     desc: { type: String, required: true, maxLength: 150, minLength: 10}, // 简介

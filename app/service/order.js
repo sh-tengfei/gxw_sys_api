@@ -1,4 +1,7 @@
 import { Service } from 'egg'
+import _ from 'lodash'
+import { Decimal } from 'decimal.js'
+import moment from 'moment'
 
 class OrderService extends Service {
   async find(query) {
@@ -8,54 +11,73 @@ class OrderService extends Service {
 
   }
   async create({ products, payType, extractId }) {
-    const { ctx } = this;
-    const { service } = ctx
+    payType = payType.toLocaleLowerCase()
+    const { service, model } = this.ctx
 
     let total = 0
     let error = []
     let productList = []
 
-    for (const i of products) {
-      let p = await service.product.findOne({ productId: i.productId })
+    for (const item of products) {
+      let { productId, buyNum } = item
+      let product = await service.product.findOne({ productId })
       // 商品不存在
-      if (p === null) {
-        error.push({ code: 201, msg: '购买商品不存在', productId: i.productId })
+      if (product === null) {
+        error.push({ code: 201, msg: '购买商品不存在', productId })
       }
-      total += p.mallPrice * p.buyNum
+      let { mallPrice, name, desc, cover, unitValue, sellerOfType } = product
+      // 求订单总金额 
+      total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
       productList.push({
-        productId: p.productId,
-        name: p.name,
-        desc: p.desc,
-        buyNum: i.buyNum,
-        mallPrice: p.mallPrice,
-        cover: p.cover,
-        priceUnit: p.priceUnit,
-        total: p.mallPrice * p.buyNum
+        productId,
+        name,
+        desc,
+        buyNum,
+        mallPrice,
+        cover,
+        unitValue,
+        productType: sellerOfType.code,
+        total: new Decimal(mallPrice).mul(buyNum),
       })
     }
+
     if (error.length) {
-      return { code: 201, msg: '商品不可购买', error }
+      return { code: 201, msg: '订单创建失败，商品不可购买', error }
     }
-    if (payType !== 'wx' || payType !== 'zfb') {
-      return { code: 201, msg: '支付方式不正确', error }
+    if (payType !== 'wx' && payType !== 'zfb') {
+      return { code: 201, msg: '订单创建失败，支付方式不正确', error: payType }
     }
 
-    let order = {
+    let orderId = await service.counters.findAndUpdate('orderId')
+    let newOrder = {
       total,
       products: productList,
-
+      extractId,
+      orderId,
+      parentId: orderId,
+      payType,
+      payEndTime: moment().add(30, 'minutes')
     }
-    let orderId = 'orderId', newOrder
-    data.orderId = await service.counters.findAndUpdate(orderId)
-
-    try{
-      newOrder = await ctx.model.Order.create(order)
-    }catch (e) {
-      ctx.logger.warn({ msg: '订单创建错误', data: e })
-      console.log(e);
-      return e
+    try {
+      // 父订单创建
+      newOrder = await model.Order.create(newOrder)
+      // 执行拆单
+      const ret = await this.splitChildOrder({ 
+        products: productList,
+        parentId: orderId,
+        extractId,
+        payType,
+        payEndTime: newOrder.payEndTime,
+      })
+      if (ret.code !== 200) {
+        this.ctx.logger.warn({ msg: '拆单错误', error: ret.error })
+        return { code: 201, msg: ret.msg, error: ret.error }
+      }
+    } catch (e) {
+      this.ctx.logger.warn({ msg: '订单创建错误', error: e })
+      return { code: 201, msg: '订单创建失败，订单创建错误', error: e }
     }
-    return newOrder;
+    return { code: 200, msg: '订单创建成功！', data: newOrder };
   }
   async updateOne(adminId, data) {
 
@@ -63,37 +85,49 @@ class OrderService extends Service {
   async delete(adminId) {
 
   }
-  async createChildOrder({ products, orderId }) {
+  async splitChildOrder({ products, parentId, extractId, payType, payEndTime }) {
     const { ctx, app } = this;
-    //得到有多少类型商品
-    const productType = {}
-    for (const item of products){
-      if(!productType[item.productType]) {
-          productType[item.productType] = []
+    // 得到有多少类型商品
+    const types = {}
+    for (const i of products){
+      const { productType } = i
+      if(!types[productType]) {
+        types[productType] = []
       }
-      productType[item.productType].push(item)
+      types[productType].push(i)
     }
 
-    const orderList = []
-    for (const key in productType) {
-      let childOrderId = await makeId.getMakeId('orderId') // 子订单Id
-      let productList = productTypes[key]
+    // 单个类型商品不需要拆单
+    if (_.size(types) === 1) {
+      return { code: 200, msg: '无需拆单' }
+    }
 
-      let totalAmount = 0
-      productList.forEach((i)=>{
-          totalAmount += i.price * i.buyNum
+    _.forEach(types, async (valList, key) => {
+      let orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
+      let total = 0
+      _.forEach(valList, (i)=>{
+        total += new Decimal(i.mallPrice).mul(i.buyNum)
       })
-
-      let newOrder = Object.assign({}, {
-        products: productList,
-        childOrderId,
+      let newOrder = {
+        products: valList,
+        parentId: parentId,
+        extractId,
         orderId,
-        totalAmount,
-      })
-      let orderRet = await service.order.create(newOrder)
-      orderList.push(orderRet)
-    }
-    return orderList[0]
+        total,
+        payType,
+        payEndTime,
+      }
+      if (Number(key) === 2) {
+        newOrder.expressNo = ''
+      }
+      let orderRet
+      try {
+        orderRet = await ctx.service.order.create(newOrder)
+      } catch (e) {
+        ctx.logger.warn({ msg: '拆单错误', error: orderRet })
+      }
+    })
+    return { code: 200, msg: '拆单成功' }
   }
 }
 

@@ -5,9 +5,11 @@ class OrderController extends Controller {
   async makeOrder() {
     const { ctx, app } = this;
     const { request: req, service } = ctx
-    const { products, payType, extractId } = req.body
 
-    if (!products) {
+    // 判断有多少未支付订单 或许不用判断
+
+    const { products, payType, extractId } = req.body
+    if (!products || !products.length) {
       ctx.body = { code: 201, msg: '商品有误' }
       return
     }
@@ -20,14 +22,13 @@ class OrderController extends Controller {
       return
     }
 
-    ctx.logger.error(data)
-    const order = await service.order.create({ products, payType, extractId })
-    if (!order.orderId) {
-      ctx.logger.error({ code: 201, msg: '订单创建失败', data: order })
-      ctx.body = { code: 201, msg: '订单创建失败', data: order }
+    const { code, error, data, msg } = await service.order.create({ products, payType, extractId })
+    if (code !== 200) {
+      ctx.logger.error({ code: 201, msg, data: error })
+      ctx.body = { code: 201, msg, data: error }
       return
     }
-    ctx.body = { code: 200, msg: '订单创建成功', data: order }
+    ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async updateOrder() {
     const { ctx, app } = this;
