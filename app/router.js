@@ -9,5 +9,4 @@ module.exports = app => {
   
   admin({ router, controller, jwt })
   small({ router, controller, jwt })
-
 };

@@ -19,29 +19,29 @@ class LoginController extends Controller {
     }
 
     let user = await ctx.service.user.findOne({ unionid: userInfo.unionid })
-    ctx.logger.info('用户注册: %j', ctx.request.body)
-    if (user === null) {
-      // 不存在 创建
-      try {
-        user = await ctx.service.user.create({
-          openid: userInfo.openid,
-          unionid: userInfo.unionid,
-          userInfo: null,
-        })
-        console.log(user, 1)
-        if (!user) {
-          ctx.logger.error({ msg: '保存失败，联系管理员', data: user })
-          ctx.body = { msg: '保存失败，联系管理员', data: user }
-          return
-        }
-        ctx.body = { code: 200, msg:'登陆成功！', data: { token: this.createToken(user), user } }
-        return
-      } catch (e) {
-        ctx.logger.error({ msg: '保存失败，联系管理员', data: e })
-        return ctx.body = { msg: '登陆失败，联系管理员', data: e }
-      }
+    if (user !== null) {
+      ctx.body = { code: 200, msg:'登陆成功！', data: { token: this.createToken(user), user } }
+      return
     }
-    ctx.body = { code: 200, msg:'登陆成功！', data: { token: this.createToken(user), user } }
+    ctx.logger.info('用户注册: %j', ctx.request.body)
+    // 不存在 创建
+    try {
+      user = await ctx.service.user.create({
+        openid: userInfo.openid,
+        unionid: userInfo.unionid,
+        userInfo: null,
+      })
+      if (!user) {
+        ctx.logger.error({ msg: '保存失败，联系管理员', data: user })
+        ctx.body = { msg: '保存失败，联系管理员', data: user }
+        return
+      }
+      ctx.body = { code: 200, msg:'登陆成功！', data: { token: this.createToken(user), user } }
+      return
+    } catch (e) {
+      ctx.logger.error({ msg: '保存失败，联系管理员', data: e })
+      return ctx.body = { msg: '登陆失败，联系管理员', data: e }
+    }
   }
   // 创建token
   createToken({ userId }) {

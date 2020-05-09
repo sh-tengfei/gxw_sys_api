@@ -7,11 +7,13 @@ class OrderService extends Service {
   async find(query) {
 
   }
-  async findOne(username) {
-
+  async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
+    const { model } = this.ctx
+    console.log(query)
+    const orderRet = await model.Order.findOne(query, other)
+    return orderRet
   }
-  async create({ products, payType, extractId }) {
-    payType = payType.toLocaleLowerCase()
+  async create({ products, extractId }) {
     const { service, model } = this.ctx
 
     let total = 0
@@ -44,9 +46,6 @@ class OrderService extends Service {
     if (error.length) {
       return { code: 201, msg: '订单创建失败，商品不可购买', error }
     }
-    if (payType !== 'wx' && payType !== 'zfb') {
-      return { code: 201, msg: '订单创建失败，支付方式不正确', error: payType }
-    }
 
     let orderId = await service.counters.findAndUpdate('orderId')
     let newOrder = {
@@ -55,7 +54,6 @@ class OrderService extends Service {
       extractId,
       orderId,
       parentId: orderId,
-      payType,
       payEndTime: moment().add(30, 'minutes')
     }
     try {
@@ -66,7 +64,6 @@ class OrderService extends Service {
         products: productList,
         parentId: orderId,
         extractId,
-        payType,
         payEndTime: newOrder.payEndTime,
       })
       if (ret.code !== 200) {

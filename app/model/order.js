@@ -39,7 +39,7 @@ module.exports = app => {
       transaction_id: { type: String },
       resultXml: { type: String },
     },
-    payType: { type: String, default: 'wx' }, // 支付类型 默认wx 微信wx 支付宝 zfb
+    payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
     extractId: { type: String, required: true }, // 提货点Id
     expressNo: { type: String }, // 产地的物流号单发货后有值
     isDelete: { type: Boolean, default: false },
@@ -53,6 +53,5 @@ module.exports = app => {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
   order.plugin(uniqueValidator);
-  let ret = mongoose.model('Order', order);
-  return ret
+  return mongoose.model('Order', order);
 }
