@@ -53,7 +53,7 @@ class OrderService extends Service {
       products: productList,
       extractId,
       orderId,
-      parentId: orderId,
+      parentId: 0,
       payEndTime: moment().add(30, 'minutes')
     }
     try {

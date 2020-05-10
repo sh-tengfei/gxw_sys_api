@@ -8,6 +8,6 @@ export default function ({ router, controller, jwt }) {
   router.get('/small/product/:id', jwt, controller.miniprogram.product.getProduct);
   router.post('/small/order', jwt, controller.miniprogram.order.makeOrder);
   router.get('/small/order/:id', jwt, controller.miniprogram.order.getOrder);
-  router.post('/small/payOrder/:id', jwt, controller.miniprogram.order.payOrder);
+  router.post('/small/payment', jwt, controller.miniprogram.order.payOrder);
   
 }

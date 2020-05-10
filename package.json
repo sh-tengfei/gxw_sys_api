@@ -16,7 +16,9 @@
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.4.6",
     "qiniu": "^7.3.0",
-    "wechat-api": "^1.35.1"
+    "sha1": "^1.1.1",
+    "wechat-api": "^1.35.1",
+    "xmlreader": "^0.2.3"
   },
   "devDependencies": {
     "autod": "^3.0.1",
