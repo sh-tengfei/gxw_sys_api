@@ -20,25 +20,7 @@ module.exports = app => {
         productType: { type: Number, required: true },
       }
     ],
-    payResult: { // 微信签名信息
-      app_id: { type: String },
-      bank_type: { type: String },
-      cash_fee: { type: String },
-      fee_type: { type: String },
-      is_subscribe: { type: String },
-      mch_id: { type: String },
-      nonce_str: { type: String },
-      openid: { type: String },
-      out_trade_no: { type: String },
-      result_code: { type: String },
-      return_code: { type: String },
-      sign: { type: String },
-      time_end: { type: String },
-      total_fee: { type: String },
-      trade_type: { type: String },
-      transaction_id: { type: String },
-      resultXml: { type: String },
-    },
+    resultXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
     extractId: { type: String, required: true }, // 提货点Id
     expressNo: { type: String }, // 产地的物流号单发货后有值

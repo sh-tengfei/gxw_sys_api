@@ -53,16 +53,19 @@ class OrderController extends Controller {
       return ctx.body = { code: 200, msg: '支付成功！', data: order.payResult }
     }
     const { openid } = await service.user.findOne({ userId: state.user.userId })
-    this.orderPayment({
+    const { msg, code, data } = await this.orderPayment({
       orderId: order.orderId,
       openid,
       total: order.total,
-    }).then((data) => {
-      ctx.body = { code: 200, msg: '支付成功', data }
-    }).catch((err) => {
-      ctx.logger.error({ err })
-      ctx.body = { code: 201, msg: '订单支付失败' }
     })
+    if (code !== 200) {
+      ctx.body = { code, msg }
+      return
+    }
+    // 签名信息存入订单
+    await ctx.service.order.updateOne(data.orderId, { paySign: data })
+
+    ctx.body = { code, msg: '获取成功', data }
   }
 	orderPayment({ orderId, openid, total }) {
     const { app, ctx } = this
@@ -87,46 +90,77 @@ class OrderController extends Controller {
           xml  += "<sign>"+sign+"</sign>";
           xml  += "</xml>";
 
-      let { data: preData } = await ctx.postWebSite(prepayUrl, {body: xml})
-      if(!preData){
-        ctx.logger.error({ code: 201, msg: '支付下单失败，请重试', data: preData })
+      let { data: resultXml, status } = await ctx.postWebSite(prepayUrl, {body: xml})
+      if(!resultXml || status !== 200){
+        ctx.logger.error({ code: 201, msg: '支付下单失败，请重试', data: resultXml })
         return reject({ code: 201, msg: '支付下单失败，请重试' })
       }
-      preData = preData.toString("utf-8")
-      read(preData, (errors, value)=>{
-          let { return_code, return_msg, prepay_id, err_code } = value.xml
-          if (return_code.text() !== 'SUCCESS' ) {
-            ctx.logger.error({ code: return_code.text(), msg: return_msg.text() })
-            return reject({ code: 201, msg: '数据解析失败，请联系管理员', data: return_msg.text() })
+      resultXml = resultXml.toString("utf-8")
+      
+      // xml存入指定 订单
+      await ctx.service.order.updateOne(orderId, { resultXml })
+      
+      read(resultXml, (errors, value)=>{
+        const { 
+          return_code, 
+          return_msg, 
+          prepay_id, 
+          err_code, 
+          result_code,
+        } = value.xml
+
+        if (return_code.text() !== 'SUCCESS' ) {
+          ctx.logger.error({ code: return_code.text(), msg: result_code.text(), errors })
+          return resolve({ code: 201, msg: '支付失败，请联系管理员', data: return_msg.text() })
+        }
+        if (result_code.text() !== 'SUCCESS' ) {
+          const errCode = err_code.text()
+          if (errCode === 'ORDERPAID') {
+            ctx.logger.error({ code: 201, msg: '订单已支付！', data: errCode })
+            return resolve({ code: 201, msg: '订单已支付！', data: null })
           }
-          console.log(value.xml, err_code.text(), return_code.text(), return_msg.text(), '\nxml')
-          let prepayId = prepay_id.text();
-          let timestamp = ctx.helper.createTimeStamp()
-          //将预支付订单和其他信息一起签名后返回给前端
-          let finalsign = ctx.helper.paysignjsapifinal({
-            appid,
-            prepayId,
-            nonceStr,
-            timestamp,
-            mchkey
-          })
-          resolve({
-            code: 200,
-            msg: '下单成功！',
+        }
+
+        const prepayId = prepay_id.text();
+        const timestamp = ctx.helper.createTimeStamp()
+        //将预支付订单和其他信息一起签名后返回给前端
+        const finalsign = ctx.helper.paysignjsapifinal({
+          appid,
+          prepayId,
+          nonceStr,
+          timestamp,
+          mchkey
+        })
+        let opt = {
+          code: 200,
+          msg: '下单成功！',
+          data: {
             appid: appid,
             nonceStr: nonceStr,
             timestamp: timestamp,
             packages: `prepay_id=${prepayId}`,
             paySign: finalsign,
             orderId
-          })
+          }
+        }
+        resolve(opt)
       })
     })
 	}
   async updateOrder() {
-    const { ctx, app } = this;
-    const { query, request, service, params } = ctx
+    const { ctx } = this;
+    const { request: req, service, params } = ctx
+    if (!params.id || !req.body) {
+      ctx.body = { code: 201, msg: '参数不正确' }
+      return
+    }
 
+    const data = await service.order.updateOne(params.id, req.body)
+    if (!data) {
+      ctx.body = { code: 201, msg: '更新失败！', data }
+      return
+    }
+    ctx.body = { code: 200, msg: '更新成功！', data }
   }
 }
 module.exports = OrderController;

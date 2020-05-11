@@ -49,17 +49,17 @@ module.exports = {
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase();
   },
   // 支付的签名加密算法,第二次的签名
-  paysignjsapifinal ({appid,prepayid,noncestr,timestamp,mchkey}) {
+  paysignjsapifinal ({ appid, prepayId, nonceStr, timestamp, mchkey }) {
     let ret = {
       appId:appid,
       timeStamp: timestamp,
-      nonceStr: noncestr,
-      package: `prepay_id=${prepayid}`,
+      nonceStr: nonceStr,
+      package: `prepay_id=${prepayId}`,
       signType: 'MD5',
     };
     let string = raw(ret);
-    let key = mchkey;
-    string = string + '&key=' + key;
+    string = string + '&key=' + mchkey;
+    console.log(string, 'string')
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase();
   },
   // 生成公众号配置签名

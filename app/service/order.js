@@ -9,7 +9,6 @@ class OrderService extends Service {
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { model } = this.ctx
-    console.log(query)
     const orderRet = await model.Order.findOne(query, other)
     return orderRet
   }
@@ -76,8 +75,12 @@ class OrderService extends Service {
     }
     return { code: 200, msg: '订单创建成功！', data: newOrder };
   }
-  async updateOne(adminId, data) {
-
+  async updateOne(orderId, data) {
+    const { ctx } = this;
+    const newOrder = await ctx.model.Order.findOneAndUpdate({ 
+      orderId
+    }, data, { new: true, _id: 0}).lean()
+    return newOrder
   }
   async delete(adminId) {
 
