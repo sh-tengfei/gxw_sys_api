@@ -51,7 +51,7 @@ class LoginController extends Controller {
   // 更新
   async updateInfo() {
     const { ctx, app } = this;
-    const { request: req } = ctx
+    const { request: req, params } = ctx
     let { nickName, avatarUrl } = req.body
     const newData = {
       username: nickName,
@@ -60,7 +60,11 @@ class LoginController extends Controller {
         ...req.body
       }
     }
-    let user = await this.ctx.service.user.updateOne(ctx.state.user.userId, newData)
+    if (!params.id) {
+      ctx.body = { msg: '参数错误', code: 201 }
+      return
+    }
+    let user = await this.ctx.service.user.updateOne(params.id, newData)
 
     if (!user) {
       ctx.body = { msg: '更新失败', data: user, code: 201 }
