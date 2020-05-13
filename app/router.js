@@ -7,6 +7,6 @@ import small from './router/small'
 module.exports = app => {
   const { router, controller, jwt } = app;
   
-  admin({ router, controller, jwt })
-  small({ router, controller, jwt })
+  admin({ router, controller: controller.admin, jwt })
+  small({ router, controller: controller.miniprogram, jwt })
 };
