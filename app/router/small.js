@@ -13,4 +13,9 @@ export default function ({ router, controller, jwt }) {
   router.put('/small/order/:id', jwt, controller.order.updateOrder);
 
   router.post('/small/payment', jwt, controller.order.payOrder);
+
+  router.post('/small/agent', jwt, controller.agent.makeAgent);
+
+  router.get('/small/searbys', jwt, controller.agent.getNearbyAgents);
+
 }

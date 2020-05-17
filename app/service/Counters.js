@@ -20,6 +20,12 @@ class CountersService extends Service {
     }
     return null
   }
+  async startCheck() {
+    let counters = await this.findOne()
+    if (counters === null) {
+     counters = await this.create()
+    }
+  }
 }
 
 module.exports = CountersService;

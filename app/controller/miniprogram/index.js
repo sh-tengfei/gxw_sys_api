@@ -21,7 +21,6 @@ class IndexController extends Controller {
       'state': 2,
       'limit': 6
     }
-
     const local = await ctx.service.product.find(localQuery)
     const direct = await ctx.service.product.find(directQuery)
     const speci = await ctx.service.product.find(speciQuery)

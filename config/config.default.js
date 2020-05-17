@@ -43,6 +43,14 @@ module.exports = appInfo => {
     }
   }
 
+  config.session = {
+    key: 'gxw', // 设置 Session cookies 里面的 key
+    maxAge: 24 * 3600 * 1000, // 1 天
+    httpOnly: true,
+    encrypt: true,
+    renew: true, // 每次刷新页面，Session 都会被延期。
+  };
+
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1586274558093_9882';
 
@@ -51,6 +59,17 @@ module.exports = appInfo => {
 
   // add your user config here
   const userConfig = {
+    autoNumberTypeList: {
+      productId: '1000000',
+      orderId: '1000000',
+      userId: '1000000',
+      adminId: '1000',
+      extractId: '1000',
+      stockId: '1000',
+      activityId: '1000',
+      sliderId: '1000',
+      areaId: '1000', 
+    },
     qiniuConf: {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
       secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
