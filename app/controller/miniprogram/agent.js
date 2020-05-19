@@ -1,5 +1,10 @@
 'use strict';
 import { Controller } from 'egg'
+const EARTH_RADIUS = 6378.137 //地球半径
+
+function rad(d) {
+    return d * Math.PI / 180.0;
+}
 
 class AgentController extends Controller {
   async makeAgent() {
@@ -29,11 +34,53 @@ class AgentController extends Controller {
     ctx.body = { msg: '创建失败！' , code: 201 }
   }
   async getNearbyAgents() {
-  	const { service, query } = this.ctx
-  	const { latitude, longitude } = query
-  	const agents = await service.agent.find({})
-  	
-  	this.ctx.body = { msg: '获取成功' , code: 200, data: agents }
+	  const { ctx } = this
+  	const { service, query } = ctx
+    const { latitude, longitude } = query
+    if (!latitude || !longitude) {
+      ctx.body = { msg: '参数错误！', code: 201 }
+      return
+    }
+  	const agents = await service.agent.find({ state: 2 })
+    const list = []
+    agents.forEach((item) => {
+      const { location, source, communitySite, extractId, applyPhone, applyName } = item
+      const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
+      list.push({
+        distance: Math.floor(distance * 100) / 100,
+        nickName: source.nickName,
+        avatarUrl: source.avatarUrl,
+        applyName,
+        communitySite,
+        extractId,
+        applyPhone,
+      })
+    })
+    // 排序获取前五个
+    const result = list.sort((next, prev) => {
+      return next.distance - prev.distance
+    }).splice(0, 5)
+  	ctx.body = { msg: '获取成功' , code: 200, data: result }
+  }
+  /** 
+   * 谷歌地图计算两个坐标点的距离 
+   * @param lng1  经度1 
+   * @param lat1  纬度1 
+   * @param lng2  经度2 
+   * @param lat2  纬度2 
+   * @return 距离（千米） 
+  */
+  getDistance(lng1, lat1, lng2, lat2) {
+    let radLat1 = rad(lat1);
+    let radLat2 = rad(lat2);
+    let a = radLat1 - radLat2;
+    let b = rad(lng1) - rad(lng2);
+    let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
+        + Math.cos(radLat1) * Math.cos(radLat2)
+        * Math.pow(Math.sin(b / 2), 2)));
+    s = s * EARTH_RADIUS;
+    s = Math.round(s * 10000) / 10000;
+    return s;
   }
 }
 
