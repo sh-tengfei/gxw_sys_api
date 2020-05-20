@@ -10,6 +10,8 @@ export default function ({ router, controller, jwt }) {
   router.get('/admin/dashboard', jwt, controller.user.dashboard);
   router.get('/admin/salesData', jwt, controller.sales.salesData);
   router.get('/admin/agentList', jwt, controller.agent.agentList);
+  router.put('/admin/agent/:id', jwt, controller.agent.updateAgent);
+
   router.get('/admin/order', jwt, controller.order.orderList);
 
   router.post('/admin/product', jwt, controller.product.createProduct);

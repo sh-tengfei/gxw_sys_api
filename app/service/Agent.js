@@ -51,7 +51,9 @@ class AgentService extends Service {
     return newAgent;
   }
   async updateOne(extractId, data) {
-
+    const { ctx } = this;
+    let newAgent = await ctx.model.Agent.findOneAndUpdate({extractId}, data, { _id: 0, new: true})
+    return newAgent;
   }
   async delete(extractId) {
 
