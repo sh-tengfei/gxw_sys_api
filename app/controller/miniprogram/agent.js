@@ -41,12 +41,12 @@ class AgentController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
-  	const agents = await service.agent.find({ state: 2 })
-    const list = []
-    agents.forEach((item) => {
+  	const { list, total } = await service.agent.find({ state: 2 })
+    const ret = []
+    list.forEach((item) => {
       const { location, source, communitySite, extractId, applyPhone, applyName } = item
       const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
-      list.push({
+      ret.push({
         distance: Math.floor(distance * 100) / 100,
         nickName: source.nickName,
         avatarUrl: source.avatarUrl,
@@ -57,10 +57,10 @@ class AgentController extends Controller {
       })
     })
     // 排序获取前五个
-    const result = list.sort((next, prev) => {
+    const result = ret.sort((next, prev) => {
       return next.distance - prev.distance
     }).splice(0, 5)
-  	ctx.body = { msg: '获取成功' , code: 200, data: result }
+  	ctx.body = { msg: '获取成功' , code: 200, data: result, total }
   }
   /** 
    * 谷歌地图计算两个坐标点的距离 
