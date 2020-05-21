@@ -26,10 +26,11 @@ module.exports = app => {
         url: { type: String, required: true }
       }
     ],
-    sellerOfType: {  // 商品所属类型 就是商品分类
+    sellerOfType: {  // 商品所属类型 就是商品分类 就是商品特征
       code: { type: Number, required: true },
       title: { type: String, required: true },
     },
+    salesTerritory: { type: Object, default: null }, // 销售区域
     state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未下线  2上线  3删除
     salesNumber: { type: Number, default: 0 }, // 销售数量
     isAgentSendOnlineMsg: { type: Number, default: false },

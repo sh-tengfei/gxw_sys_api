@@ -47,7 +47,8 @@ class ProductController extends Controller {
         rebate,
         weight,
         unitValue,
-        address
+        address,
+        salesTerritory
       } = request.body
     if (!name) {
       ctx.body = { code: 201, msg: '商品名称不存在！'}
@@ -72,7 +73,8 @@ class ProductController extends Controller {
       rebate,
       weight,
       unitValue,
-      address
+      address,
+      salesTerritory
     }
     let newPro = await service.product.create(opt)
     if (!newPro.productId) {
