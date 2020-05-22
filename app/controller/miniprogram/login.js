@@ -81,6 +81,12 @@ class LoginController extends Controller {
     }
     ctx.body = { code: 200, msg: '获取成功', data: user }
   }
+  async getLocation() {
+    const { ctx, app } = this;
+    const { query, service } = ctx
+    const city = await service.sellingCity.getCity(query)
+    ctx.body = { code: 200, msg: '获取成功', data: city }
+  }
 }
 
 module.exports = LoginController;

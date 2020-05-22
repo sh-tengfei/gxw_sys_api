@@ -11,6 +11,10 @@ class ProductController extends Controller {
       name: _query.name,
       locking: _query.locking || 0
     }
+    if (_query.sellerOfType) {
+      query['sellerOfType.code'] = _query.sellerOfType
+    }
+
     const { page = 1, limit = 10 } = _query
     const option = {
       limit: _query.limit || 10,
@@ -54,9 +58,29 @@ class ProductController extends Controller {
       ctx.body = { code: 201, msg: '商品名称不存在！'}
       return
     }
+    
+    const queryName = {
+      name,
+    }
+    let localType = ''
+    // 本地产品
+    if (sellerOfType && sellerOfType.code !== 101) {
+      queryName['sellerOfType.code'] = sellerOfType.code
+      localType = '本地产品'
+      if (!salesTerritory) {
+        ctx.body = { code: 201, msg: '商品销售区域必须填！'}
+        return
+      } else {
+        await service.sellingCity.PushCity(salesTerritory)
+      }
+    } else {
+    // 产地产品不用地区区分
+      localType = '产地特工'
+    }
+
     let pro = await service.product.findOne({ name })
     if (pro !== null) {
-      ctx.body = { code: 201, msg: '该商品已存在！'}
+      ctx.body = { code: 201, msg: `${localType}-该商品名称已存在！`}
       return
     }
     let opt = {

@@ -4,15 +4,19 @@ import { Controller } from 'egg'
 class IndexController extends Controller {
   async index() {
     const { ctx } = this
+    const { params, query } = ctx
 
+    // 本地产品
     const localQuery = {
       'sellerOfType.code': 100,
       'limit': 10,
     }
+    // 产地直供
     const directQuery = {
       'sellerOfType.code': 101,
       'limit': 10,
     }
+    // 产地特产
     const speciQuery = {
       'sellerOfType.code': 102,
       'limit': 10,
@@ -21,6 +25,13 @@ class IndexController extends Controller {
       'state': 2,
       'limit': 6
     }
+
+    // 存在地址代码
+    if (query.cityCode) {
+      localQuery['salesTerritory.id'] = query.cityCode
+      speciQuery['salesTerritory.id'] = query.cityCode
+    }
+
     const local = await ctx.service.product.find(localQuery)
     const direct = await ctx.service.product.find(directQuery)
     const speci = await ctx.service.product.find(speciQuery)

@@ -6,6 +6,7 @@ export default function ({ router, controller, jwt }) {
 
   router.get('/small/userInfo', jwt, controller.login.getUserInfo);
   router.put('/small/userInfo/:id', controller.login.updateInfo);
+  router.get('/small/location', controller.login.getLocation);
 
   router.get('/small/product/:id', controller.product.getProduct);
   router.post('/small/order', jwt, controller.order.makeOrder);
