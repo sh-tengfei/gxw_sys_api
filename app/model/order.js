@@ -3,8 +3,9 @@
 
 module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator');
-  const mongoose = app.mongoose;
+  const mongoose = app.mongoose
   const order = new mongoose.Schema({
+    userId: { type: String, required: true }, // 用户信息
     orderId: { type: String, required: true, unique: true },
     parentId: { type: String, required: true },
     paySign: { type: Object, default: null }, // 支付签名信息

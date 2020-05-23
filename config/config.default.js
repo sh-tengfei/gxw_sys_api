@@ -60,9 +60,9 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     autoNumberTypeList: {
-      productId: '1000000',
-      orderId: '1000000',
-      userId: '1000000',
+      productId: '1000',
+      orderId: '1000',
+      userId: '1000',
       adminId: '1000',
       extractId: '1000',
       stockId: '1000',

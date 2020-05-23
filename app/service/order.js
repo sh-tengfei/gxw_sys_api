@@ -20,10 +20,13 @@ class OrderService extends Service {
     delete query.skip
 
     const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
-    list.forEach(i=>{
+    
+    for (const i of list ) {
+      i.extract = await ctx.service.agent.findOne({ extractId: i.extractId })
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
-    })
+    }
+
     const total = await ctx.model.Order.find(query).countDocuments()
 
     return {
@@ -32,11 +35,12 @@ class OrderService extends Service {
     };
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
-    const { model } = this.ctx
-    const orderRet = await model.Order.findOne(query, other)
+    const { model, service } = this.ctx
+    const orderRet = await model.Order.findOne(query, other).lean()
+    orderRet.extract = await service.agent.findOne({ extractId: orderRet.extractId })
     return orderRet
   }
-  async create({ products, extractId }) {
+  async create({ products, extractId, userId }) {
     const { service, model } = this.ctx
 
     let total = 0
@@ -48,12 +52,12 @@ class OrderService extends Service {
       let product = await service.product.findOne({ productId })
       // 商品不存在
       if (product === null) {
-        error = { code: 201, msg: '购买商品不存在', productId }
+        error = { code: 201, msg: '下单失败，购买商品不存在', productId }
         break
       }
       // 库存判断
       if (product.stockNumber === 0) {
-        error = { code: 201, msg: '商品库存不足', productId }
+        error = { code: 201, msg: '下单失败，商品库存不足', productId }
         break
       }
       let { mallPrice, name, desc, cover, unitValue, sellerOfType } = product
@@ -73,7 +77,7 @@ class OrderService extends Service {
     }
 
     if (error) {
-      return { code: 201, msg: '订单创建失败，商品不可购买', error }
+      return { code: 201, msg: error.msg, error }
     }
 
     let orderId = await service.counters.findAndUpdate('orderId')
@@ -81,8 +85,9 @@ class OrderService extends Service {
       total,
       products: productList,
       extractId,
-      orderId,
+      orderId: `wx${orderId}`,
       parentId: 0,
+      userId,
       payEndTime: moment().add(30, 'minutes')
     }
     try {

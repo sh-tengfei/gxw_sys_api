@@ -5,8 +5,10 @@ import { read } from 'xmlreader'
 class OrderController extends Controller {
   async getOrder() {
     const { ctx, app } = this;
-    const { service, params } = ctx
-    const order = await service.order.findOne({ orderId: params.id })
+    const { service, params, state } = ctx
+    const { userId } = state.user
+
+    const order = await service.order.findOne({ orderId: params.id, userId })
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
@@ -14,9 +16,11 @@ class OrderController extends Controller {
   }
   async getOrders() {
     const { ctx, app } = this;
-    const { service, query } = ctx
+    const { service, query, state } = ctx
+    const { userId } = state.user
 
     query.state = query.state || -1
+    query.userId = userId
 
     const { page = 1, limit = 10 } = query
     const option = {
@@ -32,7 +36,9 @@ class OrderController extends Controller {
   }
   async makeOrder() {
     const { ctx, app } = this;
-    const { request: req, service } = ctx
+    const { request: req, service, state } = ctx
+    // 当前登录用户
+    const { userId } = state.user
 
     // 判断有多少未支付订单 或许不用判断
     const { products, extractId } = req.body
@@ -44,8 +50,7 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '请选择提货点' }
       return
     }
-
-    const { code, error, data, msg } = await service.order.create({ products, extractId })
+    const { code, error, data, msg } = await service.order.create({ products, extractId, userId })
     if (code !== 200) {
       ctx.logger.error({ code: 201, msg, data: error })
       ctx.body = { code: 201, msg, data: error }
@@ -81,7 +86,7 @@ class OrderController extends Controller {
       return
     }
     // 签名信息存入订单
-    await ctx.service.order.updateOne(data.orderId, { paySign: data })
+    await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
 
     ctx.body = { code, msg: '获取成功', data }
   }
