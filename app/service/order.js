@@ -40,7 +40,7 @@ class OrderService extends Service {
     const { service, model } = this.ctx
 
     let total = 0
-    let error = []
+    let error = null
     let productList = []
 
     for (const item of products) {
@@ -48,7 +48,13 @@ class OrderService extends Service {
       let product = await service.product.findOne({ productId })
       // 商品不存在
       if (product === null) {
-        error.push({ code: 201, msg: '购买商品不存在', productId })
+        error = { code: 201, msg: '购买商品不存在', productId }
+        break
+      }
+      // 库存判断
+      if (product.stockNumber === 0) {
+        error = { code: 201, msg: '商品库存不足', productId }
+        break
       }
       let { mallPrice, name, desc, cover, unitValue, sellerOfType } = product
       // 求订单总金额 
@@ -66,7 +72,7 @@ class OrderService extends Service {
       })
     }
 
-    if (error.length) {
+    if (error) {
       return { code: 201, msg: '订单创建失败，商品不可购买', error }
     }
 
