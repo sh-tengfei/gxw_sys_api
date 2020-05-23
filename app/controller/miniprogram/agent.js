@@ -82,6 +82,16 @@ class AgentController extends Controller {
     s = Math.round(s * 10000) / 10000;
     return s;
   }
+  async getSearbys() {
+	  const { ctx } = this
+    const { service, params } = ctx
+    if (!params.id) {
+      ctx.body = { msg: '参数错误！', code: 201 }
+      return
+    }
+    const agent = await service.agent.findOne({ extractId: params.id })
+    ctx.body = { msg: '获取成功' , code: 200, data: agent }
+  }
 }
 
 module.exports = AgentController;

@@ -32,8 +32,8 @@ class ProductController extends Controller {
     const query = {
       productId: params.id,
     }
-    let pro = await service.product.findOne(query)
-    ctx.body = { code: 200, msg: '', data: pro }
+    let product = await service.product.findOne(query)
+    ctx.body = { code: 200, msg: '', data: product }
   }
   async createProduct() {
     const { ctx, app } = this;
@@ -114,6 +114,14 @@ class ProductController extends Controller {
     let { id } = params
     let opt = {
       ...request.body
+    }
+
+    if (opt.state === 2) {
+      let stock = await ctx.service.stocks.findOne({ productId: id })
+      if (stock === null || stock.stockNumber === 0) {
+        ctx.body = { code: 201, msg: '商品没有库存无法上线！' }
+        return
+      }
     }
 
     let curPro = service.product.findOne({ productId: id })

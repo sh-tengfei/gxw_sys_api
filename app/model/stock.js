@@ -5,8 +5,9 @@ module.exports = app => {
 	const mongoose = app.mongoose;
 	const stock = new mongoose.Schema({
 		productId: { type: Number, unique: true, required: true },
-		productName: { type: String, unique: true, required: true },
+		productName: { type: String, unique: true },
 		stockNumber: { type: Number, required: true },
+		salesTerritory: { type: Object, required: true },
 		stockId: { type: Number, required: true, unique: true },
 		stockHistory: [
 			{ type: Number }

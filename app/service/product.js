@@ -58,14 +58,15 @@ class ProductService extends Service {
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { ctx } = this;
-    const product = await ctx.model.Product.findOne(query, other)
+    const product = await ctx.model.Product.findOne(query, other).lean()
     if (!product) {
       return product
     }
-    product.stockNumber = null
+    product.stockNumber = 0
     
     const curStock = await ctx.model.Stock.findOne({ productId: product.productId })
     if (curStock) {
+      // 存在库存
       product.stockNumber = curStock.stockNumber
     }
     return product

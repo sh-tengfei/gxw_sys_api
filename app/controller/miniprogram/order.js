@@ -12,6 +12,24 @@ class OrderController extends Controller {
     }
     ctx.body = { code: 200, msg: '获取成功', data: order }
   }
+  async getOrders() {
+    const { ctx, app } = this;
+    const { service, query } = ctx
+
+    query.state = query.state || -1
+
+    const { page = 1, limit = 10 } = query
+    const option = {
+      limit: query.limit || 10,
+      skip: (page - 1) * limit
+    }
+
+    const orders = await service.order.find(query, option)
+    if (!orders) {
+      return ctx.body = { code: 201, msg: '参数错误！' }
+    }
+    ctx.body = { code: 200, msg: '获取成功', data: orders }
+  }
   async makeOrder() {
     const { ctx, app } = this;
     const { request: req, service } = ctx
@@ -156,6 +174,18 @@ class OrderController extends Controller {
     }
 
     const data = await service.order.updateOne(params.id, req.body)
+    if (!data) {
+      ctx.body = { code: 201, msg: '更新失败！', data }
+      return
+    }
+    ctx.body = { code: 200, msg: '更新成功！', data }
+  }
+  async paySuccessOrder() {
+    const { ctx } = this;
+    const { service, params } = ctx
+
+    const data = await service.order.updateOne(params.id, { state: 2, payTime: Date.now() })
+    // 发送支付成功消息 
     if (!data) {
       ctx.body = { code: 201, msg: '更新失败！', data }
       return

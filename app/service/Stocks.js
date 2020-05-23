@@ -39,6 +39,11 @@ class StockService extends Service {
     let newStock = await ctx.model.Stock.updateOne({stockId}, data, { _id: 0, new: true})
     return newStock;
   }
+  async updateOneOfProductId(productId, data) {
+    const { ctx } = this;
+    let newStock = await ctx.model.Stock.updateOne({productId}, data, { _id: 0, new: true})
+    return newStock;
+  }
   async delete(stockId) {
     return await this.ctx.model.Stock.findOneAndRemove({stockId})
   }

@@ -5,7 +5,7 @@ module.exports = app => {
   const mongoose = app.mongoose;
   const product = new mongoose.Schema({
     productId: { type: String, required: true, unique: true },
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
     slide: [{
       url: { type: String, required: true }, // 图片的相对路径
       src: { type: String, required: true }, // 图片的全部路径
@@ -19,7 +19,7 @@ module.exports = app => {
     unitValue: { type: String, required: true }, // 产品单位
     locking: { type: Number, default: 0 }, // 非0即是商品被占用
     cover: { type: String, required: true }, // 缩略图
-    desc: { type: String, required: true, maxLength: 150, minLength: 10}, // 简介
+    desc: { type: String, required: true, maxLength: 150, minLength: 10 }, // 简介
     address: { type: String, required: true },
     imageDetail: [ // 规格
       {

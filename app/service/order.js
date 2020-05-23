@@ -4,8 +4,32 @@ import { Decimal } from 'decimal.js'
 import moment from 'moment'
 
 class OrderService extends Service {
-  async find(query) {
+  async find(query = {}, option = {}, other = { _id: 0 }) {
+    const { ctx } = this;
+    const { limit = 10, skip = 0 } = option
 
+    if (!query.state) {
+      query.state = 2
+    }
+
+    if (+query.state === -1) {
+      delete query.state
+    }
+
+    delete query.limit
+    delete query.skip
+
+    const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    list.forEach(i=>{
+      i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+    })
+    const total = await ctx.model.Order.find(query).countDocuments()
+
+    return {
+      list,
+      total
+    };
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { model } = this.ctx
@@ -87,6 +111,8 @@ class OrderService extends Service {
   }
   async splitChildOrder({ products, parentId, extractId, payType, payEndTime }) {
     const { ctx, app } = this;
+    const { service } = ctx;
+    
     // 得到有多少类型商品
     const types = {}
     for (const i of products){
@@ -95,6 +121,14 @@ class OrderService extends Service {
         types[productType] = []
       }
       types[productType].push(i)
+      // 更新增加已售数
+      await service.product.updateOne(i.productId, {
+        $inc: { salesNumber: 1}
+      })
+      // 更新减少库存数
+      await service.stocks.updateOneOfProductId(i.productId, {
+        $inc: { stockNumber: -1}
+      })
     }
 
     // 单个类型商品不需要拆单
