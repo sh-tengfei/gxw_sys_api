@@ -17,12 +17,11 @@ export default function({ router, controller, jwt }) {
 
   router.post('/small/payment', jwt, controller.order.payOrder)
 
-  router.post('/small/agent', jwt, controller.agent.makeAgent)
-
   router.get('/small/searbys', jwt, controller.agent.getNearbyAgents)
   router.get('/small/searbys/:id', jwt, controller.agent.getSearbys)
 
   // 团长端登录
+  router.put('/small/agent/:id', jwt, controller.login.updateAgent) // 登陆后更新信息
+  router.post('/small/agent', jwt, controller.agent.regGroupUser) // 团长注册
   router.get('/small/groupLogin', controller.login.getGroupLogin)
-  router.post('/small/groupLogin', controller.login.regGroupUser)
 }

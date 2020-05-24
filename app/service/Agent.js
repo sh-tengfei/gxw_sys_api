@@ -31,7 +31,7 @@ class AgentService extends Service {
   }
   async findOne(query) {
     const { ctx } = this;
-    let agent = await ctx.model.Agent.findOne(query)
+    let agent = await ctx.model.Agent.findOne(query).lean()
     return agent;
   }
   async create(data) {
@@ -50,9 +50,9 @@ class AgentService extends Service {
 
     return newAgent;
   }
-  async updateOne(extractId, data) {
+  async updateOne(extractId, data, other = { _id: 0, new: true }) {
     const { ctx } = this;
-    let newAgent = await ctx.model.Agent.findOneAndUpdate({extractId}, data, { _id: 0, new: true})
+    let newAgent = await ctx.model.Agent.findOneAndUpdate({extractId}, data, other).lean()
     return newAgent;
   }
   async delete(extractId) {

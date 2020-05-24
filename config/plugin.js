@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /** @type Egg.EggPlugin */
 module.exports = {
@@ -6,16 +6,16 @@ module.exports = {
   // static: {
   //   enable: true,
   // }
-	jwt: {
+  jwt: {
 	  enable: true,
 	  package: 'egg-jwt'
-	},
-	curl: {
+  },
+  curl: {
     enable: true,
     package: 'egg-curl'
   },
-	mongoose: {
-		enable: true,
-		package: 'egg-mongoose',
-	},
-};
+  mongoose: {
+    enable: true,
+    package: 'egg-mongoose'
+  }
+}

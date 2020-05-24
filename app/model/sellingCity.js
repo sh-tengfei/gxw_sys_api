@@ -1,7 +1,7 @@
 
 'use strict'
 module.exports = app => {
-  const uniqueValidator = require('mongoose-unique-validator');
+  const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
   const SellingCity = new mongoose.Schema({
     id: { type: String, required: true, unique: true },

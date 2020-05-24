@@ -9,6 +9,7 @@ class OrderController extends Controller {
     const { userId } = state.user
 
     const order = await service.order.findOne({ orderId: params.id, userId })
+
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }

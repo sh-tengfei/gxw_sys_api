@@ -7,31 +7,26 @@ function rad(d) {
 }
 
 class AgentController extends Controller {
-  async makeAgent() {
+  async regGroupUser() {
     const { ctx } = this
-    const { request: req, service } = ctx
+    const { request: req, service, state } = ctx
     
-    const data = {
-    	...req.body,
-    	accountSurplus: 0,
-    	state: 1,
-    	userId: ctx.state.user.userId,
-    }
-    let agent = await service.agent.findOne({ applyPhone: data.applyPhone })
+    let agent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
     if (agent !== null) {
     	ctx.body = { msg: '改手机号码已使用！', code: 201 }
     	return
     }
-    agent = await service.agent.create(data)
-    if (agent && agent.extractId) {
+    agent = await service.agent.updateOne(state.user.userId, req.body)
+    agent.isReg = true
+    if (agent !== null) {
 	    ctx.body = {
-	    	msg: '' , 
+	    	msg: '注册成功' , 
 	    	code: 200,
 	    	data: agent,
 	    }
 	    return
     }
-    ctx.body = { msg: '创建失败！' , code: 201 }
+    ctx.body = { msg: '创建失败！', code: 201 }
   }
   async getNearbyAgents() {
 	  const { ctx } = this
@@ -44,12 +39,12 @@ class AgentController extends Controller {
   	const { list, total } = await service.agent.find({ state: 2 })
     const ret = []
     list.forEach((item) => {
-      const { location, source, communitySite, extractId, applyPhone, applyName } = item
+      const { location, userInfo, communitySite, extractId, applyPhone, applyName } = item
       const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
       ret.push({
         distance: Math.floor(distance * 100) / 100,
-        nickName: source.nickName,
-        avatarUrl: source.avatarUrl,
+        nickName: userInfo.nickName,
+        avatarUrl: userInfo.avatarUrl,
         applyName,
         communitySite,
         extractId,

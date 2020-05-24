@@ -11,21 +11,21 @@ module.exports = {
   ctxDel(url) {
     return this.curl(`${this.app.config.serveSite}/${url}`, {
       method: 'DELETE',
-      dataType: 'json',
+      dataType: 'json'
     })
   },
   getWebSite(url, query = {}) {
     return this.curlGet(url, query)
   },
   postWebSite(url, data = {}) {
-    return this.curl(url, { 
+    return this.curl(url, {
       dataType: 'text',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       method: 'POST',
-      data,
+      data
     })
-  },
-};
+  }
+}

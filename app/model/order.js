@@ -2,7 +2,7 @@
 'use strict'
 
 module.exports = app => {
-  const uniqueValidator = require('mongoose-unique-validator');
+  const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
   const order = new mongoose.Schema({
     userId: { type: String, required: true }, // 用户信息
@@ -18,7 +18,7 @@ module.exports = app => {
         mallPrice: { type: Number, required: true },
         cover: { type: String, required: true },
         unitValue: { type: String, required: true },
-        productType: { type: Number, required: true },
+        productType: { type: Number, required: true }
       }
     ],
     resultXml: { type: String },
@@ -30,11 +30,11 @@ module.exports = app => {
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
-    total: { type: Number, required: true },
+    total: { type: Number, required: true }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
-  order.plugin(uniqueValidator);
-  return mongoose.model('Order', order);
+  order.plugin(uniqueValidator)
+  return mongoose.model('Order', order)
 }

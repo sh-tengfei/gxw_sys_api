@@ -1,15 +1,15 @@
 
-'use strict';
+'use strict'
 module.exports = app => {
-  const uniqueValidator = require('mongoose-unique-validator');
-  const mongoose = app.mongoose;
+  const uniqueValidator = require('mongoose-unique-validator')
+  const mongoose = app.mongoose
   const product = new mongoose.Schema({
     productId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     slide: [{
       url: { type: String, required: true }, // 图片的相对路径
       src: { type: String, required: true }, // 图片的全部路径
-      source: { type: Object, required: true }, // 图片原始信息
+      source: { type: Object, required: true } // 图片原始信息
     }],
     weight: { type: Number, required: true }, // 排序权重
     scribingPrice: { type: Number, required: true }, // 折扣价 商场显示用
@@ -26,19 +26,19 @@ module.exports = app => {
         url: { type: String, required: true }
       }
     ],
-    sellerOfType: {  // 商品所属类型 就是商品分类 就是商品特征
+    sellerOfType: { // 商品所属类型 就是商品分类 就是商品特征
       code: { type: Number, required: true },
-      title: { type: String, required: true },
+      title: { type: String, required: true }
     },
     salesTerritory: { type: Object, default: null }, // 销售区域
     state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未下线  2上线  3删除
     salesNumber: { type: Number, default: 0 }, // 销售数量
-    isAgentSendOnlineMsg: { type: Number, default: false },
+    isAgentSendOnlineMsg: { type: Number, default: false }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
-  product.plugin(uniqueValidator);
-  let ret = mongoose.model('Product', product);
+  product.plugin(uniqueValidator)
+  const ret = mongoose.model('Product', product)
   return ret
 }
