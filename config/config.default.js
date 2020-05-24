@@ -92,8 +92,12 @@ module.exports = appInfo => {
       AppID: 'wxc57433b341246d35',
       AppSecret: 'a511f73c0f4658b733328bc7eca6ffdb',
     },
+    groupMiniprogram: {
+      AppID: 'wx2f5dc897e58b593c',
+      AppSecret: 'ed89563528d05cb7bb2af8157bcc1eff',
+    },
     wxPayment: {
-      appid: 'wxc57433b341246d35',
+      appid: 'wxc57433b341246d35', // 就是商城的小程序id
       appsecret: '3c63da837b2d3b3e52bdc22bc4147f9a',
       mchid: '1524492701',
       tradeType: 'JSAPI',

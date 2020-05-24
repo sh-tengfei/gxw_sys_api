@@ -1,7 +1,7 @@
 import { Service } from 'egg'
 
 class TokenService extends Service {
-  async getCode2Session(code) {
+  async get2Session(code) {
   	let baseInfo = await this.reqSessionKey(code)
   	return baseInfo
   }
