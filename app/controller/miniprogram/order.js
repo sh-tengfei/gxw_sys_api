@@ -198,5 +198,32 @@ class OrderController extends Controller {
     }
     ctx.body = { code: 200, msg: '更新成功！', data }
   }
+  async wxPayNotify() {
+    const { ctx } = this;
+    const { service, params, request: req, logger } = ctx
+
+    const { rawBody } = req
+    const { return_code, return_msg, time_end, out_trade_no } = req.body.xml
+    if (return_code !== 'SUCCESS'){
+      logger.error({ msg: '支付成功后通知消息，支付失败', error: req.body.xml + return_msg })
+    } else {
+      logger.error({ msg: '支付成功后通知消息，支付成功', error: req.body.xml + return_msg })
+    }
+
+    const { 
+        shareSources,
+        orderId,
+        productList,
+        customerId,
+        totalMoney,
+      } = await service.order.findOneAndUpdate({orderId: out_trade_no}, {
+      payTime: time_end,
+      state: 4,
+      stateTitle: '待发货',
+      payResult: req.body,
+      payResultXml: xmlData,
+      updateTime: Date.now(),
+    })
+  }
 }
 module.exports = OrderController;

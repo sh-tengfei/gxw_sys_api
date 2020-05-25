@@ -14,6 +14,7 @@ export default function({ router, controller, jwt }) {
   router.put('/small/order/:id', jwt, controller.order.updateOrder)
 
   router.get('/small/paySuccessOrder/:id', jwt, controller.order.paySuccessOrder)
+  router.post('/small/wxPayNotify', jwt, controller.order.wxPayNotify)
 
   router.post('/small/payment', jwt, controller.order.payOrder)
 
