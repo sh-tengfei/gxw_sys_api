@@ -7,6 +7,7 @@
     "declarations": true
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
     "decimal.js": "^10.2.0",
     "egg": "^2.15.1",
     "egg-curl": "^1.0.1",
@@ -18,6 +19,7 @@
     "qiniu": "^7.3.0",
     "sha1": "^1.1.1",
     "wechat-api": "^1.35.1",
+    "xml2js": "^0.4.23",
     "xmlreader": "^0.2.3"
   },
   "devDependencies": {

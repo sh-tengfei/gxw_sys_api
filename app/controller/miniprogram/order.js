@@ -1,6 +1,7 @@
 'use strict';
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
+import { parseString } from 'xml2js'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -120,16 +121,16 @@ class OrderController extends Controller {
         return reject({ code: 201, msg: '支付下单失败，请重试' })
       }
       resultXml = resultXml.toString("utf-8")
-      
+
       // xml存入指定 订单
       await ctx.service.order.updateOne(orderId, { resultXml })
-      
+
       read(resultXml, (errors, value)=>{
-        const { 
-          return_code, 
-          return_msg, 
-          prepay_id, 
-          err_code, 
+        const {
+          return_code,
+          return_msg,
+          prepay_id,
+          err_code,
           result_code,
         } = value.xml
 
@@ -191,7 +192,7 @@ class OrderController extends Controller {
     const { service, params } = ctx
 
     const data = await service.order.updateOne(params.id, { state: 2, payTime: Date.now() })
-    // 发送支付成功消息 
+    // 发送支付成功消息
     if (!data) {
       ctx.body = { code: 201, msg: '更新失败！', data }
       return
@@ -200,30 +201,39 @@ class OrderController extends Controller {
   }
   async wxPayNotify() {
     const { ctx } = this;
-    const { service, params, request: req, logger } = ctx
+    const { service, request: req, logger } = ctx
 
-    const { rawBody } = req
-    const { return_code, return_msg, time_end, out_trade_no } = req.body.xml
-    if (return_code !== 'SUCCESS'){
-      logger.error({ msg: '支付成功后通知消息，支付失败', error: req.body.xml + return_msg })
-    } else {
-      logger.error({ msg: '支付成功后通知消息，支付成功', error: req.body.xml + return_msg })
-    }
+    parseString(req.body, { explicitArray:false }, async (err, option) => {
+      if (err) {
+        throw Error(err)
+      }
+      const { return_code, return_msg, time_end, out_trade_no } = option.xml
+      if (return_code !== 'SUCCESS'){
+        logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
+      } else {
+        logger.info({ msg: '支付成功通知消息。', data: return_code })
+      }
+      
+      const ret = await service.order.updateOne(out_trade_no, {
+        payTime: time_end,
+        state: 2,
+        payResult: option,
+        resultXml: req.body,
+      })
 
-    const { 
-        shareSources,
-        orderId,
-        productList,
-        customerId,
-        totalMoney,
-      } = await service.order.findOneAndUpdate({orderId: out_trade_no}, {
-      payTime: time_end,
-      state: 4,
-      stateTitle: '待发货',
-      payResult: req.body,
-      payResultXml: xmlData,
-      updateTime: Date.now(),
+      if (ret === null) {
+        logger.error({ msg: '订单不存在，修改失败', data: out_trade_no })
+      } else {
+        logger.success({ msg: '订单修改支付状态修改成功。', data: out_trade_no })
+      }
     })
+
+    const sendXml = '<xml>\n' +
+    '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
+    '<return_msg><![CDATA[OK]]></return_msg>\n' +
+    '</xml>';
+    this.ctx.body = sendXml
   }
 }
+
 module.exports = OrderController;

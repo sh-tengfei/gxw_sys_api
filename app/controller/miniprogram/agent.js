@@ -13,7 +13,7 @@ class AgentController extends Controller {
     
     let agent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
     if (agent !== null) {
-    	ctx.body = { msg: '改手机号码已使用！', code: 201 }
+    	ctx.body = { msg: '该手机号码已使用！', code: 201 }
     	return
     }
     agent = await service.agent.updateOne(state.user.userId, req.body)

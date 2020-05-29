@@ -30,7 +30,8 @@ module.exports = app => {
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
-    total: { type: Number, required: true }
+    total: { type: Number, required: true },
+    payResult: { type: Object, default: {} },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

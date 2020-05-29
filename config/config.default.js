@@ -51,6 +51,19 @@ module.exports = appInfo => {
     renew: true, // 每次刷新页面，Session 都会被延期。
   };
 
+  config.bodyParser = {
+    enable: true,
+    // @see https://github.com/hapijs/qs/b ... %23L8 for more options
+    queryString: {
+      arrayLimit: 100,
+      depth: 5,
+      parameterLimit: 1000,
+    },
+    enableTypes: ['json', 'form', 'text'],
+    extendTypes: {
+      text: ['text/xml', 'application/xml'],
+    },
+  };
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1586274558093_9882';
 
@@ -68,7 +81,7 @@ module.exports = appInfo => {
       stockId: '1000',
       activityId: '1000',
       sliderId: '1000',
-      areaId: '1000', 
+      areaId: '1000',
     },
     qiniuConf: {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
@@ -102,7 +115,7 @@ module.exports = appInfo => {
       mchid: '1524492701',
       tradeType: 'JSAPI',
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
-      wxurl: 'https://mall.gxianwang.com/api/weixin/weixinNotify',
+      wxurl: 'https://mall.gxianwang.com/small/wxPayNotify',
       spbillCreateIp: '39.100.114.184',
       body: 'guoxianwang',
       prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder',
