@@ -44,6 +44,7 @@ class OrderService extends Service {
     const { service, model } = this.ctx
 
     let total = 0
+    let reward = 0
     let error = null
     let productList = []
 
@@ -60,9 +61,10 @@ class OrderService extends Service {
         error = { code: 201, msg: '下单失败，商品库存不足', productId }
         break
       }
-      let { mallPrice, name, desc, cover, unitValue, sellerOfType } = product
+      let { mallPrice, name, desc, cover, unitValue, sellerOfType, rebate } = product
       // 求订单总金额 
       total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
+      reward = Decimal.add(reward,  new Decimal(rebate))
       productList.push({
         productId,
         name,
@@ -88,6 +90,7 @@ class OrderService extends Service {
       orderId: `wx${orderId}`,
       parentId: 0,
       userId,
+      reward,
       payEndTime: moment().add(30, 'minutes')
     }
     try {

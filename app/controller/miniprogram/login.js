@@ -106,9 +106,6 @@ class LoginController extends Controller {
       ctx.logger.warn({ msg: '回话过期重新登录', code: 401 })
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
-    if (!userInfo.unionid) {
-      userInfo.unionid = userInfo.openid  // 认证后去掉或
-    }
 
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {

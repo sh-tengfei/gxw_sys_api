@@ -43,12 +43,13 @@ class StockController extends Controller {
   async putStock() {
     const { ctx, app } = this
     const { request: req, params } = ctx
+    const { stockNumber } = req.body
     const stock = await ctx.service.stocks.findOne({ stockId: params.id })
     if (!stock) {
     	ctx.body = { code: 201, msg: '修改失败，库存不存在', data: stock }
     	return
     }
-    let option = { $push: { stockHistory: req.body.stockNumber } }
+    let option = { $push: { stockHistory: stockNumber }, stockNumber }
 
     const newStock = await ctx.service.stocks.updateOne(params.id, option)
 

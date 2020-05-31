@@ -2,6 +2,8 @@
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
 import { parseString } from 'xml2js'
+import moment from 'moment'
+import { Decimal } from 'decimal.js'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -233,6 +235,57 @@ class OrderController extends Controller {
     '<return_msg><![CDATA[OK]]></return_msg>\n' +
     '</xml>';
     this.ctx.body = sendXml
+  }
+  async getSales() {
+    const { ctx, app } = this;
+    const { service, state } = ctx
+    const { userId } = state.user
+    const todayStart = moment().startOf('day')
+    const todayEnd = moment().endOf('day')
+
+    const yesterday = moment().subtract(1, 'days')
+    const yesterdayStart = yesterday.startOf('day')
+    const yesterdayEnd = yesterday.endOf('day')
+    
+    const todayOrders = await service.order.find({ 
+      extractId: userId,
+      state: [2, 3],
+      createTime: { 
+        '$gte': todayStart, 
+        '$lte': todayEnd 
+      }
+    })
+
+    const yesterdayOrders = await service.order.find({ 
+      extractId: userId, 
+      state: [2, 3],
+      createTime: { 
+        '$gte': yesterdayStart, 
+        '$lte': yesterdayEnd 
+      }
+    })
+
+    let yesterSalesTotal = 0
+    let yesterReward = 0
+
+    let todaySalesTotal = 0
+    let todayReward = 0
+    yesterdayOrders.list.forEach(({ total, reward }) => {
+      yesterSalesTotal = Decimal.add(yesterSalesTotal, total)
+      yesterReward = Decimal.add(yesterReward, reward)
+    })
+    todayOrders.list.forEach(({ total, reward }) => {
+      todaySalesTotal = Decimal.add(todaySalesTotal,  new Decimal(total))
+      todayReward = Decimal.add(todayReward, new Decimal(reward))
+    })
+    ctx.body = { code: 200, msg: '获取成功！', data: {
+      yesterSalesTotal,
+      yesterReward,
+
+      todaySalesTotal,
+      todayReward,
+      todayOrders: todayOrders.total,
+    }}
   }
 }
 

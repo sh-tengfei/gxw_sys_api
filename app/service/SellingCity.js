@@ -15,6 +15,11 @@ class SellingCityService extends Service {
     const city = await ctx.model.SellingCity.findOne({ id: cityCode })
     return city
   }
+  async getCitys() {
+    const { ctx } = this;
+    const citys = await ctx.model.SellingCity.find({})
+    return citys
+  }
 }
 
 module.exports = SellingCityService;

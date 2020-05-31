@@ -93,6 +93,7 @@ module.exports = appInfo => {
         upSite: '//up-z1.qiniup.com'
       }
     },
+    // 公众号配置
     adminWxConfig: {
       AppID: "wx724926f4b76057bc",
       AppSecret: "b441cc3f90ac09308f12d2389a632c20"
@@ -101,6 +102,7 @@ module.exports = appInfo => {
       AppID: 'wxf81bdc08e2056b8f',
       AppSecret: '3c63da837b2d3b3e52bdc22bc4147f9a',
     },
+    // 小程序配置
     mallMiniprogram: {
       AppID: 'wxc57433b341246d35',
       AppSecret: 'a511f73c0f4658b733328bc7eca6ffdb',
@@ -109,8 +111,9 @@ module.exports = appInfo => {
       AppID: 'wx2f5dc897e58b593c',
       AppSecret: 'ed89563528d05cb7bb2af8157bcc1eff',
     },
+    // 小程序支付配置
     wxPayment: {
-      appid: 'wxc57433b341246d35', // 就是商城的小程序id
+      appid: 'wxc57433b341246d35', // 就是商城的小程序id 商城要接支付
       appsecret: '3c63da837b2d3b3e52bdc22bc4147f9a',
       mchid: '1524492701',
       tradeType: 'JSAPI',

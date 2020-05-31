@@ -3,6 +3,9 @@ export default function({ router, controller, jwt }) {
   router.get('/small/index', controller.index.index)
   router.post('/small/login', controller.login.getUser)
 
+  // 首页的销售数据
+  router.get('/small/sales', jwt, controller.order.getSales)
+
   router.get('/small/userInfo', jwt, controller.login.getUserInfo)
   router.put('/small/userInfo/:id', controller.login.updateInfo)
   router.get('/small/location', controller.login.getLocation)

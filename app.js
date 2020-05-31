@@ -31,6 +31,7 @@ class AppBootHook {
   async serverDidReady() {
     const { service } = await this.app.createAnonymousContext();
     service.counters.startCheck()
+    service.admin.initialUser()
   }
 }
 

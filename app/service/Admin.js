@@ -1,9 +1,17 @@
 import { Service } from 'egg'
 import moment from 'moment'
+import crypto from 'crypto'
+
+function md5Pwd (pwd) {
+  let md5 = crypto.createHash('md5');
+  return md5.update(pwd).digest('hex');
+}
 
 class AdminService extends Service {
-  async find() {
-
+  async find(query) {
+    const { ctx } = this;
+    let users = await ctx.model.Admin.find(query)
+    return users;
   }
   async findOne(query) {
     const { ctx } = this;
@@ -32,6 +40,20 @@ class AdminService extends Service {
   }
   async delete(adminId) {
 
+  }
+  
+  async initialUser() {
+    let users = await this.find()
+    if (users.length === 0) {
+      await this.create({
+        username: 'root',
+        password: md5Pwd('123456')
+      })
+      await this.create({
+        username: 'admin',
+        password: md5Pwd('123456')
+      })
+    }
   }
 }
 

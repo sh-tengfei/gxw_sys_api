@@ -2,14 +2,14 @@ import { Service } from 'egg'
 import wechatAPI from 'wechat-api'
 import os from 'os'
 import nodemailer from 'nodemailer'
-import chalk from 'chalk'
-// import wxTemp from './../../config/wxTemplate'
+import wxTemp from './../../config/noticeTemp'
 
 class TempMsgService extends Service {
   async sendWxMsg({ openid, action, type, temp = {} }) {
-    // if (os.hostname() !== 'gxianwang') {
-    //   return
-    // }
+    if (os.hostname() !== 'gxianwang') {
+      console.log(openid, action, type, temp)
+      return
+    }
     let { tempId, jumpUrl, tempData } = this.getTempData(action)
     const weixinApi = this.getApi(type)
     tempData = Object.assign(tempData, temp)
@@ -21,9 +21,9 @@ class TempMsgService extends Service {
           text: '模板消息发送错误',
           html: `<p>${JSON.stringify(err)}</p>`,
         })
-        console.log(chalk.red(`模板消息发送错误：${JSON.stringify(err)}`), JSON.stringify(tempData), openid)
-      }else{
-        console.log(chalk.green(`模板消息发送成功：${JSON.stringify(result)}`), JSON.stringify(tempData), openid)
+        this.ctx.logger.warn({ msg: '模板消息发送错误', openid, err, tempData })
+      } else {
+        this.ctx.logger.info({ msg: '模板消息发送成功', openid, err, tempData })
       }
     })
   }
@@ -98,13 +98,14 @@ class TempMsgService extends Service {
   }
   getApi(type) {
     const { app } = this;
-    if (!this.mallApi) {
+    const key = `${type}Api`
+    if (key === 'mallApi' && !this.mallApi) {
       this.mallApi = new wechatAPI(app.config.mallWxConfig.AppID,  app.config.mallWxConfig.AppSecret)
     }
-    if (!this.adminApi) {
+    if (key === 'adminApi' && !this.adminApi) {
       this.adminApi = new wechatAPI(app.config.adminWxConfig.AppID, app.config.adminWxConfig.AppSecret)
     }
-    return this[type+'Api']
+    return this[admin]
   }
 }
 

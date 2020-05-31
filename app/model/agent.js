@@ -27,8 +27,10 @@ module.exports = app => {
       latitude: { type: Number, default: 0 },
       longitude: { type: Number, default: 0 }
     },
-    accountSurplus: { type: Number, default: 0 },
-    address: {}
+    avatarUrl: { type: String, default: '' },
+    withdraw: { type: Number, default: 0 }, // 用户账户余额
+    withdrawFrozen: { type: Boolean, default: false },
+    address: {} // 省市具体信息
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
