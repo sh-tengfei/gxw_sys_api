@@ -1,4 +1,5 @@
 import { Service } from 'egg'
+import moment from 'moment'
 
 class CountersService extends Service {
   async findOne(type) {
@@ -16,7 +17,7 @@ class CountersService extends Service {
     let counter = await ctx.model.Counters.findOne({})
     if (type !== undefined && counter[type]) {
       await ctx.model.Counters.updateOne({_id: counter._id },{[type]: (+counter[type]) + 1})
-      return +counter[type]
+      return moment().format('YYYYMMDD').replace('-', '') + counter[type]
     }
     return null
   }

@@ -59,7 +59,6 @@ module.exports = {
     };
     let string = raw(ret);
     string = string + '&key=' + mchkey;
-    console.log(string, 'string')
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase();
   },
   // 生成公众号配置签名

@@ -2,9 +2,8 @@ export default function({ router, controller, jwt }) {
   // 小程序 api
   router.get('/small/index', controller.index.index)
   router.post('/small/login', controller.login.getUser)
-
   // 首页的销售数据
-  router.get('/small/sales', jwt, controller.order.getSales)
+  router.get('/small/indexSales', jwt, controller.index.getIndexSales)
 
   router.get('/small/userInfo', jwt, controller.login.getUserInfo)
   router.put('/small/userInfo/:id', controller.login.updateInfo)
@@ -25,7 +24,8 @@ export default function({ router, controller, jwt }) {
   router.get('/small/searbys/:id', jwt, controller.agent.getSearbys)
 
   // 团长端登录
+  router.get('/small/groupLogin', controller.login.getGroupLogin)
   router.put('/small/agent/:id', jwt, controller.login.updateAgent) // 登陆后更新信息
   router.post('/small/agent', jwt, controller.agent.regGroupUser) // 团长注册
-  router.get('/small/groupLogin', controller.login.getGroupLogin)
+  router.get('/small/deliveryNote', jwt, controller.deliveryNote.getDeliveryList)
 }

@@ -5,8 +5,8 @@ module.exports = app => {
   const mongoose = app.mongoose
   const DeliveryNote = new mongoose.Schema({
     noteId: { type: String, required: true, unique: true },
-    userId: { type: String, required: true },
-    state: { type: Number, required: true, default: 1 }, // 1.待收货 2.已收货
+    extractId: { type: String, required: true },
+    state: { type: Number, required: true, default: 1 }, // 1.待发货 2.待收货 3.已收货
     orderIds: { type: Array, default: [] },
   }, {
     versionKey: false,

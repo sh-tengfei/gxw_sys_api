@@ -2,16 +2,13 @@
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
 import { parseString } from 'xml2js'
-import moment from 'moment'
-import { Decimal } from 'decimal.js'
 
 class OrderController extends Controller {
   async getOrder() {
     const { ctx, app } = this;
     const { service, params, state } = ctx
-    const { userId } = state.user
 
-    const order = await service.order.findOne({ orderId: params.id, userId })
+    const order = await service.order.findOne({ orderId: params.id })
 
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
@@ -56,8 +53,8 @@ class OrderController extends Controller {
     }
     const { code, error, data, msg } = await service.order.create({ products, extractId, userId })
     if (code !== 200) {
-      ctx.logger.error({ code: 201, msg, data: error })
-      ctx.body = { code: 201, msg, data: error }
+      ctx.logger.error({ code: error.code, msg, data: error.productId })
+      ctx.body = { code: error.code, msg, data: error.productId }
       return
     }
     ctx.body = { code: 200, msg: '订单创建成功', data }
@@ -75,9 +72,10 @@ class OrderController extends Controller {
     if (order === null) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
+    // 后期可能要加判断 当前支付信息是否过期
     if (order.payType !== 'void') {
       // 已经存在支付信息 直接返回
-      return ctx.body = { code: 200, msg: '支付成功！', data: order.payResult }
+      return ctx.body = { code: 200, msg: '支付成功！', data: order.paySign }
     }
     const { openid } = await service.user.findOne({ userId: state.user.userId })
     const { msg, code, data } = await this.orderPayment({
@@ -88,6 +86,14 @@ class OrderController extends Controller {
     if (code !== 200) {
       ctx.body = { code, msg }
       return
+    }
+    if (data !== null) {
+      const deliveryRet = await this.makeDeliveryNote(order)
+      if (!deliveryRet) {
+        ctx.logger.error({ msg: '配送单生成错误！', data })
+      } else {
+        ctx.logger.error({ msg: '配送单更新创建成功！', noteId: deliveryRet.noteId })
+      }
     }
     // 签名信息存入订单
     await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
@@ -193,13 +199,22 @@ class OrderController extends Controller {
     const { ctx } = this;
     const { service, params } = ctx
 
-    const data = await service.order.updateOne(params.id, { state: 2, payTime: Date.now() })
+    // const { state, ...other } = await service.user.findOne({ userId: params.id })
+    // if (state === 2) {
+    //   logger.info({ msg: '微信用户端通知支付成功！', data: { other, state: 2 } })
+    //   return ctx.body = { code: 200, msg: '支付成功！', data: { other, state: 2 } }
+    // }
+
+    let data 
+    // if (state === 1) {
+    //   data = await service.order.updateOne(params.id, { state: 2, payTime: Date.now() })
+    // }
     // 发送支付成功消息
     if (!data) {
-      ctx.body = { code: 201, msg: '更新失败！', data }
+      ctx.body = { code: 201, msg: '状态错误，更新失败！' }
       return
     }
-    ctx.body = { code: 200, msg: '更新成功！', data }
+    ctx.body = { code: 200, msg: '更新成功！' }
   }
   async wxPayNotify() {
     const { ctx } = this;
@@ -209,21 +224,34 @@ class OrderController extends Controller {
       if (err) {
         throw Error(err)
       }
+
       const { return_code, return_msg, time_end, out_trade_no } = option.xml
       if (return_code !== 'SUCCESS'){
         logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
       } else {
         logger.info({ msg: '支付成功通知消息。', data: return_code })
       }
-      
-      const ret = await service.order.updateOne(out_trade_no, {
+
+      const { state, ...other } = await service.user.findOne({ userId: params.id })
+      if (state !== 1) {
+        return logger.error({ msg: '订单状态已支付', data: other })
+      }
+
+      const orderRet = await service.order.updateOne(out_trade_no, {
         payTime: time_end,
         state: 2,
         payResult: option,
         resultXml: req.body,
       })
 
-      if (ret === null) {
+      if (orderRet !== null) {
+        const deliveryRet = await this.makeDeliveryNote(orderRet)
+        if (!deliveryRet) {
+          logger.error({ msg: '配送单生成错误！', data: deliveryRet, order: orderRet })
+        }
+      }
+
+      if (orderRet === null) {
         logger.error({ msg: '订单不存在，修改失败', data: out_trade_no })
       } else {
         logger.success({ msg: '订单修改支付状态修改成功。', data: out_trade_no })
@@ -234,58 +262,12 @@ class OrderController extends Controller {
     '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
     '<return_msg><![CDATA[OK]]></return_msg>\n' +
     '</xml>';
-    this.ctx.body = sendXml
+    ctx.body = sendXml
   }
-  async getSales() {
-    const { ctx, app } = this;
-    const { service, state } = ctx
-    const { userId } = state.user
-    const todayStart = moment().startOf('day')
-    const todayEnd = moment().endOf('day')
-
-    const yesterday = moment().subtract(1, 'days')
-    const yesterdayStart = yesterday.startOf('day')
-    const yesterdayEnd = yesterday.endOf('day')
-    
-    const todayOrders = await service.order.find({ 
-      extractId: userId,
-      state: [2, 3],
-      createTime: { 
-        '$gte': todayStart, 
-        '$lte': todayEnd 
-      }
-    })
-
-    const yesterdayOrders = await service.order.find({ 
-      extractId: userId, 
-      state: [2, 3],
-      createTime: { 
-        '$gte': yesterdayStart, 
-        '$lte': yesterdayEnd 
-      }
-    })
-
-    let yesterSalesTotal = 0
-    let yesterReward = 0
-
-    let todaySalesTotal = 0
-    let todayReward = 0
-    yesterdayOrders.list.forEach(({ total, reward }) => {
-      yesterSalesTotal = Decimal.add(yesterSalesTotal, total)
-      yesterReward = Decimal.add(yesterReward, reward)
-    })
-    todayOrders.list.forEach(({ total, reward }) => {
-      todaySalesTotal = Decimal.add(todaySalesTotal,  new Decimal(total))
-      todayReward = Decimal.add(todayReward, new Decimal(reward))
-    })
-    ctx.body = { code: 200, msg: '获取成功！', data: {
-      yesterSalesTotal,
-      yesterReward,
-
-      todaySalesTotal,
-      todayReward,
-      todayOrders: todayOrders.total,
-    }}
+  async makeDeliveryNote(order) {
+    const { ctx } = this
+    const deliveryRet = await ctx.service.deliveryNote.joinDeliveryNote({ ...order })
+    return deliveryRet
   }
 }
 

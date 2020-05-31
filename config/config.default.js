@@ -82,6 +82,7 @@ module.exports = appInfo => {
       activityId: '1000',
       sliderId: '1000',
       areaId: '1000',
+      noteId: '1000',
     },
     qiniuConf: {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
