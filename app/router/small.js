@@ -28,4 +28,5 @@ export default function({ router, controller, jwt }) {
   router.put('/small/agent/:id', jwt, controller.login.updateAgent) // 登陆后更新信息
   router.post('/small/agent', jwt, controller.agent.regGroupUser) // 团长注册
   router.get('/small/deliveryNote', jwt, controller.deliveryNote.getDeliveryList)
+  router.get('/small/deliveryNote/:id', jwt, controller.deliveryNote.getDeliveryDetail)
 }

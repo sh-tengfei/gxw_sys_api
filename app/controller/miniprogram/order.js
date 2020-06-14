@@ -21,7 +21,7 @@ class OrderController extends Controller {
     const { userId } = state.user
 
     query.state = query.state || -1
-    query.userId = userId
+    query.extractId = userId
 
     const { page = 1, limit = 10 } = query
     const option = {
@@ -29,11 +29,15 @@ class OrderController extends Controller {
       skip: (page - 1) * limit
     }
 
-    const orders = await service.order.find(query, option)
-    if (!orders) {
-      return ctx.body = { code: 201, msg: '参数错误！' }
-    }
-    ctx.body = { code: 200, msg: '获取成功', data: orders }
+    const { list, total } = await service.order.find(query, option)
+    list.forEach((i)=>{
+      delete i.extract
+      delete o.resultXml
+    })
+    ctx.body = { code: 200, msg: '获取成功', data: {
+      list,
+      total
+    } }
   }
   async makeOrder() {
     const { ctx, app } = this;
