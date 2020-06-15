@@ -18,12 +18,27 @@ class ProductController extends Controller {
     const { page = 1, limit = 10 } = _query
     const option = {
       limit: _query.limit || 10,
-      skip: (page - 1) * limit
+      skip: (page - 1) * limit,
     }
     if (!query.name) delete query.name
 
     let { list, total } = await service.product.find(query, option)
-    ctx.body = { code: 200, msg: '', data: list, total }
+    let newList = list.filter((i)=>{
+      if (!_query.sellOut) {
+        return i
+      }
+      if (_query.sellOut === '1') {
+        if (i.stockNumber > 0) {
+          return i
+        }
+      }
+      if (_query.sellOut === '2') {
+        if (i.stockNumber === 0) {
+          return i
+        }
+      }
+    })
+    ctx.body = { code: 200, msg: '', data: newList, total: newList.length }
   }
     
   async getProduct() {
@@ -47,6 +62,7 @@ class ProductController extends Controller {
         mallPrice,
         imageDetail,
         sellerOfType,
+        productType,
         isAgentSendOnlineMsg,
         rebate,
         weight,
@@ -75,7 +91,7 @@ class ProductController extends Controller {
       }
     } else {
     // 产地产品不用地区区分
-      localType = '产地特工'
+      localType = '产地特供'
     }
 
     let pro = await service.product.findOne({ name })
@@ -93,6 +109,7 @@ class ProductController extends Controller {
       mallPrice,
       imageDetail,
       sellerOfType,
+      productType,
       isAgentSendOnlineMsg,
       rebate,
       weight,

@@ -1,6 +1,7 @@
 export default function({ router, controller, jwt }) {
   // 后台系统 api
   router.get('/admin/qnToken', jwt, controller.user.getQnToken)
+
   router.post('/admin/login', controller.login.login)
   router.post('/admin/logout', controller.login.logout)
   router.post('/admin/add', controller.login.addAdmin)
@@ -31,4 +32,6 @@ export default function({ router, controller, jwt }) {
   router.put('/admin/active/:id', jwt, controller.activity.putActive)
 
   router.get('/admin/sellingCitys', jwt, controller.sellingCity.getSellingCitys)
+
+  router.get('/admin/productType', jwt, controller.common.getProductType)
 }
