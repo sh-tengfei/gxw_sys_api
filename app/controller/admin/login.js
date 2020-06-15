@@ -15,6 +15,7 @@ class AdminController extends Controller {
 
     if (admin === null) {
       ctx.body = { code: 201, msg: '用户不存在' }
+      return
     }
 
     let token = null
@@ -46,10 +47,6 @@ class AdminController extends Controller {
     }
     let admin = await ctx.service.admin.create({ username, password: md5Pwd(password) });
     ctx.body = { code: 200, msg: '添加成功' }
-  }
-  async logOut() {
-    const { ctx } = this;
-    console.log(this.ctx.user)
   }
 }
 

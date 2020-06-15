@@ -125,7 +125,7 @@ class LoginController extends Controller {
         unionid: userInfo.unionid,
         userInfo: null,
       })
-      if (!agent) {
+      if (!agent || agent.errors) {
         ctx.logger.error({ msg: '保存失败，联系管理员', agent })
         ctx.body = { msg: '保存失败，联系管理员' }
         return

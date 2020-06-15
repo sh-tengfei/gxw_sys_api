@@ -2,6 +2,7 @@
 
 const Controller = require('egg').Controller;
 const qiniu = require('qiniu');
+import { productType } from '../../config/productType'
 
 class UserController extends Controller {
   async userInfo() {
