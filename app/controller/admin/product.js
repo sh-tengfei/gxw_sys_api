@@ -15,6 +15,10 @@ class ProductController extends Controller {
       query['sellerOfType.code'] = _query.sellerOfType
     }
 
+    if (_query.salesTerritory) {
+      query['salesTerritory.id'] = _query.salesTerritory
+    }
+
     const { page = 1, limit = 10 } = _query
     const option = {
       limit: _query.limit || 10,
