@@ -1,6 +1,6 @@
 'use strict';
 
-const Controller = require('egg').Controller;
+import { Controller } from 'egg'
 
 class AgentController extends Controller {
   async agentList() {

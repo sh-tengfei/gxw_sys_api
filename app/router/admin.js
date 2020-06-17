@@ -34,4 +34,5 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/sellingCitys', jwt, controller.sellingCity.getSellingCitys)
 
   router.get('/admin/productType', jwt, controller.common.getProductType)
+  router.get('/admin/classify', jwt, controller.classify.newClassify)
 }
