@@ -2,6 +2,7 @@
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
 import { parseString } from 'xml2js'
+import moment from 'moment'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -44,6 +45,10 @@ class OrderController extends Controller {
     const { request: req, service, state } = ctx
     // 当前登录用户
     const { userId } = state.user
+    if (this.isPauseService()) {
+      ctx.body = { code: 202, msg: '购买服务暂停中！' }
+      return
+    }
 
     // 判断有多少未支付订单 或许不用判断
     const { products, extractId } = req.body
@@ -272,6 +277,11 @@ class OrderController extends Controller {
     const { ctx } = this
     const deliveryRet = await ctx.service.deliveryNote.joinDeliveryNote({ ...order })
     return deliveryRet
+  }
+  isPauseService() {
+    const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
+    const pause = moment().endOf('day')
+    return moment().isBetween(start, pause)
   }
 }
 
