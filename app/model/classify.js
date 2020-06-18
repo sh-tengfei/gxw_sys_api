@@ -4,9 +4,10 @@ module.exports = app => {
   const mongoose = app.mongoose
   const Classify = new mongoose.Schema({
     classifyId: { type: String, required: true },
-    name: { type: String, required: true },
-    products: { type: Array, required: true },
+    classifyName: { type: String, required: true },
+    classifyProducts: { type: Array, required: true },
     classifyCity: { type: String, required: true },
+    classifyIndex: { type: Number, required: true },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

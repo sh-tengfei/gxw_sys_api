@@ -22,7 +22,13 @@ class OrderController extends Controller {
     const { userId } = state.user
 
     query.state = query.state || -1
-    query.extractId = userId
+    query.userId = userId
+
+    // 团长端查收货地址用 extractId 参数待extractType为此类型查询
+    if (query.extractType) {
+      query.extractId = userId
+      delete query.userId
+    }
 
     const { page = 1, limit = 10 } = query
     const option = {
@@ -33,7 +39,7 @@ class OrderController extends Controller {
     const { list, total } = await service.order.find(query, option)
     list.forEach((i)=>{
       delete i.extract
-      delete o.resultXml
+      delete i.resultXml
     })
     ctx.body = { code: 200, msg: '获取成功', data: {
       list,
@@ -45,6 +51,7 @@ class OrderController extends Controller {
     const { request: req, service, state } = ctx
     // 当前登录用户
     const { userId } = state.user
+
     if (this.isPauseService()) {
       ctx.body = { code: 202, msg: '购买服务暂停中！' }
       return
