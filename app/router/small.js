@@ -29,4 +29,7 @@ export default function({ router, controller, jwt }) {
   router.post('/small/agent', jwt, controller.agent.regGroupUser) // 团长注册
   router.get('/small/deliveryNote', jwt, controller.deliveryNote.getDeliveryList)
   router.get('/small/deliveryNote/:id', jwt, controller.deliveryNote.getDeliveryDetail)
+
+  // 团长销售业绩
+  router.get('/small/sales', jwt, controller.sales.getSales)
 }

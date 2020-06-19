@@ -26,10 +26,10 @@ class OrderCheck extends Subscription {
   		const isAfter = moment().isAfter(item.payEndTime)
   		if (isAfter) {
   			const orderRet = await ctx.service.order.updateOne(item.orderId, { state: 4 })
-  			console.log(orderRet);
+  			console.log(orderRet, '支付时间超时，订单关闭');
   			// 发送订单关闭消息
   		} else {
-  			console.log(moment().isBefore(item.payEndTime),11);
+  			console.log(moment().isBefore(item.payEndTime), '支付时间未超时');
   		}
   	}
   }
