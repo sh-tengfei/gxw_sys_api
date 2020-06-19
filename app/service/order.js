@@ -22,6 +22,7 @@ class OrderService extends Service {
     const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
     
     for (const i of list ) {
+      // 读出订单的代理点信息
       i.extract = await ctx.service.agent.findOne({ extractId: i.extractId })
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')

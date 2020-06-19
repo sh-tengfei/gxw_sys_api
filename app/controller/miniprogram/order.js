@@ -28,6 +28,7 @@ class OrderController extends Controller {
     if (query.extractType) {
       query.extractId = userId
       delete query.userId
+      delete query.extractType
     }
 
     const { page = 1, limit = 10 } = query
