@@ -1,6 +1,7 @@
 'use strict';
 import { Controller } from 'egg'
 import moment from 'moment'
+import { Decimal } from 'decimal.js'
 
 class SalesController extends Controller {
   async getSales() {
@@ -29,7 +30,26 @@ class SalesController extends Controller {
     }
     delete opt.createTime
     const { list, total } = await service.order.find(opt)
-    ctx.body = { code: 200, msg: '获取成功', data: { list, total } }
+    let salesAmount = 0 // 销售额
+    let rewardAmount = 0 // 销售收益
+    let userIds = []
+    for (const item of list) {
+      salesAmount = new Decimal(salesAmount).add(new Decimal(item.total)) 
+      rewardAmount = new Decimal(rewardAmount).add(new Decimal(item.reward))
+      userIds.push(item.userId)
+    }
+    let setId = new Set(userIds) // 购买商品的会员ID去重
+    ctx.body = { 
+      code: 200, 
+      msg: '获取成功', 
+      data: {
+        totalOrder: total,
+        salesAmount,
+        rewardAmount,
+        userId: setId.length,
+        cup: new Decimal(salesAmount).div(new Decimal(setId.length))
+      } 
+    }
   }
 }
 

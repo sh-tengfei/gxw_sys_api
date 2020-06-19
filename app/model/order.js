@@ -18,7 +18,8 @@ module.exports = app => {
         mallPrice: { type: Number, required: true },
         cover: { type: String, required: true },
         unitValue: { type: String, required: true },
-        productType: { type: Number, required: true }
+        productType: { type: Number, required: true },
+        total: { type: Number, required: true },
       }
     ],
     reward: { type: Number, required: true }, // 该订单的团长收益
