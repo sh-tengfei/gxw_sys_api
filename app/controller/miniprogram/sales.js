@@ -28,7 +28,7 @@ class SalesController extends Controller {
     if (Number(timeType) === 3) {
       opt.createTime = { $gte: time.startOf('month').valueOf(), $lt: time.endOf('month').valueOf() }
     }
-    delete opt.createTime
+    // delete opt.createTime
     const { list, total } = await service.order.find(opt)
     let salesAmount = 0 // 销售额
     let rewardAmount = 0 // 销售收益
@@ -39,6 +39,10 @@ class SalesController extends Controller {
       userIds.push(item.userId)
     }
     let setId = new Set(userIds) // 购买商品的会员ID去重
+    let cup = 0
+    if (setId.size) {
+      cup = new Decimal(salesAmount).div(new Decimal(setId.size))
+    }
     ctx.body = { 
       code: 200, 
       msg: '获取成功', 
@@ -46,8 +50,8 @@ class SalesController extends Controller {
         totalOrder: total,
         salesAmount,
         rewardAmount,
-        userId: setId.length,
-        cup: new Decimal(salesAmount).div(new Decimal(setId.length))
+        userIds: setId.length,
+        cup,
       } 
     }
   }

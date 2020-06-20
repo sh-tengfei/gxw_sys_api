@@ -32,4 +32,7 @@ export default function({ router, controller, jwt }) {
 
   // 团长销售业绩
   router.get('/small/sales', jwt, controller.sales.getSales)
+
+  // 流水
+  router.get('/small/bill', jwt, controller.bill.getBills)
 }

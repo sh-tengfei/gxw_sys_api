@@ -43,6 +43,7 @@
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix --ext .js app config",
     "ci": "npm run lint && npm run cov",
     "autod": "autod"
   },

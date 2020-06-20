@@ -7,7 +7,7 @@ module.exports = app => {
     classifyName: { type: String, required: true },
     classifyProducts: { type: Array, required: true },
     classifyCity: { type: String, required: true },
-    classifyIndex: { type: Number, required: true },
+    classifyIndex: { type: Number, required: true }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

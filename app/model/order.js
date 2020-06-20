@@ -19,7 +19,7 @@ module.exports = app => {
         cover: { type: String, required: true },
         unitValue: { type: String, required: true },
         productType: { type: Number, required: true },
-        total: { type: Number, required: true },
+        total: { type: Number, required: true }
       }
     ],
     reward: { type: Number, required: true }, // 该订单的团长收益
@@ -33,7 +33,7 @@ module.exports = app => {
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
     total: { type: Number, required: true },
-    payResult: { type: Object, default: {} },
+    payResult: { type: Object, default: {}}
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

@@ -14,7 +14,7 @@ module.exports = app => {
     sliderId: { type: String, required: true, unique: true },
     areaId: { type: String, required: true, unique: true },
     noteId: { type: String, required: true, unique: true },
-    classifyId: { type: String, required: true, unique: true },
+    classifyId: { type: String, required: true, unique: true }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
