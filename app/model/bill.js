@@ -7,6 +7,7 @@ module.exports = app => {
     billId: { type: String, required: true, unique: true },
     orderId: { type: String }, // 支出没有订单ID
     userId: { type: String, required: true },
+    amount: { type: Number, required: true },
     type: { type: Number, required: true, default: 1 } // 1.收入 2.支出
   }, {
     versionKey: false,

@@ -26,7 +26,8 @@ class BillService extends Service {
     return billRet
   }
   async create(data) {
-    const { service, model } = this.ctx
+    const { ctx } = this
+    const { service, model } = ctx
 
     let newBill, billId = 'billId';
     billId = await service.counters.findAndUpdate('billId')

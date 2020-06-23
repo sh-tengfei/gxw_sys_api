@@ -19,7 +19,7 @@ class OrderService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: -1})
     
     for (const i of list ) {
       // 读出订单的代理点信息

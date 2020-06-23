@@ -249,9 +249,9 @@ class OrderController extends Controller {
         logger.info({ msg: '支付成功通知消息。', data: return_code })
       }
 
-      const { state, ...other } = await service.user.findOne({ userId: params.id })
+      const { state, ...other } = await service.order.findOne({ orderId: out_trade_no })
       if (state !== 1) {
-        return logger.error({ msg: '订单状态已支付', data: other })
+        return logger.error({ msg: '订单状态已支付', orderId: other.orderId })
       }
 
       const orderRet = await service.order.updateOne(out_trade_no, {
@@ -269,12 +269,16 @@ class OrderController extends Controller {
       }
 
       // 生成收益
-      const billRet = await service.bill.create({ orderId: orderRet.orderId, userId: orderRet.userId })
+      const billRet = await service.bill.create({ 
+        orderId: orderRet.orderId, 
+        userId: orderRet.userId,
+        amount: orderRet.total,
+      })
 
       if (orderRet === null) {
-        logger.error({ msg: '订单不存在，修改失败', data: out_trade_no })
+        logger.error({ msg: '订单不存在，修改失败', data: orderRet.orderId })
       } else {
-        logger.success({ msg: '订单修改支付状态修改成功。', data: out_trade_no })
+        logger.info({ msg: '订单修改支付状态修改成功。', data: orderRet.orderId })
       }
     })
 
