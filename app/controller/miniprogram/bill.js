@@ -10,13 +10,13 @@ class BillController extends Controller {
     const { timeType } = query // 1是天 2是周 3是月
     const { userId } = user
 
-    const { list } = await service.order.find()
+    const { list } = await service.bill.find()
 
     ctx.body = { 
       code: 200, 
       msg: '获取成功', 
       data: {
-      } 
+      }
     }
   }
 }
