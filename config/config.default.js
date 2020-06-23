@@ -84,6 +84,7 @@ module.exports = appInfo => {
       areaId: '1000',
       noteId: '1000',
       classifyId: '1000',
+      billId: 'billId',
     },
     qiniuConf: {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',

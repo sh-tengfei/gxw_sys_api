@@ -268,6 +268,9 @@ class OrderController extends Controller {
         }
       }
 
+      // 生成收益
+      const billRet = await service.bill.create({ orderId: orderRet.orderId, userId: orderRet.userId })
+
       if (orderRet === null) {
         logger.error({ msg: '订单不存在，修改失败', data: out_trade_no })
       } else {

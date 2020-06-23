@@ -25,7 +25,7 @@ class BillService extends Service {
     const billRet = await model.Bill.findOne(query, other).lean()
     return billRet
   }
-  async create({ products, extractId, userId }) {
+  async create(data) {
     const { service, model } = this.ctx
 
     let newBill, billId = 'billId';
