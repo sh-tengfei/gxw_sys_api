@@ -214,24 +214,47 @@ class OrderController extends Controller {
   }
   async paySuccessOrder() {
     const { ctx } = this;
-    const { service, params } = ctx
+    const { service, params, logger } = ctx
 
-    // const { state, ...other } = await service.user.findOne({ userId: params.id })
-    // if (state === 2) {
-    //   logger.info({ msg: '微信用户端通知支付成功！', data: { other, state: 2 } })
-    //   return ctx.body = { code: 200, msg: '支付成功！', data: { other, state: 2 } }
-    // }
+    const { state, extract, ...other } = await service.order.findOne({ orderId: params.id })
+    if (state === 2) {
+      logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', data: { other, state: 2 } })
+      return ctx.body = { code: 200, msg: '支付成功！', data: { other, state: 2 } }
+    }
 
     let data 
-    // if (state === 1) {
-    //   data = await service.order.updateOne(params.id, { state: 2, payTime: Date.now() })
-    // }
-    // 发送支付成功消息
-    if (!data) {
-      ctx.body = { code: 201, msg: '状态错误，更新失败！' }
-      return
+    if (state === 1) {
+      data = await service.order.updateOne(params.id, { 
+        state: 2, 
+        payTime: Date.now(), 
+        payResult: {},
+        resultXml: 'xml'
+      })
+      logger.info({ msg: '支付成功，状态修改完成', data })
+
+      if (data !== null) {
+        const deliveryRet = await this.makeDeliveryNote(Object.assign(other, data))
+        if (!deliveryRet) {
+          logger.error({ msg: '配送单生成错误！', extractId: deliveryRet.extractId, orderId: data.orderId })
+        } else {
+          logger.error({ msg: '配送单生成成功！', extractId: deliveryRet.extractId })
+        }
+      }
+
+      // 生成收益
+      const billRet = await service.bill.create({ 
+        orderId: data.orderId, 
+        extractId: data.extractId,
+        areaId: extract.areaId,
+        amount: data.total,
+      })
+
+      logger.info({ msg: '订单收益记录创建成功。', billId: billRet.billId })
+      
+      return ctx.body = { code: 200, msg: '支付成功，模拟状态修改', data }
     }
-    ctx.body = { code: 200, msg: '更新成功！' }
+
+    ctx.body = { code: 201, msg: '状态错误，更新失败！' }
   }
   async wxPayNotify() {
     const { ctx } = this;
@@ -250,8 +273,8 @@ class OrderController extends Controller {
       }
 
       const { state, ...other } = await service.order.findOne({ orderId: out_trade_no })
-      if (state !== 1) {
-        return logger.error({ msg: '订单状态已支付', orderId: other.orderId })
+      if (state === 2) {
+        return logger.error({ msg: '订单状态已支付，不再做修改', orderId: other.orderId })
       }
 
       const orderRet = await service.order.updateOne(out_trade_no, {
@@ -261,8 +284,14 @@ class OrderController extends Controller {
         resultXml: req.body,
       })
 
+      if (orderRet === null) {
+        return logger.error({ msg: '订单不存在，修改失败', data: orderRet.orderId })
+      } else {
+        logger.info({ msg: '订单修改支付状态修改成功。', data: orderRet.orderId })
+      }
+
       if (orderRet !== null) {
-        const deliveryRet = await this.makeDeliveryNote(orderRet)
+        const deliveryRet = await this.makeDeliveryNote(Object.assign(other, data))
         if (!deliveryRet) {
           logger.error({ msg: '配送单生成错误！', data: deliveryRet, order: orderRet })
         }
@@ -271,15 +300,11 @@ class OrderController extends Controller {
       // 生成收益
       const billRet = await service.bill.create({ 
         orderId: orderRet.orderId, 
-        userId: orderRet.userId,
+        extractId: orderRet.extractId,
+        areaId: orderRet.extract.areaId,
         amount: orderRet.total,
       })
-
-      if (orderRet === null) {
-        logger.error({ msg: '订单不存在，修改失败', data: orderRet.orderId })
-      } else {
-        logger.info({ msg: '订单修改支付状态修改成功。', data: orderRet.orderId })
-      }
+      logger.info({ msg: '订单收益记录创建成功。', bill: billRet })
     })
 
     const sendXml = '<xml>\n' +

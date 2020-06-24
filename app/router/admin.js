@@ -37,4 +37,6 @@ export default function({ router, controller, jwt }) {
 
   router.get('/admin/classify', jwt, controller.classify.getClassifys)
   router.post('/admin/classify', jwt, controller.classify.newClassify)
+
+  router.get('/admin/delivery-note', jwt, controller.deliveryNote.getDeliveryNote)
 }

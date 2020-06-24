@@ -11,14 +11,9 @@ class DeliveryNoteService extends Service {
       orderId: note.orderIds,
       state: -1,
     })
-    let amount = 0
-    list.forEach(i => {
-      amount = new Decimal(amount).add(new Decimal(i.total))
-    })
 
     delete note.orderIds
     note.orders = list
-    note.amount = amount
 
     return note
   }
@@ -34,10 +29,20 @@ class DeliveryNoteService extends Service {
       delete query.state
     }
 
+    if (query.dateTime) {
+      const time = moment(query.dateTime)
+      query.createTime = { 
+        $gte: time.startOf('day').valueOf(), 
+        $lt: time.endOf('day').valueOf(),
+      }
+      delete query.dateTime
+    }
+
     delete query.limit
-    delete query.skip
+    delete query.page
 
     const list = await ctx.model.DeliveryNote.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+
     for (const i of list ) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -45,20 +50,16 @@ class DeliveryNoteService extends Service {
         orderId: i.orderIds,
         state: -1,
       })
-      let amount = 0
-      orders.list.forEach(i => {
-        amount = new Decimal(amount).add(new Decimal(i.total))
-      })
+
       delete i.orderIds
       i.orders = orders.list
-      i.amount = amount
     }
 
     const total = await ctx.model.DeliveryNote.find(query).countDocuments()
     return {
       list,
-      total
-    };
+      total,
+    }
   }
   async create(data) {
     const { ctx } = this
@@ -76,13 +77,14 @@ class DeliveryNoteService extends Service {
     }
     return newNote;
   }
-  async joinDeliveryNote ({ extractId, orderId }) {
+  async joinDeliveryNote ({ extractId, orderId, extract }) {
     const { ctx } = this;
     const curNote = await ctx.model.DeliveryNote.findOne({ extractId, state: 1 })
     let note
     if (curNote === null) {
       note = await this.create({
         extractId,
+        areaId: extract.areaId,
         orderIds: [orderId],
       })
     } else {

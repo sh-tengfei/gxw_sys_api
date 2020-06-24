@@ -45,7 +45,7 @@ class ProductService extends Service {
     productId = await ctx.service.counters.findAndUpdate(productId)
 
     delete data.productId
-    data.productId = `${moment().year()}${moment().month()}${productId}`
+    data.productId = `${moment()}${productId}`
     try{
      newProduct = await ctx.model.Product.create(data)
      newProduct = newProduct.toObject()

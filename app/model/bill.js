@@ -6,8 +6,9 @@ module.exports = app => {
   const Bill = new mongoose.Schema({
     billId: { type: String, required: true, unique: true },
     orderId: { type: String }, // 支出没有订单ID
-    userId: { type: String, required: true },
+    extractId: { type: String, required: true },
     amount: { type: Number, required: true },
+    areaId: { type: String, required: true },
     type: { type: Number, required: true, default: 1 } // 1.收入 2.支出
   }, {
     versionKey: false,
