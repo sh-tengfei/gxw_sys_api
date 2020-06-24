@@ -163,6 +163,7 @@ class OrderController extends Controller {
           ctx.logger.error({ code: return_code.text(), msg: result_code.text(), errors })
           return resolve({ code: 201, msg: '支付失败，请联系管理员', data: return_msg.text() })
         }
+
         if (result_code.text() !== 'SUCCESS' ) {
           const errCode = err_code.text()
           if (errCode === 'ORDERPAID') {
@@ -321,7 +322,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return moment().isBetween(start, pause)
+    return !moment().isBetween(start, pause)
   }
 }
 

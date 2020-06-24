@@ -65,7 +65,7 @@ class OrderService extends Service {
       let { mallPrice, name, desc, cover, unitValue, sellerOfType, rebate } = product
       // 求订单总金额 
       total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
-      reward = Decimal.add(reward,  new Decimal(rebate))
+      reward = Decimal.add(reward, new Decimal(rebate))
       productList.push({
         productId,
         name,
@@ -88,7 +88,7 @@ class OrderService extends Service {
       total,
       products: productList,
       extractId,
-      orderId: `wx${orderId}`,
+      orderId: `WX${(Math.random()*10000).toFixed(0)}${orderId}`,
       parentId: 0,
       userId,
       reward,

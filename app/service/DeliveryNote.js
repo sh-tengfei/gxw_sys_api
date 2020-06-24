@@ -5,8 +5,10 @@ import { Decimal } from 'decimal.js'
 class DeliveryNoteService extends Service {
   async findOne(query) {
     const { ctx } = this;
-    const note = await ctx.model.DeliveryNote.findOne(query).lean()
-
+    const { service, model } = ctx
+    const note = await model.DeliveryNote.findOne(query).lean()
+    note.extract = await service.agent.findOne({ extractId: note.extractId })
+    note.area = await service.sellingCity.getCity({ cityCode: note.areaId })
     const { list } = await service.order.find({
       orderId: note.orderIds,
       state: -1,
@@ -19,6 +21,7 @@ class DeliveryNoteService extends Service {
   }
   async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this;
+    const { service, model } = ctx
     const { limit = 10, skip = 0 } = option
 
     if (!query.state) {
@@ -41,21 +44,23 @@ class DeliveryNoteService extends Service {
     delete query.limit
     delete query.page
 
-    const list = await ctx.model.DeliveryNote.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await model.DeliveryNote.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
 
     for (const i of list ) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
-      const orders = await ctx.service.order.find({
+      const orders = await service.order.find({
         orderId: i.orderIds,
         state: -1,
       })
+      i.extract = await service.agent.findOne({ extractId: i.extractId })
+      i.area = await service.sellingCity.getCity({ cityCode: i.areaId })
 
       delete i.orderIds
       i.orders = orders.list
     }
 
-    const total = await ctx.model.DeliveryNote.find(query).countDocuments()
+    const total = await model.DeliveryNote.find(query).countDocuments()
     return {
       list,
       total,
