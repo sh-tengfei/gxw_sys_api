@@ -5,7 +5,8 @@ import moment from 'moment'
 
 class OrderService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
-    const { ctx } = this;
+    const { ctx } = this
+    const { service, model } = ctx
     const { limit = 10, skip = 0 } = option
 
     if (!query.state) {
@@ -19,16 +20,17 @@ class OrderService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: -1})
+    const list = await model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: -1})
     
     for (const i of list ) {
       // 读出订单的代理点信息
-      i.extract = await ctx.service.agent.findOne({ extractId: i.extractId })
+      i.extract = await service.agent.findOne({ extractId: i.extractId })
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+      i.user = await service.user.findOne({ userId: i.userId })
     }
 
-    const total = await ctx.model.Order.find(query).countDocuments()
+    const total = await model.Order.find(query).countDocuments()
 
     return {
       list,
@@ -177,6 +179,16 @@ class OrderService extends Service {
       }
     })
     return { code: 200, msg: '拆单成功' }
+  }
+  async sendGoods(orderIds) {
+    const { service, model } = this.ctx
+    const retList = []
+    for (const i of orderIds) {
+      const ret = await service.order.updateOne(i, { state: 3 })
+      retList.push(ret)
+    }
+    // 这里发送发货通知
+    return retList
   }
 }
 

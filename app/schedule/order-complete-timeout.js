@@ -12,18 +12,25 @@ class OrderCompleteTimeout extends Subscription {
   }
   // subscribe 是真正定时任务执行时被运行的函数
   async subscribe() {
-  	const { ctx } = this
+    const { ctx, app } = this
+    // 现在是待收货的都查询 可以设置成只查4天前的
   	const { list } = await ctx.service.order.find({ state: 3 })
-  	await this.computeState(list)
+  	await this.computeState(list, app.config)
   }
-  async computeState(list) {
-    console.log(list, '11111')
+  async computeState(list, { orderCompleteTimeout }) {
   	if (!list.length) {
   		return
-  	}
+    }
+    const curTime = moment().endOf('day')
     const { ctx } = this
-  	for (const item of list) {
-      
+  	for (const { createTime, orderId } of list) {
+      const targetTime = moment(createTime).startOf('day').add(orderCompleteTimeout, 'days')
+      if (curTime.isAfter(targetTime)) {
+        const order = await ctx.service.order.updateOne(orderId, { state: 5 })
+        ctx.logger.info(orderId, '确认收货超时，自动确认')
+      } else {
+        console.log(curTime.isAfter(targetTime), '确认收货未超时')
+      }
   	}
   }
 }

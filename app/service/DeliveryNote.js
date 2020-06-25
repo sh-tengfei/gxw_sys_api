@@ -100,6 +100,15 @@ class DeliveryNoteService extends Service {
     }
     return note
   }
+  async updateOne(noteId, data) {
+    const { ctx } = this
+    const { service, model } = ctx
+    const newNote = await model.DeliveryNote.findOneAndUpdate({ 
+      noteId
+    }, data, { new: true, _id: 0}).lean()
+    const sendRet = await service.order.sendGoods(newNote.orderIds)
+    return newNote
+  }
 }
 
 module.exports = DeliveryNoteService;
