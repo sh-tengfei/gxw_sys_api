@@ -85,6 +85,7 @@ module.exports = appInfo => {
       noteId: '1000',
       classifyId: '1000',
       billId: '1000',
+      addressId: '1000',
     },
     orderCompleteTimeout: 4, //订单完成超时时间天
     qiniuConf: {

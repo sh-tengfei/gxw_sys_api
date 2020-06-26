@@ -16,7 +16,9 @@ class DeliveryNoteService extends Service {
 
     delete note.orderIds
     note.orders = list
-
+    list.forEach(({ total }) => {
+      note.totalAmount = Decimal.add(note.totalAmount || 0, new Decimal(total))
+    })
     return note
   }
   async find(query = {}, option = {}, other = { _id: 0 }) {
@@ -58,6 +60,9 @@ class DeliveryNoteService extends Service {
 
       delete i.orderIds
       i.orders = orders.list
+      i.orders.forEach(({ total }) => {
+        i.totalAmount = Decimal.add(i.totalAmount || 0, new Decimal(total))
+      })
     }
 
     const total = await model.DeliveryNote.find(query).countDocuments()

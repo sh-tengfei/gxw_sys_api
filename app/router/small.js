@@ -23,6 +23,11 @@ export default function({ router, controller, jwt }) {
   router.get('/small/searbys', jwt, controller.agent.getNearbyAgents)
   router.get('/small/searbys/:id', jwt, controller.agent.getSearbys)
 
+  // 收货地址
+  router.get('/small/address', jwt, controller.address.getAddress)
+  router.get('/small/address/:id', jwt, controller.address.getOneAddress)
+  router.post('/small/address', jwt, controller.address.makeAddress)
+
   // 团长端登录
   router.get('/small/groupLogin', controller.login.getGroupLogin)
   router.put('/small/agent/:id', jwt, controller.login.updateAgent) // 登陆后更新信息
@@ -34,5 +39,5 @@ export default function({ router, controller, jwt }) {
   router.get('/small/sales', jwt, controller.sales.getSales)
 
   // 流水
-  router.get('/small/bill', jwt, controller.bill.getBills)
+  router.get('/small/bill', jwt, controller.bill.getBills) 
 }

@@ -25,15 +25,17 @@ module.exports = app => {
     reward: { type: Number, required: true }, // 该订单的团长收益
     resultXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
-    extractId: { type: String, required: true }, // 提货点Id
-    expressNo: { type: String }, // 产地的物流号单发货后有值
+    extractId: { type: String, default: null }, // 提货点Id
+    addressId: { type: String, default: null }, // 收货地址Id
+    expressNo: { type: Array }, // 产地的物流号单产地订单发货后有值
     isDelete: { type: Boolean, default: false },
     // 1.待支付 2.备货中 3.待收货 4.已关闭 5.已完成 6.退款中 7.已退款
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
     total: { type: Number, required: true },
-    payResult: { type: Object, default: {}}
+    payResult: { type: Object, default: {}},
+    orderType: { type: Number, required: true } // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

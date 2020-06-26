@@ -5,38 +5,251 @@ import officegen from 'officegen'
 import fs from 'fs'
 import path from 'path'
 
-async function generateDownload (data, url) {
+function getTabelCell (title) {
+  return {
+    val: title,
+    opts: {
+      b:true,
+      sz: '20',
+      spacingBefore: 120,
+      spacingAfter: 120,
+      spacingLine: 240,
+      spacingLineRule: 'atLeast',
+      shd: {
+        fill: "f5f5f5",
+        themeFill: "text1",
+        "themeFillTint": "80"
+      },
+      fontFamily: "Avenir Book"
+    }
+  }
+}
+
+async function generateDownload({ 
+  extract, 
+  orders, 
+  area, 
+  createTime, 
+  noteId,
+  totalAmount,
+}, url) {
+  createTime = moment(createTime).add(1, 'days').format('YYYY-MM-DD')
   const docx = officegen('docx')
 
   docx.on('finalize', function(written) {
-    console.log('Finish to create a Microsoft Word document.')
+    console.log('配送单文档生成成功')
   })
 
-  // Officegen calling this function to report errors:
   docx.on('error', function(err) {
-    console.log(err)
+    console.log('配送单文档生成错误')
   })
+  const pObj = docx.createP({align: 'center'})
+  pObj.addText('果仙网-团长配送单', { 
+    font_face: 'Arial', 
+    font_size: 22, 
+    color: '#333',
+  })
+  const table = [
+    [
+      getTabelCell('序号'),
+      getTabelCell('订单号'),
+      getTabelCell('会员名称'),
+      getTabelCell('会员手机'),
+      getTabelCell('商品名称'),
+      getTabelCell('计价单位'),
+      getTabelCell('购买数量'),
+      getTabelCell('下单金额'),
+      getTabelCell('下单时间'),
+    ]
+  ]
+
+  orders.forEach(({ user, orderId, products, total, createTime }, n) => {
+    const names = []
+    const buys = []
+    const unitValue = []
+    products.forEach((w, q) => {
+      names.push(w.name)
+      buys.push(w.buyNum)
+      unitValue.push(w.unitValue)
+    })
+    table.push([
+      n+1, 
+      orderId, 
+      user.username, 
+      user.mobile + '', 
+      names, 
+      unitValue, 
+      buys, 
+      total, 
+      createTime
+    ])
+  })
+
+  const tableStyle = {
+    tableColWidth: 4261,
+    tableSize: 20,
+    tableColor: "ada",
+    tableAlign: "left",
+    tableFontFamily: "Comic Sans MS",
+    spacingBefor: 120, // default is 100
+    spacingAfter: 120, // default is 100
+    spacingLine: 240, // default is 240
+    spacingLineRule: 'atLeast', // default is atLeast
+    indent: 100, // table indent, default is 0
+    fixedLayout: true, // default is false
+    borders: true, // default is false. if true, default border size is 4
+    borderSize: 2, // To use this option, the 'borders' must set as true, default is 4
+    columns: [{ width: 4261 }, { width: 1 }, { width: 42 }], // Table logical columns
+  }
+  // 团长配送信息
+  const data = [
+    [
+      {
+        type: "text",
+        val: `团长信息：`,
+        opt: {
+          font_face: 'Arial', 
+          font_size: 12, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    姓名：${extract.applyName}，`,
+        opt: {
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    手机：${extract.applyPhone}，`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "text",
+        val: `    微信昵称：${extract.nickName}，`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `配送信息：`,
+        opt: {
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    配送城市：${area.fullname}`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#000',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    配送单号：${noteId}`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#000',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    配送日期：${createTime}`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#000',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    配送金额：${totalAmount}元`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#000',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    社区名称：${extract.communityName}`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#333',
+          align: 'left'
+        }
+      }, {
+        type: "linebreak"
+      }, {
+        type: "text",
+        val: `    社区地址：${extract.communitySite}`,
+        opt: { 
+          font_face: 'Arial', 
+          font_size: 10, 
+          color: '#000',
+          align: 'left'
+        }
+      }
+    ], {
+      type: "table",
+      val: table,
+      opt: tableStyle
+    }, {
+      type: "pagebreak"
+    }
+  ]
+
+  docx.createByJson(data)
 
   docx.putPageBreak()
+
   return new Promise((resolve, reject) => {
     let out = fs.createWriteStream(url)
-  
-    // This one catch only the officegen errors:
+
     docx.on('error', function(err) {
       reject(err)
     })
   
-    // Catch fs errors:
     out.on('error', function(err) {
       reject(err)
     })
-  
-    // End event after creating the PowerPoint file:
+
     out.on('close', function() {
       resolve()
     })
   
-    // This async method is working like a pipe - it'll generate the pptx data and put it into the output stream:
     docx.generate(out)
   })
 }

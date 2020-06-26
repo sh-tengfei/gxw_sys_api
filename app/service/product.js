@@ -45,12 +45,12 @@ class ProductService extends Service {
     productId = await ctx.service.counters.findAndUpdate(productId)
 
     delete data.productId
-    data.productId = `${moment()}${productId}`
+    data.productId = `SP${(Math.random()*1000).toFixed(0)}${productId}`
     try{
      newProduct = await ctx.model.Product.create(data)
      newProduct = newProduct.toObject()
      delete newProduct._id
-    }catch (e) {
+    } catch (e) {
       console.log(e);
       return e
     }

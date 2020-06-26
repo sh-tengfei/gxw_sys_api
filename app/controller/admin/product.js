@@ -8,8 +8,12 @@ class ProductController extends Controller {
     const { query: _query } = request
     const query = {
       state: +_query.state || -1,
-      name: _query.name,
-      locking: _query.locking || 0
+    }
+    if (_query.name) {
+      query.name = _query.name
+    }
+    if (_query.locking) {
+      query.locking = _query.locking
     }
     if (_query.sellerOfType) {
       query['sellerOfType.code'] = _query.sellerOfType
@@ -24,7 +28,6 @@ class ProductController extends Controller {
       limit: _query.limit || 10,
       skip: (page - 1) * limit,
     }
-    if (!query.name) delete query.name
 
     let { list, total } = await service.product.find(query, option)
     let newList = list.filter((i)=>{
@@ -37,7 +40,7 @@ class ProductController extends Controller {
         }
       }
       if (_query.sellOut === '2') {
-        if (i.stockNumber === 0) {
+        if (i.stockNumber === 0 || i.stockNumber === null) {
           return i
         }
       }
