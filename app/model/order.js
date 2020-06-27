@@ -18,14 +18,15 @@ module.exports = app => {
         mallPrice: { type: Number, required: true },
         cover: { type: String, required: true },
         unitValue: { type: String, required: true },
-        productType: { type: Number, required: true },
-        total: { type: Number, required: true }
+        sellerType: { type: Number, required: true },
+        total: { type: Number, required: true },
+        reward: { type: Number, required: true }
       }
     ],
     reward: { type: Number, required: true }, // 该订单的团长收益
     resultXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
-    extractId: { type: String, default: null }, // 提货点Id
+    extractId: { type: String, default: null, required: true }, // 提货点Id
     addressId: { type: String, default: null }, // 收货地址Id
     expressNo: { type: Array }, // 产地的物流号单产地订单发货后有值
     isDelete: { type: Boolean, default: false },

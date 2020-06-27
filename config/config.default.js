@@ -88,6 +88,7 @@ module.exports = appInfo => {
       addressId: '1000',
     },
     orderCompleteTimeout: 4, //订单完成超时时间天
+    commissionComplete: 4, //收益结算时间天
     qiniuConf: {
       accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
       secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'

@@ -12,9 +12,13 @@ class BillService extends Service {
     delete query.skip
 
     const list = await ctx.model.Bill.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
-
+    
+    list.forEach(i=>{
+      i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+    })
+    
     const total = await ctx.model.Bill.find(query).countDocuments()
-
     return {
       list,
       total
@@ -22,8 +26,10 @@ class BillService extends Service {
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { model, service } = this.ctx
-    const billRet = await model.Bill.findOne(query, other).lean()
-    return billRet
+    const bill = await model.Bill.findOne(query, other).lean()
+    bill.updateTime = moment(bill.updateTime).format('YYYY-MM-DD HH:mm:ss')
+    bill.createTime = moment(bill.createTime).format('YYYY-MM-DD HH:mm:ss')
+    return bill
   }
   async create(data) {
     const { ctx } = this

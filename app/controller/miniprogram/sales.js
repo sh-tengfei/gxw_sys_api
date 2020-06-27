@@ -43,6 +43,7 @@ class SalesController extends Controller {
     if (setId.size) {
       cup = new Decimal(salesAmount).div(new Decimal(setId.size))
     }
+ 
     ctx.body = { 
       code: 200, 
       msg: '获取成功', 
@@ -50,7 +51,7 @@ class SalesController extends Controller {
         totalOrder: total,
         salesAmount,
         rewardAmount,
-        userIds: setId.length,
+        userIds: setId.size,
         cup,
       } 
     }

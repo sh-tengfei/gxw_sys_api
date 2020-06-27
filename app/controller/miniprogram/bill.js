@@ -10,12 +10,21 @@ class BillController extends Controller {
     const { timeType } = query // 1是天 2是周 3是月
     const { userId } = user
 
-    const { list } = await service.bill.find()
+    const { list: waitList, total: waitTotal } = await service.bill.find({
+      extractId: userId,
+      state: 1,
+    })
+    const { list: doneList, total: doneTotal } = await service.bill.find({
+      extractId: userId,
+      state: 2,
+    })
 
     ctx.body = { 
       code: 200, 
       msg: '获取成功', 
       data: {
+        wait: {waitList, waitTotal},
+        done: {doneList, doneTotal}
       }
     }
   }

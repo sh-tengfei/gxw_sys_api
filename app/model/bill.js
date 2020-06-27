@@ -8,6 +8,7 @@ module.exports = app => {
     orderId: { type: String }, // 支出没有订单ID
     extractId: { type: String, required: true },
     amount: { type: Number, required: true },
+    state: { type: Number, required: true }, // 1.待结算 2.已经结算
     areaId: { type: String, required: true },
     type: { type: Number, required: true, default: 1 } // 1.收入 2.支出
   }, {

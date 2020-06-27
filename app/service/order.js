@@ -24,7 +24,12 @@ class OrderService extends Service {
     
     for (const i of list ) {
       // 读出订单的代理点信息
-      i.extract = await service.agent.findOne({ extractId: i.extractId })
+      if (i.extractId) {
+        i.extract = await service.agent.findOne({ extractId: i.extractId })
+      }
+      if (i.addressId) {
+        i.address = await service.address.findOne(i.addressId)
+      }
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
       i.user = await service.user.findOne({ userId: i.userId })
@@ -39,18 +44,25 @@ class OrderService extends Service {
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { model, service } = this.ctx
-    const orderRet = await model.Order.findOne(query, other).lean()
-    orderRet.extract = await service.agent.findOne({ extractId: orderRet.extractId })
-    return orderRet
+    const order = await model.Order.findOne(query, other).lean()
+    if (order !== null) {
+      order.user = await service.user.findOne({ userId: order.userId })
+      if (order.extractId) {
+        order.extract = await service.agent.findOne({ extractId: order.extractId })
+      }
+      if (order.addressId) {
+        order.address = await service.address.findOne(order.addressId)
+      }    
+    }
+    return order
   }
-  async create({ products, extractId, userId, addressId }) {
+  async create({ products, extractId, userId, addressId, parentId='0', orderType = 0, payEndTime }) {
     const { service, model } = this.ctx
 
     let total = 0
     let reward = 0
     let error = null
     let productList = []
-
     for (const item of products) {
       let { productId, buyNum } = item
       let product = await service.product.findOne({ productId })
@@ -60,14 +72,14 @@ class OrderService extends Service {
         break
       }
       // 库存判断
-      if (product.stockNumber === 0) {
+      if (product.stockNumber < item.buyNum) {
         error = { code: 201, msg: '下单失败，商品库存不足', productId }
         break
       }
       let { mallPrice, name, desc, cover, unitValue, sellerOfType, rebate } = product
       // 求订单总金额 
       total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
-      reward = Decimal.add(reward, new Decimal(rebate))
+      reward = Decimal.add(reward, new Decimal(rebate).mul(buyNum))
       productList.push({
         productId,
         name,
@@ -76,8 +88,9 @@ class OrderService extends Service {
         mallPrice,
         cover,
         unitValue,
-        productType: sellerOfType.code,
+        sellerType: sellerOfType.code,
         total: new Decimal(mallPrice).mul(buyNum),
+        reward: new Decimal(rebate).mul(buyNum),
       })
     }
 
@@ -91,16 +104,27 @@ class OrderService extends Service {
       products: productList,
       extractId,
       addressId,
-      orderType:0,
+      orderType,
       orderId: `WXD${(Math.random()*10000).toFixed(0)}${orderId}`,
-      parentId: '0',
+      parentId,
       userId,
       reward,
-      payEndTime: moment().add(30, 'minutes')
+      payEndTime: payEndTime || moment().add(30, 'minutes')
     }
     try {
       // 主订单创建 支付完成后再拆单
       newOrder = await model.Order.create(newOrder)
+      // 订单创建完成 减库存
+      for (const product of newOrder.products) {
+        // 更新增加已售数
+        await service.product.updateOne(product.productId, {
+          $inc: { salesNumber: product.buyNum}
+        })
+        // 更新减少库存数
+        await service.stocks.updateOneOfProductId(product.productId, {
+          $inc: { stockNumber: -product.buyNum}
+        })
+      }
 
     } catch (e) {
       this.ctx.logger.warn({ msg: '订单创建错误', error: e })

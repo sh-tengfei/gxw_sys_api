@@ -3,6 +3,7 @@ import { Controller } from 'egg'
 import { read } from 'xmlreader'
 import { parseString } from 'xml2js'
 import moment from 'moment'
+import { Decimal } from 'decimal.js'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -59,16 +60,21 @@ class OrderController extends Controller {
     }
 
     // 判断有多少未支付订单 或许不用判断
-    const { products, extractId } = req.body
+    const { products, extractId, addressId, isExtractReceive } = req.body
     if (!products || !products.length) {
       ctx.body = { code: 201, msg: '商品有误' }
       return
     }
-    if (!extractId) {
+    if (!extractId ) {
       ctx.body = { code: 201, msg: '请选择提货点' }
       return
     }
-    const { code, error, data, msg } = await service.order.create({ products, extractId, userId })
+    if (isExtractReceive === false && !addressId) {
+      ctx.body = { code: 201, msg: '请选择收货地址' }
+      return
+    }
+
+    const { code, error, data, msg } = await service.order.create({ products, extractId, userId, addressId })
     if (code !== 200) {
       ctx.logger.error({ code: error.code, msg, data: error.productId })
       ctx.body = { code: error.code, msg, data: error.productId }
@@ -217,7 +223,7 @@ class OrderController extends Controller {
     const { ctx } = this;
     const { service, params, logger } = ctx
 
-    const { state, extract, ...other } = await service.order.findOne({ orderId: params.id })
+    const { state, ...other } = await service.order.findOne({ orderId: params.id })
     if (state === 2) {
       logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', data: { other, state: 2 } })
       return ctx.body = { code: 200, msg: '支付成功！', data: { other, state: 2 } }
@@ -225,56 +231,35 @@ class OrderController extends Controller {
 
     let data 
     if (state === 1) {
-      data = await service.order.updateOne(params.id, { 
-        state: 2, 
-        payTime: Date.now(), 
-        payResult: {},
-        resultXml: 'xml'
-      })
-      logger.info({ msg: '支付成功，状态修改完成', data })
-
-      // 执行拆单逻辑 后续需要循环创建收益 配送信息
-      const ret = await this.splitChildOrder({ 
+      // 执行拆单逻辑
+      const { orders, code, msg, error } = await this.splitChildOrder({ 
         ...other
       })
-
-      if (ret.code !== 200) {
-        this.ctx.logger.warn({ msg: '拆单错误', error: ret.error })
-        return { code: 201, msg: ret.msg, error: ret.error }
+      if (code === 200) {
+        // 成功可以不发邮件
+        logger.info({ msg: '拆单创建成功', orderId: other.orderId  })
+      } else {
+        // 失败要发邮件 排查失败原因
+        logger.info({ msg: '拆单创建失败', orderId: other.orderId  })
       }
 
-      // 生成配送单
-      if (data !== null) {
-        const deliveryRet = await this.makeDeliveryNote(Object.assign(other, data))
-        if (!deliveryRet) {
-          logger.error({ msg: '配送单生成错误！', extractId: deliveryRet.extractId, orderId: data.orderId })
-        } else {
-          logger.error({ msg: '配送单生成成功！', extractId: deliveryRet.extractId })
-        }
+      const bill = await this.createBill(orders, Date.now(), {}, 'xml')
+      if (bill.code === 200) {
+        ctx.body = { code: 200, msg: '收益创建错误' }
+      } else {
+        ctx.body = { code: 201, msg: '收益创建错误成功' }
       }
-
-      // 生成收益
-      const billRet = await service.bill.create({ 
-        orderId: data.orderId, 
-        extractId: data.extractId,
-        areaId: extract.areaId,
-        amount: data.total,
-      })
-
-      logger.info({ msg: '订单收益记录创建成功。', billId: billRet.billId })
-      
-      return ctx.body = { code: 200, msg: '支付成功，模拟状态修改', data }
+      return
     }
-
     ctx.body = { code: 201, msg: '状态错误，更新失败！' }
   }
   async wxPayNotify() {
     const { ctx } = this;
     const { service, request: req, logger } = ctx
-
     parseString(req.body, { explicitArray:false }, async (err, option) => {
       if (err) {
-        throw Error(err)
+        logger.error({ msg: '支付失败通知消息。', err })
+        return
       }
 
       const { return_code, return_msg, time_end, out_trade_no } = option.xml
@@ -284,116 +269,160 @@ class OrderController extends Controller {
         logger.info({ msg: '支付成功通知消息。', data: return_code })
       }
 
-      const { state, ...other } = await service.order.findOne({ orderId: out_trade_no })
-      if (state === 2) {
-        return logger.error({ msg: '订单状态已支付，不再做修改', orderId: other.orderId })
+      const order = await service.order.findOne({ orderId: out_trade_no })
+      if (order.state === 2) {
+        logger.error({ msg: '订单状态已支付，不再做修改', orderId: order.orderId })
+        return
       }
 
       // 执行拆单逻辑
-      const ret = await this.splitChildOrder({ 
-        ...other
-      })
+      const { orders, code, msg, error } = await this.splitChildOrder(order)
 
-      if (ret.code !== 200) {
-        this.ctx.logger.warn({ msg: '拆单错误', error: ret.error })
-        return { code: 201, msg: ret.msg, error: ret.error }
+      if (code === 200) {
+        // 成功可以不发邮件
+        logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
+      } else {
+        // 失败要发邮件 排查失败原因
+        logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
       }
 
-      // 更新订单支付信息
-      const orderRet = await service.order.updateOne(out_trade_no, {
+      const billRet = await this.createBill(orders, time_end, option, req.body)
+      if (billRet.code !== 200) {
+        logger.info({ msg: '收益创建错误', bill: billRet })
+      } else {
+        logger.info({ msg: '收益创建成功' })
+      }
+    })
+
+    // 对错都要回复腾讯消息
+    const sendXml = '<xml>\n' +
+      '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
+      '<return_msg><![CDATA[OK]]></return_msg>\n' +
+      '</xml>'
+    ctx.body = sendXml
+  }
+
+  async makeDeliveryNote(order) {
+    const { service } = this.ctx
+    const deliveryRet = await service.deliveryNote.joinDeliveryNote({ ...order })
+    return deliveryRet
+  }
+  async splitChildOrder({ products, ...other }) {
+    const { ctx, app } = this;
+    const { service } = ctx;
+    const orders = []
+
+    const types = {}
+    for (const i of products) {
+      if (!types[i.sellerType]) {
+        types[i.sellerType] = []
+      }
+      types[i.sellerType].push(i)
+    }
+    
+    const typeList = Object.keys(types)
+    // 单个类型商品不需要拆单 直接更新数据
+    if (typeList.length === 1) {
+      const product = products[0]
+      // 产地直供 code为101
+      const orderType = product.sellerType === 101 ? 2 : 1
+      const order = await service.order.updateOne(other.orderId, {
+        orderType,
+        state: 2,
+      })
+      orders.push(order.orderId)
+      return orders
+    }
+
+    // 遍历产品类型key 获得商品列表
+    for (const index in typeList) {
+      const order = await this.getChildOrder(types[typeList[index]], other)
+      let retOrder = null
+      // 第零个修改老订单
+      if (+index === 0) {
+        // 更新订单需要手动创建ID
+        let orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
+        order.orderId = `WXD${(Math.random()*10000).toFixed(0)}${orderId}`
+        retOrder = await service.order.updateOne(order.parentId, order)
+        orders.push(retOrder.orderId)
+      } else {
+        // 新建订单不用计算金额
+        delete order.reward
+        delete order.total
+        retOrder = await service.order.create(order)
+        orders.push(retOrder.data.orderId)
+      }      
+    }
+    return { code: 200, msg: '拆单成功', orders }
+  }
+  async createBill(orders, time_end, option, body) {
+    const { ctx } = this;
+    const { service, params, logger } = ctx
+    for (const orderId of orders) {
+      // 更新订单状态支付信息
+      await service.order.updateOne(orderId, {
         payTime: time_end,
         state: 2,
         payResult: option,
-        resultXml: req.body,
+        resultXml: body,
       })
 
-      if (orderRet === null) {
-        return logger.error({ msg: '订单不存在，修改失败', data: orderRet.orderId })
-      } else {
-        logger.info({ msg: '订单修改支付状态修改成功。', data: orderRet.orderId })
-      }
-
-      if (orderRet !== null) {
-        const deliveryRet = await this.makeDeliveryNote(Object.assign(other, data))
-        if (!deliveryRet) {
-          logger.error({ msg: '配送单生成错误！', data: deliveryRet, order: orderRet })
+      const newOrder = await service.order.findOne({ orderId })
+      // 本地发货可以生成配送单 1 本地发货
+      if (newOrder.orderType === 1) {
+        const delivery = await this.makeDeliveryNote(newOrder)
+        if (!delivery) {
+          logger.error({ msg: '配送单生成错误！', orderId })
+          return { code: 201, orderId }
         }
+      } else {
+        // 产地直发发送消息
       }
 
       // 生成收益
-      const billRet = await service.bill.create({ 
-        orderId: orderRet.orderId, 
-        extractId: orderRet.extractId,
-        areaId: orderRet.extract.areaId,
-        amount: orderRet.total,
+      const bill = await service.bill.create({ 
+        orderId: newOrder.orderId, 
+        extractId: newOrder.extractId,
+        areaId: newOrder.extract.areaId,
+        orderType: newOrder.orderType,
+        amount: newOrder.total,
       })
-      logger.info({ msg: '订单收益记录创建成功。', bill: billRet })
-    })
-
-    const sendXml = '<xml>\n' +
-    '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
-    '<return_msg><![CDATA[OK]]></return_msg>\n' +
-    '</xml>';
-    ctx.body = sendXml
+      if (!bill) {
+        logger.error({ msg: '收益生成错误！', bill })
+        return { code: 201 }
+      }
+    }
+    return { code: 200 }
   }
-  async makeDeliveryNote(order) {
-    const { ctx } = this
-    const deliveryRet = await ctx.service.deliveryNote.joinDeliveryNote({ ...order })
-    return deliveryRet
-  }
-  async splitChildOrder({ products, parentId, extractId, payType, payEndTime }) {
+  async getChildOrder(products, order) {
     const { ctx, app } = this;
     const { service } = ctx;
-    
-    // 得到有多少类型商品
-    const types = {}
-    for (const i of products){
-      const { productType } = i
-      if(!types[productType]) {
-        types[productType] = []
-      }
-      types[productType].push(i)
-      // 更新增加已售数
-      await service.product.updateOne(i.productId, {
-        $inc: { salesNumber: 1}
-      })
-      // 更新减少库存数
-      await service.stocks.updateOneOfProductId(i.productId, {
-        $inc: { stockNumber: -1}
-      })
-    }
 
-    // 单个类型商品不需要拆单
-    if (_.size(types) === 1) {
-      return { code: 200, msg: '无需拆单' }
-    }
+    let total = 0
+    let reward = 0 // 当前订单总金额
+    let orderType = 0
+    let code = null
 
-    _.forEach(types, async (valList, key) => {
-      let orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
-      let total = 0
-      _.forEach(valList, (i)=>{
-        total += new Decimal(i.mallPrice).mul(i.buyNum)
-      })
-      let newOrder = {
-        products: valList,
-        parentId: parentId,
-        extractId,
-        orderId,
-        total,
-        payType,
-        payEndTime,
-      }
-      if (Number(key) === 2) {
-        newOrder.expressNo = ''
-      }
-      let orderRet
-      try {
-        orderRet = await ctx.service.order.create(newOrder)
-      } catch (e) {
-        ctx.logger.warn({ msg: '拆单错误', error: orderRet })
-      }
-    })
-    return { code: 200, msg: '拆单成功' }
+    for (const product of products) {
+      code = product.sellerType
+      total = Number(new Decimal(total).add(product.total))
+      reward = Number(new Decimal(reward).add(product.reward))
+    }
+    // 产地直供 code为101
+    if (code === 101) {
+      orderType = 2
+    } else {
+      orderType = 1
+    }
+    let newOrder = {
+      ...order,
+      parentId: order.orderId,
+      products: products,
+      orderType,
+      reward,
+      total,
+    }
+    return newOrder
   }
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
