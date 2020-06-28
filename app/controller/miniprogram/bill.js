@@ -10,12 +10,26 @@ class BillController extends Controller {
     const { timeType } = query // 1是天 2是周 3是月
     const { userId } = user
 
-    const { list: waitList, total: waitTotal } = await service.bill.find({
+    const opt = {
       extractId: userId,
+    }
+    const time = moment()
+    if (Number(timeType) === 1) {
+      opt.createTime = { $gte: time.startOf('day').valueOf(), $lt: time.endOf('day').valueOf() }
+    }
+    if (Number(timeType) === 2) {
+      opt.createTime = { $gte: time.startOf('week').valueOf(), $lt: time.endOf('week').valueOf() }
+    }
+    if (Number(timeType) === 3) {
+      opt.createTime = { $gte: time.startOf('month').valueOf(), $lt: time.endOf('month').valueOf() }
+    }
+
+    const { list: waitList, total: waitTotal } = await service.bill.find({
+      ...opt,
       state: 1,
     })
     const { list: doneList, total: doneTotal } = await service.bill.find({
-      extractId: userId,
+      ...opt,
       state: 2,
     })
 

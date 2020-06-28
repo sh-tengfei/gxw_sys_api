@@ -52,7 +52,7 @@ class OrderService extends Service {
       }
       if (order.addressId) {
         order.address = await service.address.findOne(order.addressId)
-      }    
+      }
     }
     return order
   }

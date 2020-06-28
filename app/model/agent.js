@@ -29,7 +29,7 @@ module.exports = app => {
     },
     avatarUrl: { type: String, default: '' },
     withdraw: { type: Number, default: 0 }, // 用户账户余额
-    withdrawFrozen: { type: Boolean, default: false },
+    withdrawFrozen: { type: Number, default: 0 }, // 冻结的账户余额
     address: {} // 省市具体信息
   }, {
     versionKey: false,

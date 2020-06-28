@@ -41,7 +41,7 @@ class BillService extends Service {
     delete data.billId
     data.billId = `${moment().year()}${moment().month()}${billId}`
     try{
-     newBill = await ctx.model.Bill.create(data)
+     newBill = await model.Bill.create(data)
      newBill = newBill.toObject()
     }catch (e) {
       console.log(e);

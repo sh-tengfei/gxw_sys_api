@@ -223,31 +223,29 @@ class OrderController extends Controller {
     const { ctx } = this;
     const { service, params, logger } = ctx
 
-    const { state, ...other } = await service.order.findOne({ orderId: params.id })
-    if (state === 2) {
-      logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', data: { other, state: 2 } })
-      return ctx.body = { code: 200, msg: '支付成功！', data: { other, state: 2 } }
+    const order = await service.order.findOne({ orderId: params.id })
+    if (order.state === 2) {
+      logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
+      return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
     }
 
-    let data 
-    if (state === 1) {
+    if (order.state === 1) {
       // 执行拆单逻辑
-      const { orders, code, msg, error } = await this.splitChildOrder({ 
-        ...other
-      })
+      const { orders, code, msg, error } = await this.splitChildOrder(order)
+
       if (code === 200) {
         // 成功可以不发邮件
-        logger.info({ msg: '拆单创建成功', orderId: other.orderId  })
+        logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
       } else {
         // 失败要发邮件 排查失败原因
-        logger.info({ msg: '拆单创建失败', orderId: other.orderId  })
+        logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
       }
 
       const bill = await this.createBill(orders, Date.now(), {}, 'xml')
       if (bill.code === 200) {
-        ctx.body = { code: 200, msg: '收益创建错误' }
+        ctx.body = { code: 200, msg: '收益创建成功' }
       } else {
-        ctx.body = { code: 201, msg: '收益创建错误成功' }
+        ctx.body = { code: 201, msg: '收益创建错误', bill }
       }
       return
     }
@@ -331,7 +329,7 @@ class OrderController extends Controller {
         state: 2,
       })
       orders.push(order.orderId)
-      return orders
+      return { code: 200, msg: '单个商品无需拆单', orders }
     }
 
     // 遍历产品类型key 获得商品列表
@@ -351,7 +349,7 @@ class OrderController extends Controller {
         delete order.total
         retOrder = await service.order.create(order)
         orders.push(retOrder.data.orderId)
-      }      
+      }
     }
     return { code: 200, msg: '拆单成功', orders }
   }
@@ -386,6 +384,7 @@ class OrderController extends Controller {
         areaId: newOrder.extract.areaId,
         orderType: newOrder.orderType,
         amount: newOrder.total,
+        state: 1,
       })
       if (!bill) {
         logger.error({ msg: '收益生成错误！', bill })
@@ -427,7 +426,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return !moment().isBetween(start, pause)
+    return moment().isBetween(start, pause)
   }
 }
 
