@@ -6,8 +6,10 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/indexSales', jwt, contr.index.getIndexSales)
 
   // 购物车
-  router.get('/small/card', jwt, contr.shoppingCart.getCard)
-  router.post('/small/card', jwt, contr.shoppingCart.increaseCard)
+  router.get('/small/cart', jwt, contr.shoppingCart.getCard)
+  router.post('/small/cart', jwt, contr.shoppingCart.increaseCard)
+  router.post('/small/cart/reduce', jwt, contr.shoppingCart.reduceCard)
+  router.delete('/small/cart/:id', jwt, contr.shoppingCart.deleteCard)
 
   router.get('/small/userInfo', jwt, contr.login.getUserInfo)
   router.put('/small/userInfo/:id', contr.login.updateInfo)
