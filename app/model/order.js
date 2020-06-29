@@ -36,7 +36,8 @@ module.exports = app => {
     payTime: { type: Date, default: -1, required: true }, // 支付时间
     total: { type: Number, required: true },
     payResult: { type: Object, default: {}},
-    orderType: { type: Number, required: true } // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发
+    orderType: { type: Number, required: true }, // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发
+    isExtractReceive: { type: Boolean, default: false } // 是否是收货点接货 收货点的话不用填收货地址信息
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

@@ -60,7 +60,7 @@ class OrderController extends Controller {
     }
 
     // 判断有多少未支付订单 或许不用判断
-    const { products, extractId, addressId, isExtractReceive } = req.body
+    const { products, extractId, addressId, isExtractReceive, isCart } = req.body
     if (!products || !products.length) {
       ctx.body = { code: 201, msg: '商品有误' }
       return
@@ -74,11 +74,25 @@ class OrderController extends Controller {
       return
     }
 
-    const { code, error, data, msg } = await service.order.create({ products, extractId, userId, addressId })
+    const { code, error, data, msg } = await service.order.create({ 
+      products, 
+      extractId, 
+      userId, 
+      addressId,
+      isExtractReceive,
+    })
     if (code !== 200) {
       ctx.logger.error({ code: error.code, msg, data: error.productId })
       ctx.body = { code: error.code, msg, data: error.productId }
       return
+    }
+    // 如果是购物车请求 订单成功后清空
+    if (isCart) {
+      const cart = await service.shoppingCart.updateOne(userId, {
+        userId,
+        products: [],
+      })
+      ctx.logger.error({ msg: '购物车清空完成', userId, cart })
     }
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
@@ -110,14 +124,7 @@ class OrderController extends Controller {
       ctx.body = { code, msg }
       return
     }
-    if (data !== null) {
-      const deliveryRet = await this.makeDeliveryNote(order)
-      if (!deliveryRet) {
-        ctx.logger.error({ msg: '配送单生成错误！', data })
-      } else {
-        ctx.logger.error({ msg: '配送单更新创建成功！', noteId: deliveryRet.noteId })
-      }
-    }
+
     // 签名信息存入订单
     await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
 
@@ -130,6 +137,7 @@ class OrderController extends Controller {
       let { appid, mchid, spbillCreateIp, tradeType, prepayUrl, wxurl, mchkey, body } = wxConfig
       let nonceStr = ctx.helper.createNonceStr()
       let totalFee = ctx.helper.getmoney(total)
+
       let sign = ctx.helper.paysignjsapi({ ...wxConfig, totalFee, nonceStr, orderId, openid })
       //组装xml数据
       let xml = "<xml>";
@@ -154,7 +162,7 @@ class OrderController extends Controller {
       resultXml = resultXml.toString("utf-8")
 
       // xml存入指定 订单
-      await ctx.service.order.updateOne(orderId, { resultXml })
+      let order = await ctx.service.order.updateOne(orderId, { resultXml })
 
       read(resultXml, (errors, value)=>{
         const {
@@ -165,16 +173,20 @@ class OrderController extends Controller {
           result_code,
         } = value.xml
 
-        if (return_code.text() !== 'SUCCESS' ) {
-          ctx.logger.error({ code: return_code.text(), msg: result_code.text(), errors })
-          return resolve({ code: 201, msg: '支付失败，请联系管理员', data: return_msg.text() })
-        }
-
         if (result_code.text() !== 'SUCCESS' ) {
-          const errCode = err_code.text()
-          if (errCode === 'ORDERPAID') {
-            ctx.logger.error({ code: 201, msg: '订单已支付！', data: errCode })
-            return resolve({ code: 201, msg: '订单已支付！', data: null })
+          if (err_code) {
+            const errCode = err_code.text()
+            if (errCode === 'ORDERPAID') {
+              ctx.logger.error({ code: 201, msg: '订单已支付！', data: errCode })
+              return resolve({ code: 201, msg: '订单已支付！', data: null })
+            }
+          }
+          if (return_msg) {
+            const msg = return_msg.text()
+            if (errCode === 'ORDERPAID') {
+              ctx.logger.error({ code: 201, msg: '订单已支付！', return_msg })
+              return resolve({ code: 201, msg: '订单已支付！' })
+            }
           }
         }
 
@@ -426,7 +438,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return moment().isBetween(start, pause)
+    return !moment().isBetween(start, pause)
   }
 }
 

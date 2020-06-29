@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const moment = require('moment');
 const sha1 = require('sha1');
+const { Decimal } = require('decimal.js')
 
 function raw(args) {
 	let keys = Object.keys(args);
@@ -20,7 +21,7 @@ function raw(args) {
 module.exports = {
   //把金额转为分
   getmoney (money) {
-    return parseFloat(money) * 100;
+    return Number(new Decimal(parseFloat(money)).mul(new Decimal(100)))
   },
   // 随机字符串产生函数
   createNonceStr () {

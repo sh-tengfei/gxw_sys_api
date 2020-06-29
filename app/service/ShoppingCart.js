@@ -19,6 +19,13 @@ class ShoppingCartService extends Service {
   async increase(data) {
     let { model, service } = this.ctx
     let cart = await this.findOne(data.userId)
+    const product = await service.product.findOne({ productId: data.productId })
+    if (product.stockNumber <= 0) {
+      return {
+        code: 201,
+        msg: '商品无库存！',
+      }
+    }
     // 不存在购物车数据
     if (cart === null) {
       try {
@@ -54,7 +61,6 @@ class ShoppingCartService extends Service {
       }
     }
     if (inProduct) {
-      const product = await service.product.findOne({ productId: data.productId })
       // 输入的数字超库存
       if (data.buyNum && product.stockNumber < inProduct.buyNum) {
         return {
@@ -99,9 +105,10 @@ class ShoppingCartService extends Service {
     return newCart;
   }
   async reduce(data) {
+    const { ctx } = this
     let cart = await this.findOne(data.userId)
     const inProduct = this.getProductId(cart, data.productId)
-    const product = await service.product.findOne({ productId: data.productId })
+    const product = await ctx.service.product.findOne({ productId: data.productId })
     if (!product.stockNumber) {
       return {
         code: 201,
