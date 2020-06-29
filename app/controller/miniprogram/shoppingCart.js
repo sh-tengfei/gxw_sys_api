@@ -52,6 +52,26 @@ class ShoppingCartController extends Controller {
     }
     ctx.body = { code: 200, msg: '操作成功', data: cart }
   }
+  async statusCard() {
+    const { ctx, app } = this
+    const { service, state, request: req } = ctx
+    const { productId, status } = req.body
+    const { userId } = state.user
+
+    if (!productId || status === undefined) {
+      ctx.body = { code: 201, msg: '参数不正确', data: req.body }
+      return
+    }
+
+    let cart = await service.shoppingCart.findOne(userId)
+
+    const product = service.shoppingCart.getProductId(cart, productId)
+    product.status = !!status
+
+    cart = await service.shoppingCart.updateOne(userId, cart)
+
+    ctx.body = { code: 200, msg: '修改成功', data: cart }
+  }
   async reduceCard() {
     const { ctx, app } = this
     const { service, state, request: req } = ctx

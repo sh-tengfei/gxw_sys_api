@@ -6,10 +6,12 @@ class ShoppingCartService extends Service {
     const { ctx } = this
     const cart = await ctx.model.ShoppingCart.findOne({ userId }).lean()
 
-    for (const item of cart.products) {
-      const product = await ctx.service.product.findOne({ productId: item.productId })
-      item.product = product
-      item.stockNumber = product.stockNumber
+    if (cart) {
+      for (const item of cart.products) {
+        const product = await ctx.service.product.findOne({ productId: item.productId })
+        item.product = product
+        item.stockNumber = product.stockNumber
+      }
     }
 
     return cart
@@ -33,9 +35,15 @@ class ShoppingCartService extends Service {
         cart = await model.ShoppingCart.create(cart)
       } catch (e) {
         console.log(e)
-        return e
+        return {
+          code: 201,
+          msg: '添加失败！',
+        }
       }
-      return
+      return {
+        code: 200,
+        msg: '添加成功！',
+      }
     }
     // 存在购物车数据
     const inProduct = this.getProductId(cart, data.productId)

@@ -9,6 +9,7 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/cart', jwt, contr.shoppingCart.getCard)
   router.post('/small/cart', jwt, contr.shoppingCart.increaseCard)
   router.post('/small/cart/reduce', jwt, contr.shoppingCart.reduceCard)
+  router.post('/small/cart/status', jwt, contr.shoppingCart.statusCard)
   router.delete('/small/cart/:id', jwt, contr.shoppingCart.deleteCard)
 
   router.get('/small/userInfo', jwt, contr.login.getUserInfo)
