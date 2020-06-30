@@ -2,6 +2,8 @@ export default function({ router, controller: contr, jwt }) {
   // 小程序 api
   router.get('/small/index', contr.index.index)
   router.post('/small/login', contr.login.getUser)
+  router.post('/small/getPhone', contr.login.getPhone)
+
   // 首页的销售数据
   router.get('/small/indexSales', jwt, contr.index.getIndexSales)
 
@@ -33,6 +35,8 @@ export default function({ router, controller: contr, jwt }) {
   // 收货地址
   router.get('/small/address', jwt, contr.address.getAddress)
   router.get('/small/address/:id', jwt, contr.address.getOneAddress)
+  router.delete('/small/address/:id', jwt, contr.address.delAddress)
+  router.put('/small/address/:id', jwt, contr.address.putAddress)
   router.post('/small/address', jwt, contr.address.makeAddress)
 
   // 团长端登录

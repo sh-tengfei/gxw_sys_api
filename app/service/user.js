@@ -2,9 +2,6 @@ import { Service } from 'egg'
 import moment from 'moment'
 
 class UserService extends Service {
-  async find() {
-
-  }
   async findOne(query) {
     let user = await this.ctx.model.User.findOne(query)
     return user;
@@ -29,7 +26,16 @@ class UserService extends Service {
   async delete(userId) {
 
   }
-
+  async getPhone({ sessionKey, encryptedData, iv }) {
+    const config = this.app.config.mallMiniprogram
+    const enCodeData = this.ctx.helper.decryptData({ 
+      appId: config.AppID,
+      sessionKey: sessionKey,
+      iv,
+      encryptedData,
+    })
+    return enCodeData
+  }
 }
 
 module.exports = UserService;

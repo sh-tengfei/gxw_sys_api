@@ -26,19 +26,18 @@ class AddressService extends Service {
     let address = await ctx.model.Address.findOne({addressId})
     return address;
   }
-  async findOneName(query) {
-    const { ctx } = this;
-    let address = await ctx.model.Address.findOne(query)
-    return address;
-  }
   async create(data) {
-  	const { ctx } = this;
-   
+    const { model, state, service } = this.ctx
+    const { userId } = state.user
+
     let newAddress, addressId = 'addressId';
-    data.addressId = await ctx.service.counters.findAndUpdate(addressId)
-    
+    data.addressId = await service.counters.findAndUpdate(addressId)
+    if (data.isDefault) {
+      // 找到默认那条数据改变状态
+      const defaultAddr = await model.Address.findOneAndUpdate({ userId, isDefault: true }, { isDefault: false })
+    }
     try{
-      newAddress = await ctx.model.Address.create(data)
+      newAddress = await model.Address.create(data)
     }catch (e) {
       console.log(e);
       return e
@@ -52,6 +51,14 @@ class AddressService extends Service {
   }
   async delete(addressId) {
     return await this.ctx.model.Address.findOneAndRemove({addressId})
+  }
+  async changeStatus(addressId, data) {
+    const { model, state } = this.ctx
+    const { userId } = state.user
+    // 找到默认那条数据改变状态
+    const defaultAddr = await model.Address.findOneAndUpdate({ userId, isDefault: true }, { isDefault: false })
+    const upData = this.updateOne(addressId, data)
+    return upData
   }
 }
 

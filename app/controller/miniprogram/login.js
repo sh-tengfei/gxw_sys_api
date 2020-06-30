@@ -21,7 +21,12 @@ class LoginController extends Controller {
 
     let user = await ctx.service.user.findOne({ unionid: userInfo.unionid })
     if (user !== null) {
-      ctx.body = { code: 200, msg: '登陆成功！', data: { token: this.createUserToken(user), user } }
+      ctx.body = { 
+        code: 200,
+        msg: '登陆成功！',
+        data: { token: this.createUserToken(user), user },
+        session_key: userInfo.session_key,
+      }
       return
     }
     ctx.logger.info('用户注册: %j', ctx.request.body)
@@ -30,18 +35,27 @@ class LoginController extends Controller {
       user = await ctx.service.user.create({
         openid: userInfo.openid,
         unionid: userInfo.unionid,
-        userInfo: null,
+        userInfo: null
       })
       if (!user) {
         ctx.logger.error({ msg: '保存失败，联系管理员', data: user })
-        ctx.body = { msg: '保存失败，联系管理员', data: user }
+        ctx.body = { 
+          msg: '保存失败，联系管理员', 
+          data: user,
+        }
         return
       }
-      ctx.body = { code: 200, msg: '登陆成功！', data: { token: this.createUserToken(user), user } }
+      ctx.body = { 
+        code: 200, 
+        msg: '登陆成功！', 
+        data: { token: this.createUserToken(user), user }, 
+        session_key: userInfo.session_key
+      }
       return
     } catch (e) {
-      ctx.logger.error({ msg: '保存失败，联系管理员', data: e })
-      return ctx.body = { msg: '登陆失败，联系管理员', data: e }
+      let ret = { msg: '保存失败，联系管理员', data: e }
+      ctx.logger.error(ret)
+      return ctx.body = ret
     }
   }
   // 创建User token { userId }
@@ -54,7 +68,7 @@ class LoginController extends Controller {
   // 更新用户
   async updateInfo() {
     const { ctx, app } = this;
-    const { request: req, params } = ctx
+    const { request: req, params, service } = ctx
     let { nickName, avatarUrl } = req.body
     const newData = {
       username: nickName,
@@ -67,7 +81,7 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误', code: 201 }
       return
     }
-    let user = await this.ctx.service.user.updateOne(params.id, newData)
+    let user = await service.user.updateOne(params.id, newData)
 
     if (!user) {
       ctx.body = { msg: '更新失败', data: user, code: 201 }
@@ -149,7 +163,7 @@ class LoginController extends Controller {
   async updateAgent() {
     const { ctx, app } = this;
     const { request: req, params, service } = ctx
-    let { nickName, avatarUrl } = req.body
+    let { nickName } = req.body
     const newData = {
       nickName: nickName,
       userInfo: {
@@ -174,6 +188,17 @@ class LoginController extends Controller {
     }
 
     ctx.body = { msg: '更新成功', code: 200, data: agent }
+  }
+  async getPhone() {
+    const { ctx, app } = this;
+    const { request: req, params, service } = ctx
+
+    const phoneData = await service.user.getPhone({
+      sessionKey: req.body.session_key,
+      iv: req.body.iv,
+      encryptedData: req.body.encryptedData
+    })
+    ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
 }
 

@@ -11,7 +11,6 @@ module.exports = app => {
     city: { type: String, require: true },
     county: { type: String },
     isDefault: { type: Boolean, require: true },
-    current: { type: Boolean, require: true, default: false },
     userId: { type: String, required: true }
   }, {
     versionKey: false,

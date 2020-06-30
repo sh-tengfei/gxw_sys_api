@@ -9,7 +9,6 @@ class ClassifyService extends Service {
     delete query.limit
     delete query.skip
 
-
     const list = await ctx.model.Classify.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
     
     for (const i of list) {
