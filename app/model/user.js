@@ -7,7 +7,7 @@ module.exports = app => {
     userId: { type: String, required: true, unique: true },
     level: { type: Number, default: 1 },
     levelText: { type: String, default: '普通会员' },
-    mobile: { type: Number, default: 0 },
+    phone: { type: Number, default: 0 },
     unionid: { type: String, required: true, unique: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },
@@ -22,7 +22,8 @@ module.exports = app => {
       city: { type: String, default: '' },
       province: { type: String, default: '' },
       country: { type: String, default: '' },
-      gender: { type: Number, default: '' } // 性别 0：未知、1：男、2：女
+      gender: { type: Number, default: '' }, // 性别 0：未知、1：男、2：女
+      phoneNumber: { type: String, default: '' }
     }
   }, {
     versionKey: false,

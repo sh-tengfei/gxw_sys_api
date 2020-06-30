@@ -73,9 +73,8 @@ class LoginController extends Controller {
     const newData = {
       username: nickName,
       picture: avatarUrl,
-      source: {
-        ...req.body
-      }
+      phone: req.body.phoneNumber,
+      source: req.body
     }
     if (!params.id) {
       ctx.body = { msg: '参数错误', code: 201 }
@@ -189,9 +188,9 @@ class LoginController extends Controller {
 
     ctx.body = { msg: '更新成功', code: 200, data: agent }
   }
-  async getPhone() {
+  async getUserPhone() {
     const { ctx, app } = this;
-    const { request: req, params, service } = ctx
+    const { request: req, service } = ctx
 
     const phoneData = await service.user.getPhone({
       sessionKey: req.body.session_key,
