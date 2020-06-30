@@ -7,7 +7,7 @@ module.exports = app => {
     userId: { type: String, required: true, unique: true },
     level: { type: Number, default: 1 },
     levelText: { type: String, default: '普通会员' },
-    phone: { type: Number, default: 0 },
+    phone: { type: String, default: '' },
     unionid: { type: String, required: true, unique: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },

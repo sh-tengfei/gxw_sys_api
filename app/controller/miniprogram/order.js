@@ -255,9 +255,11 @@ class OrderController extends Controller {
 
       const bill = await this.createBill(orders, Date.now(), {}, 'xml')
       if (bill.code === 200) {
-        ctx.body = { code: 200, msg: '收益创建成功' }
+        logger.info({ msg: '收益创建成功', orderId: order.orderId  })
+        ctx.body = { code: 200, msg: '支付成功' }
       } else {
-        ctx.body = { code: 201, msg: '收益创建错误', bill }
+        logger.info({ msg: '收益创建错误', orderId: order.orderId  })
+        ctx.body = { code: 201, msg: '支付错误', bill }
       }
       return
     }
@@ -438,7 +440,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return !moment().isBetween(start, pause)
+    return moment().isBetween(start, pause)
   }
 }
 
