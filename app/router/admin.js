@@ -1,6 +1,9 @@
 export default function({ router, controller, jwt }) {
   // 后台系统 api
-  router.get('/admin/qnToken', jwt, controller.user.getQnToken)
+  router.get('/admin/qnToken', jwt, controller.admin.getQnToken)
+
+  // 商城用户
+  router.get('/admin/users', jwt, controller.user.getUsers)
 
   router.get('/admin/productType', jwt, controller.common.getProductType)
 
@@ -8,8 +11,8 @@ export default function({ router, controller, jwt }) {
   router.post('/admin/logout', controller.login.logout)
   router.post('/admin/add', controller.login.addAdmin)
 
-  router.get('/admin/userInfo', jwt, controller.user.userInfo)
-  router.get('/admin/dashboard', jwt, controller.user.dashboard)
+  router.get('/admin/userInfo', jwt, controller.admin.userInfo)
+  router.get('/admin/dashboard', jwt, controller.admin.dashboard)
   router.get('/admin/salesData', jwt, controller.sales.salesData)
   router.get('/admin/agentList', jwt, controller.agent.agentList)
   router.put('/admin/agent/:id', jwt, controller.agent.updateAgent)

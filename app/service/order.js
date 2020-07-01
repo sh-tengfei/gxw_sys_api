@@ -40,7 +40,7 @@ class OrderService extends Service {
     return {
       list,
       total
-    };
+    }
   }
   async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
     const { model, service } = this.ctx

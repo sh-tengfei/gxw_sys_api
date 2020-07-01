@@ -6,6 +6,28 @@ class UserService extends Service {
     let user = await this.ctx.model.User.findOne(query)
     return user;
   }
+  async find(query, option = {}, other = {}) {
+    const { ctx } = this
+    const { model } = ctx
+    const { limit = 10, skip = 0 } = option
+
+    delete query.limit
+    delete query.skip
+
+    const list = await model.User.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: -1})
+    
+    for (const i of list ) {
+      i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+    }
+
+    const total = await model.User.find(query).countDocuments()
+
+    return {
+      list,
+      total
+    }
+  }
   async create(data) {
     const { ctx } = this;
     let newUser, userId = 'userId';
