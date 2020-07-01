@@ -3,7 +3,7 @@ import { Controller } from 'egg'
 
 class LoginController extends Controller {
   // 商城登录
-  async getUser() {
+  async getUserLogin() {
     const { ctx, app } = this;
     const { code } = ctx.request.body
 
@@ -130,7 +130,12 @@ class LoginController extends Controller {
       } else {
         agent.isReg = false
       }
-      ctx.body = { code: 200, msg: '登陆成功！', data: { token, user: agent } }
+      ctx.body = { 
+        code: 200, 
+        msg: '登陆成功！', 
+        data: { token, user: agent },
+        session_key: userInfo.session_key
+      }
       return
     }
     // 不存在团长 创建
@@ -146,7 +151,12 @@ class LoginController extends Controller {
         return
       }
       const token = this.createAgentToken(agent)
-      ctx.body = { code: 200, msg: '登陆成功！', data: { token, user: agent } }
+      ctx.body = { 
+        code: 200,
+        msg: '登陆成功！',
+        data: { token, user: agent },
+        session_key: userInfo.session_key
+      }
       return
     } catch (e) {
       ctx.logger.error({ msg: '保存失败，联系管理员', data: e })
@@ -162,9 +172,17 @@ class LoginController extends Controller {
   async updateAgent() {
     const { ctx, app } = this;
     const { request: req, params, service } = ctx
-    let { nickName } = req.body
+    let { nickName, applyPhone } = req.body
+
+    let oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
+    if (oldAgent !== null) {
+    	ctx.body = { msg: '该手机号码已使用！', code: 201 }
+    	return
+    }
+    
     const newData = {
-      nickName: nickName,
+      nickName,
+      applyPhone,
       userInfo: {
         ...req.body
       }
@@ -196,6 +214,19 @@ class LoginController extends Controller {
       sessionKey: req.body.session_key,
       iv: req.body.iv,
       encryptedData: req.body.encryptedData
+    })
+    ctx.body = { msg: '获取成功', code: 200, data: phoneData }
+  }
+
+  async getAgentPhone() {
+    const { ctx } = this
+    const { service, params, request: req, } = ctx
+
+    const phoneData = await service.user.getPhone({
+      sessionKey: req.body.sessionkey,
+      iv: req.body.iv,
+      encryptedData: req.body.encryptedData,
+      type: 'groupMiniprogram'
     })
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }

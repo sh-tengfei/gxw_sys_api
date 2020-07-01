@@ -11,9 +11,9 @@ class AgentController extends Controller {
     const { ctx } = this
     const { request: req, service, state } = ctx
     
-    let agent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
+    let agent = await service.agent.findOne({ communityName: req.body.communityName })
     if (agent !== null) {
-    	ctx.body = { msg: '该手机号码已使用！', code: 201 }
+    	ctx.body = { msg: '该社区名称已使用！', code: 201 }
     	return
     }
     agent = await service.agent.updateOne(state.user.userId, req.body)

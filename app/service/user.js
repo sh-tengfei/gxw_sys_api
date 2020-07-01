@@ -26,8 +26,8 @@ class UserService extends Service {
   async delete(userId) {
 
   }
-  async getPhone({ sessionKey, encryptedData, iv }) {
-    const config = this.app.config.mallMiniprogram
+  async getPhone({ sessionKey, encryptedData, iv, type='mallMiniprogram' }) {
+    const config = this.app.config[type]
     const enCodeData = this.ctx.helper.decryptData({ 
       appId: config.AppID,
       sessionKey: sessionKey,

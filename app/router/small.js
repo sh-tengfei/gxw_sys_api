@@ -1,7 +1,7 @@
 export default function({ router, controller: contr, jwt }) {
   // 小程序 api
   router.get('/small/index', contr.index.index)
-  router.post('/small/login', contr.login.getUser)
+  router.post('/small/login', contr.login.getUserLogin)
   router.post('/small/getUserPhone', contr.login.getUserPhone)
 
   // 首页的销售数据
@@ -42,9 +42,12 @@ export default function({ router, controller: contr, jwt }) {
   // 团长端登录
   router.get('/small/groupLogin', contr.login.getGroupLogin)
   router.put('/small/agent/:id', jwt, contr.login.updateAgent) // 登陆后更新信息
+  router.post('/small/getAgentPhone', jwt, contr.login.getAgentPhone)
+
   router.post('/small/agent', jwt, contr.agent.regGroupUser) // 团长注册
   router.get('/small/deliveryNote', jwt, contr.deliveryNote.getDeliveryList)
   router.get('/small/deliveryNote/:id', jwt, contr.deliveryNote.getDeliveryDetail)
+  router.put('/small/deliveryNote/:id', jwt, contr.deliveryNote.updateDelivery)
 
   // 团长销售业绩
   router.get('/small/sales', jwt, contr.sales.getSales)

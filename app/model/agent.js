@@ -21,7 +21,7 @@ module.exports = app => {
     communityName: { type: String, default: '' }, // 社区名称
     communitySite: { type: String, default: '' }, // 社区地址
     referrer: { type: String, default: '' }, // 推荐人
-    applyPhone: { type: Number, default: 0 },
+    applyPhone: { type: String, default: '' }, // 团长手机号
     applyName: { type: String, default: '' },
     location: {
       latitude: { type: Number, default: 0 },
