@@ -440,7 +440,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return moment().isBetween(start, pause)
+    return !moment().isBetween(start, pause)
   }
 }
 
