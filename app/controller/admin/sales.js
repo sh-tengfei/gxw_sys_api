@@ -1,12 +1,14 @@
 'use strict';
 
-const Controller = require('egg').Controller;
+import { Controller } from 'egg'
+import moment from 'moment'
+import { Decimal } from 'decimal.js'
 
 class SalesController extends Controller {
   async salesData() {
     let { ctx, app } = this
-    const { request, service, query } = ctx
-    const opt = {state: -1}
+    const { service, query } = ctx
+    const opt = { state: [2,3,4,5] }
     const option = {}
     if (query.limit) {
       option.limit = query.limit
@@ -14,13 +16,148 @@ class SalesController extends Controller {
     if (query.page) {
       option.page = query.page
     }
-    if (query.phone) {
-      opt.applyPhone = query.phone
+
+    opt.createTime = { 
+      '$gte': moment(query.startTime), 
+      '$lte': moment(query.endTime) 
     }
-    const { list, total } = await service.agent.find(opt, option)
+
+    const { list, total } = await service.order.find(opt, option)
+    
+    let orderTotal = 0, 
+        agentTotal = 0, 
+        productTotal = 0, 
+        userTotal = 0,
+        totalAmount = 0;
+
+    orderTotal = total
+    let agentList = [] //代理ID列表
+    let productList = [] //商品ID列表
+    let userList = [] //用户ID列表
+
+    let productData = {} //商品数据列表
+    let agentData = {} //代理数据列表
+    let userData = {} //用户ID列表
+
+    // 订单分类汇总
+    list.forEach((i) => {
+      // 总金额
+      totalAmount = new Decimal(totalAmount).add(i.total)
+
+      agentList.push(i.extractId)
+      if (!agentData[i.extractId]) {
+        agentData[i.extractId] = []
+      }
+      agentData[i.extractId].push(i)
+
+      i.products.forEach(e => {
+        productList.push(e.productId)
+        if (!productData[e.productId]) {
+          productData[e.productId] = []
+        }
+        productData[e.productId].push(e)
+      })
+
+      userList.push(i.userId)
+      if (!userData[i.userId]) {
+        userData[i.userId] = []
+      }
+      userData[i.userId].push(i)
+    })
+    
+    // 去重求长度
+    agentTotal = new Set(agentList).size
+    productTotal = new Set(productList).size
+    userTotal = new Set(userList).size
+
+    // 商品数据计算
+    const productDataList = []
+    for (const key in productData) {
+      let product = await service.product.findOne({
+        productId: key
+      })
+
+      let totalNum = 0
+      let rewardAmount = 0
+      let orderIds = []
+      for (const item of productData[key]) {
+        totalNum = new Decimal(totalNum).add(item.total)
+        rewardAmount = new Decimal(rewardAmount).add(item.reward)
+        orderIds.push(item.orderId)
+      }
+      
+      productDataList.push({
+        product,
+        orderIds,
+        totalAmount: totalNum,
+        rewardAmount,
+        orderNum: productData[key].length
+      })
+    }
+
+    // 代理数据计算
+    const agentDataList = []
+    for (const key in agentData) {
+      let agent = await service.agent.findOne({
+        extractId: key
+      })
+
+      let totalNum = 0
+      let rewardAmount = 0
+      let orderIds = []
+      for (const item of agentData[key]) {
+        totalNum = new Decimal(totalNum).add(item.total)
+        rewardAmount = new Decimal(rewardAmount).add(item.reward)
+        orderIds.push(item.orderId)
+      }
+      
+      agentDataList.push({
+        agent,
+        orderIds,
+        rewardAmount,
+        totalAmount: totalNum,
+        orderNum: agentData[key].length
+      })
+    }
+
+    // 代理数据计算
+    const userDataList = []
+    for (const key in userData) {
+      let user = await service.user.findOne({
+        userId: key
+      })
+
+      let totalNum = 0
+      let rewardAmount = 0
+      let orderIds = []
+      for (const item of userData[key]) {
+        totalNum = new Decimal(totalNum).add(item.total)
+        rewardAmount = new Decimal(rewardAmount).add(item.reward)
+        orderIds.push(item.orderId)
+      }
+      
+      userDataList.push({
+        user,
+        orderIds,
+        rewardAmount,
+        totalAmount: totalNum,
+        orderNum: userData[key].length
+      })
+    }
+
     ctx.body = { code: 200, msg: '', data: {
-      list,
-      total
+      totalAmount,
+      orderTotal,
+      agentTotal,
+      productTotal,
+      userTotal,
+      total,
+
+      userData,
+
+      agentDataList,
+      productDataList,
+      userDataList,
     } }
   }
 }
