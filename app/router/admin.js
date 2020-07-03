@@ -40,6 +40,7 @@ export default function({ router, controller, jwt }) {
 
   router.get('/admin/classify', jwt, controller.classify.getClassifys)
   router.post('/admin/classify', jwt, controller.classify.newClassify)
+  router.delete('/admin/classify/:id', jwt, controller.classify.delClassify)
 
   router.get('/admin/delivery-note', jwt, controller.deliveryNote.getDeliveryNote)
   router.put('/admin/delivery-note/:id', jwt, controller.deliveryNote.putDeliveryNote)

@@ -56,7 +56,7 @@ class OrderService extends Service {
     }
     return order
   }
-  async create({ products, extractId, userId, addressId, parentId='0', orderType = 0, payEndTime, isExtractReceive }) {
+  async create({ products, extractId, userId, addressId, parentId='0', orderType = 0, payEndTime, isExtractReceive, city }) {
     const { service, model } = this.ctx
 
     let total = 0
@@ -111,6 +111,7 @@ class OrderService extends Service {
       reward,
       payEndTime: payEndTime || moment().add(30, 'minutes'),
       isExtractReceive,
+      city,
     }
     try {
       // 主订单创建 支付完成后再拆单

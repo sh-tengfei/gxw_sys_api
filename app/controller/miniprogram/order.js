@@ -74,12 +74,15 @@ class OrderController extends Controller {
       return
     }
 
+    const { areaId } = await service.agent.findOne({ extractId: extractId })
+
     const { code, error, data, msg } = await service.order.create({ 
       products, 
       extractId, 
       userId, 
       addressId,
       isExtractReceive,
+      city: areaId,
     })
     if (code !== 200) {
       ctx.logger.error({ code: error.code, msg, data: error.productId })
@@ -240,6 +243,13 @@ class OrderController extends Controller {
       logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
       return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
     }
+    // 更新用户购买金额
+    const user = await service.user.updateOne(order.userId, {
+      $inc: { buyTotal: order.total }
+    })
+    if (user) {
+      logger.error({ msg: '用户支付金额修改成功', userId: user.userId })
+    }
 
     if (order.state === 1) {
       // 执行拆单逻辑
@@ -286,7 +296,14 @@ class OrderController extends Controller {
         logger.error({ msg: '订单状态已支付，不再做修改', orderId: order.orderId })
         return
       }
-
+      // 更新用户购买金额
+      const user = await service.user.updateOne(order.userId, {
+        $inc: { buyTotal: order.total }
+      })
+      if (user) {
+        logger.error({ msg: '用户支付金额修改成功', userId: user.userId })
+      }
+      
       // 执行拆单逻辑
       const { orders, code, msg, error } = await this.splitChildOrder(order)
 
@@ -369,7 +386,7 @@ class OrderController extends Controller {
   }
   async createBill(orders, time_end, option, body) {
     const { ctx } = this;
-    const { service, params, logger } = ctx
+    const { service, logger } = ctx
     for (const orderId of orders) {
       // 更新订单状态支付信息
       await service.order.updateOne(orderId, {

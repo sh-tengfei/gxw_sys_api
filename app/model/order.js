@@ -23,6 +23,7 @@ module.exports = app => {
         reward: { type: Number, required: true }
       }
     ],
+    city: { type: String, required: true }, // 订单城市
     reward: { type: Number, required: true }, // 该订单的团长收益
     resultXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb

@@ -16,12 +16,26 @@ class AdminController extends Controller {
     ctx.body = { code: 200, msg: '', data: { user: data, config: qiniuConfig }}
   }
   async dashboard() {
-    let { ctx, app } = this
+    const { ctx } = this
+    const { service, model } = ctx
+    const { total: orderTotal } = await service.order.find({ state: -1 })
+    const { total: productTotal } = await service.product.find({ state: -1 })
+    const { total: userTotal } = await service.user.find({ state: -1 })
+    const quota = await model.Order.aggregate([
+      { 
+        $group: { 
+          _id: null, 
+          amount: { 
+            $sum: "$total"
+          }
+        }
+      }
+    ])
     ctx.body = { code: 200, msg: '', data: {
-      user: 1000,
-      product: 100,
-      order: 100,
-      quota: 10000,
+      user: userTotal,
+      product: productTotal,
+      order: orderTotal,
+      quota: quota[0].amount,
     } }
   }
   async getQnToken() {

@@ -29,6 +29,20 @@ class ClassifyController extends Controller {
     const { list, total } = await ctx.service.classify.find(opt)
     ctx.body = { code: 201, msg: '', data: { list, total } }
   }
+  async delClassify() {
+    const { app, ctx } = this
+    const { params, service } = ctx
+    if (!params.id) {
+      ctx.body = { code: 201, msg: '参数不正确！' }
+      return
+    }
+    const data = await service.classify.delete(params.id)
+    if (data) {
+      ctx.body = { code: 200, msg: '删除成功', data }
+      return
+    }
+    ctx.body = { code: 201, msg: '删除失败', data }
+  }
 }
 
 module.exports = ClassifyController;

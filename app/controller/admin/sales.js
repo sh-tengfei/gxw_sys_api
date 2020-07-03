@@ -24,13 +24,11 @@ class SalesController extends Controller {
 
     const { list, total } = await service.order.find(opt, option)
     
-    let orderTotal = 0, 
-        agentTotal = 0, 
+    let agentTotal = 0, 
         productTotal = 0, 
         userTotal = 0,
         totalAmount = 0;
 
-    orderTotal = total
     let agentList = [] //代理ID列表
     let productList = [] //商品ID列表
     let userList = [] //用户ID列表
@@ -80,15 +78,18 @@ class SalesController extends Controller {
       let totalNum = 0
       let rewardAmount = 0
       let orderIds = []
+      let buyNum = 0
       for (const item of productData[key]) {
         totalNum = new Decimal(totalNum).add(item.total)
         rewardAmount = new Decimal(rewardAmount).add(item.reward)
+        buyNum = new Decimal(buyNum).add(item.buyNum)
         orderIds.push(item.orderId)
       }
       
       productDataList.push({
         product,
         orderIds,
+        buyNum,
         totalAmount: totalNum,
         rewardAmount,
         orderNum: productData[key].length
@@ -147,13 +148,11 @@ class SalesController extends Controller {
 
     ctx.body = { code: 200, msg: '', data: {
       totalAmount,
-      orderTotal,
+      orderTotal: total,
       agentTotal,
       productTotal,
       userTotal,
       total,
-
-      userData,
 
       agentDataList,
       productDataList,
