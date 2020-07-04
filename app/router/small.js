@@ -3,8 +3,9 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/index', contr.index.index)
   router.post('/small/login', contr.login.getUserLogin)
   router.post('/small/getUserPhone', contr.login.getUserPhone)
+  router.get('/small/classify', contr.classify.getClassifys)
 
-  // 首页的销售数据
+  // 团长首页的销售数据
   router.get('/small/indexSales', jwt, contr.index.getIndexSales)
 
   // 购物车
