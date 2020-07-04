@@ -31,11 +31,12 @@ class AdminController extends Controller {
         }
       }
     ])
+    const quotaAmount = quota.shift()
     ctx.body = { code: 200, msg: '', data: {
       user: userTotal,
       product: productTotal,
       order: orderTotal,
-      quota: quota[0].amount,
+      quota: quotaAmount && quotaAmount.amount || 0,
     } }
   }
   async getQnToken() {
