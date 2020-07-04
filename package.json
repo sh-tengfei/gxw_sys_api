@@ -1,5 +1,5 @@
 {
-  "name": "resetSystem",
+  "name": "reset-system",
   "version": "1.0.0",
   "description": "果仙网小程序",
   "private": true,
@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "cross-env": "^7.0.2",
     "decimal.js": "^10.2.0",
     "egg": "^2.15.1",
     "egg-curl": "^1.0.1",
@@ -37,11 +36,11 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-resetSystem",
-    "stop": "egg-scripts stop --title=egg-server-resetSystem",
+    "start": "egg-scripts start --daemon --title=egg-server-gxw",
+    "stop": "egg-scripts stop --title=egg-server-gxw",
     "dev": "egg-bin dev",
-    "start:test": "cross-env EGG_SERVER_ENV=test egg-scripts start --daemon --title=egg-server-resetSystem",
-    "stop:test": "cross-env EGG_SERVER_ENV=test egg-scripts stop --title=egg-server-resetSystem",
+    "start:test": "egg-scripts start --daemon --env=test --title=egg-server-gxw",
+    "stop:test": "egg-scripts stop --title=egg-server-gxw",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
