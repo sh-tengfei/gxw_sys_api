@@ -124,7 +124,7 @@ module.exports = appInfo => {
       mchid: '1524492701',
       tradeType: 'JSAPI',
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
-      wxurl: 'https://mall.gxianwang.com/small/wxPayNotify',
+      wxurl: 'https://mall.gxianwang.com/api/small/wxPayNotify',
       spbillCreateIp: '39.100.114.184',
       body: 'guoxianwang',
       prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder',
