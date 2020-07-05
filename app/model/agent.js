@@ -28,8 +28,8 @@ module.exports = app => {
       longitude: { type: Number, default: 0 }
     },
     avatarUrl: { type: String, default: '' },
-    withdraw: { type: Number, default: 0 }, // 用户账户余额
-    withdrawFrozen: { type: Number, default: 0 }, // 冻结的账户余额
+    withdraw: { type: String, default: 0 }, // 用户账户余额
+    withdrawFrozen: { type: String, default: 0 }, // 冻结的账户余额
     address: {} // 省市具体信息
   }, {
     versionKey: false,

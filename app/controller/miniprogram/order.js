@@ -95,7 +95,7 @@ class OrderController extends Controller {
         userId,
         products: [],
       })
-      ctx.logger.error({ msg: '购物车清空完成', userId, cart })
+      ctx.logger.error({ msg: '购物车清空完成', userId })
     }
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
@@ -240,7 +240,6 @@ class OrderController extends Controller {
 
     const order = await service.order.findOne({ orderId: params.id })
     if (order.state === 2) {
-      console.log('微信用户端支付成功通知，已经完成不做修改！')
       logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
       return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
     }
