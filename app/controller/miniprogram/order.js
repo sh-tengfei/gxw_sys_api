@@ -240,6 +240,7 @@ class OrderController extends Controller {
 
     const order = await service.order.findOne({ orderId: params.id })
     if (order.state === 2) {
+      console.log('微信用户端支付成功通知，已经完成不做修改！')
       logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
       return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
     }
@@ -278,7 +279,7 @@ class OrderController extends Controller {
   async wxPayNotify() {
     const { ctx } = this;
     const { service, request: req, logger } = ctx
-    console.log(req.body, 'req.body')
+    
     parseString(req.body, { explicitArray:false }, async (err, option) => {
       if (err) {
         logger.error({ msg: '支付失败通知消息。', err })
