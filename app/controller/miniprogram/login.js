@@ -61,7 +61,7 @@ class LoginController extends Controller {
   // 创建User token { userId }
   createUserToken({ userId }) {
     const token = this.app.jwt.sign({ userId }, this.app.config.jwt.secret, {
-      expiresIn: '1800s',
+      expiresIn: '1d',
     }) // 生成token
     return token
   }
@@ -165,7 +165,11 @@ class LoginController extends Controller {
   }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {
-    const token = this.app.jwt.sign({ userId: extractId }, this.app.config.jwt.secret) // 生成token
+    const token = this.app.jwt.sign({ 
+      userId: extractId 
+    }, this.app.config.jwt.secret, {
+      expiresIn: '1d',
+    }) // 生成token
     return token
   }
   // 更新团长

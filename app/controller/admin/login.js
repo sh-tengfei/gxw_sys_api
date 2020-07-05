@@ -24,7 +24,7 @@ class AdminController extends Controller {
     	ctx.body = { code: 201, msg: '密码不正确' }
     } else {
       token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
-        expiresIn: '1800s',
+        expiresIn: '1d',
       })
     }
 
