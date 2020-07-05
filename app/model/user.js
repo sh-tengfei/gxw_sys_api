@@ -11,7 +11,7 @@ module.exports = app => {
     unionid: { type: String, required: true, unique: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },
-    buyTotal: { type: Number, default: 0 },
+    buyTotal: { type: String, default: '0' },
     username: { type: String, default: '' },
     source: {
       nickName: { type: String, default: '' },

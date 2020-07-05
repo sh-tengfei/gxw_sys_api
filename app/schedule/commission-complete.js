@@ -1,5 +1,6 @@
 const Subscription = require('egg').Subscription;
 const moment = require('moment')
+const Decimal = require('decimal.js').Decimal
 
 class CommissionComplete extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
@@ -30,7 +31,10 @@ class CommissionComplete extends Subscription {
         amount = type === 1 ? amount : -amount
 
         // 要去相关团长计算收益
-        const agent = await ctx.service.agent.updateOne(extractId, { $inc: { withdraw: amount } })
+        const { withdraw } = await ctx.service.agent.findOne({ extractId })
+        const agent = await ctx.service.agent.updateOne(extractId, { 
+          withdraw: new Decimal(withdraw).add(amount) 
+        })
         if (agent) {
           ctx.logger.info(agent.withdraw, '用户收益计算成功')
           // 可以发结算消息
