@@ -24,10 +24,10 @@ module.exports = appInfo => {
   }
 
   config.mongoose = {
-    url: 'mongodb://127.0.0.1:9001/newDevelop',
+    url: 'mongodb://127.0.0.1:9001/gxianwangDev',
     options: {
-      user: 'newDevelop',
-      pass: '!develop123',
+      user: 'dev1',
+      pass: '!Qing001401',
       config: { autoIndex: false },
       useNewUrlParser: true,
       useUnifiedTopology: true,
