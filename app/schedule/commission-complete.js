@@ -31,9 +31,9 @@ class CommissionComplete extends Subscription {
         amount = type === 1 ? amount : -amount
 
         // 要去相关团长计算收益
-        const { withdraw } = await ctx.service.agent.findOne({ extractId })
+        // const { withdraw } = await ctx.service.agent.findOne({ extractId })
         const agent = await ctx.service.agent.updateOne(extractId, { 
-          withdraw: new Decimal(withdraw).add(amount) 
+          $inc: { withdraw: amount }
         })
         if (agent) {
           ctx.logger.info(agent.withdraw, '用户收益计算成功')

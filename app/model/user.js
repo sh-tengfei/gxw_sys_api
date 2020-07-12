@@ -3,6 +3,10 @@
 module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
+
+  require('mongoose-double')(mongoose)
+
+  const SchemaTypes = mongoose.Schema.Types
   const user = new mongoose.Schema({
     userId: { type: String, required: true, unique: true },
     level: { type: Number, default: 1 },
@@ -11,7 +15,7 @@ module.exports = app => {
     unionid: { type: String, required: true, unique: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },
-    buyTotal: { type: String, default: '0' },
+    buyTotal: { type: SchemaTypes.Double, default: 0 },
     username: { type: String, default: '' },
     source: {
       nickName: { type: String, default: '' },

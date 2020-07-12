@@ -43,7 +43,9 @@ class OrderController extends Controller {
         opt.extractId = city
       }
     }
-
+    if (opt.state) {
+      opt.state = opt.state.split(',')
+    }
     const { list, total } = await service.order.find(opt, option)
     ctx.body = { code: 200, msg: '', data: { list, total } }
   }  

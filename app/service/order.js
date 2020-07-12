@@ -42,7 +42,7 @@ class OrderService extends Service {
       total
     }
   }
-  async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
+  async findOne(query = {}, other = { updateTime:0, _id: 0}) {
     const { model, service } = this.ctx
     const order = await model.Order.findOne(query, other).lean()
     if (order !== null) {
@@ -54,9 +54,20 @@ class OrderService extends Service {
         order.address = await service.address.findOne(order.addressId)
       }
     }
+    order.payEndTime = moment(order.payEndTime).format('YYYY-MM-DD HH:mm:ss')
+    order.createTime = moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')
     return order
   }
-  async create({ products, extractId, userId, addressId, parentId='0', orderType = 0, payEndTime, isExtractReceive, city }) {
+  // payEndTime 拆单时会传递过来 payEndTime
+  async create({ 
+    products, 
+    extractId, 
+    userId, 
+    addressId, 
+    parentId='0', 
+    orderType = 0, 
+    payEndTime, 
+    isExtractReceive, city }) {
     const { service, model } = this.ctx
 
     let total = 0
@@ -97,7 +108,6 @@ class OrderService extends Service {
     if (error) {
       return { code: 201, msg: error.msg, error }
     }
-
     let orderId = await service.counters.findAndUpdate('orderId')
     let newOrder = {
       total,

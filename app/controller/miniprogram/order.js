@@ -12,6 +12,17 @@ class OrderController extends Controller {
 
     const order = await service.order.findOne({ orderId: params.id })
 
+    if (order.state === 1) {
+      const countdown = moment(order.payEndTime).valueOf() - moment().valueOf()
+      // 一秒内直接更新状态
+      if (countdown <= 1000) {
+        const orderRet = await service.order.updateOne(order.orderId, { state: 4 })
+        ctx.body = { code: 200, msg: '获取成功', data: orderRet }
+        return
+      }
+      order.countdown = countdown
+    }
+
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
@@ -24,6 +35,8 @@ class OrderController extends Controller {
 
     query.state = query.state || -1
     query.userId = userId
+
+    query.state = query.state.split(',')
 
     // 团长端查收货地址用 extractId 参数待extractType为此类型查询
     if (query.extractType) {
@@ -239,6 +252,7 @@ class OrderController extends Controller {
     const { service, params, logger } = ctx
 
     const order = await service.order.findOne({ orderId: params.id })
+    // 理论上不存在腾讯服务调用失败
     if (order.state === 2) {
       logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
       return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
@@ -248,7 +262,7 @@ class OrderController extends Controller {
       $inc: { buyTotal: order.total }
     })
     if (user) {
-      logger.error({ msg: '用户支付金额修改成功', userId: user.userId })
+      logger.info({ msg: '用户支付金额修改成功', userId: user.userId })
     }
 
     if (order.state === 1) {
@@ -293,16 +307,21 @@ class OrderController extends Controller {
       }
 
       const order = await service.order.findOne({ orderId: out_trade_no })
-      if (order.state === 2) {
-        logger.error({ msg: '订单状态已支付，不再做修改', orderId: order.orderId })
+      if (!order) {
+        logger.error({ msg: '订单不存在！'})
         return
+      }
+      if (order.state === 2) {
+        // 存在延时支付放开限制
+        // logger.error({ msg: '订单状态已支付，不再做修改', orderId: order.orderId })
+        // return
       }
       // 更新用户购买金额
       const user = await service.user.updateOne(order.userId, {
         $inc: { buyTotal: order.total }
       })
       if (user) {
-        logger.error({ msg: '用户支付金额修改成功', userId: user.userId })
+        logger.info({ msg: '用户支付金额修改成功', userId: user.userId })
       }
       
       // 执行拆单逻辑

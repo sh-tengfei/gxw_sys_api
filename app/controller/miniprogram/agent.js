@@ -31,7 +31,7 @@ class AgentController extends Controller {
   async getNearbyAgents() {
 	  const { ctx } = this
   	const { service, query } = ctx
-    const { latitude, longitude } = query
+    const { latitude, longitude, city } = query
     if (!latitude || !longitude) {
       ctx.body = { msg: '参数错误！', code: 201 }
       return

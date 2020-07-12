@@ -45,4 +45,5 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/delivery-note', jwt, controller.deliveryNote.getDeliveryNote)
   router.put('/admin/delivery-note/:id', jwt, controller.deliveryNote.putDeliveryNote)
   router.get('/admin/export-note/:id', jwt, controller.deliveryNote.exportDeliveryNote)
+  router.get('/admin/situ-deliver', controller.order.orderList)
 }
