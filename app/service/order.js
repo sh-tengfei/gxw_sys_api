@@ -33,6 +33,9 @@ class OrderService extends Service {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
       i.user = await service.user.findOne({ userId: i.userId })
+      if (i.city) {
+        i.cityAddress = await service.sellingCity.getCity({ cityCode: i.city })
+      }
     }
 
     const total = await model.Order.find(query).countDocuments()
