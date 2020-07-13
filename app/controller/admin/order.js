@@ -1,6 +1,7 @@
 'use strict';
 
-const Controller = require('egg').Controller;
+import { Controller } from 'egg'
+import moment from 'moment'
 
 class OrderController extends Controller {
   async orderList() {
@@ -43,6 +44,16 @@ class OrderController extends Controller {
         opt.extractId = city
       }
     }
+
+    if (query.orderType) {
+      opt.orderType = query.orderType
+    }
+
+    if (query.time) {
+      const time = moment(query.time)
+      opt.createTime = { $gte: time.startOf('day').valueOf(), $lt: time.endOf('day').valueOf() }
+    }
+
     if (opt.state) {
       opt.state = opt.state.split(',')
     }
