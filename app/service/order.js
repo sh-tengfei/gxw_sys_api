@@ -157,7 +157,7 @@ class OrderService extends Service {
   async delete(adminId) {
 
   }
-  
+  // 本地发货方法 产地的也会调用
   async sendGoods(orderIds) {
     const { service, model } = this.ctx
     const retList = []

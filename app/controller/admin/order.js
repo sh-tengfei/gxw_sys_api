@@ -59,7 +59,34 @@ class OrderController extends Controller {
     }
     const { list, total } = await service.order.find(opt, option)
     ctx.body = { code: 200, msg: '', data: { list, total } }
-  }  
+  }
+  async sendGoodsOrder() {
+    const { ctx, app } = this
+    const { service, params, request: req } = ctx
+    const { expressNo } = req.body
+    if (!expressNo) {
+      ctx.body = { code: 201, msg: '参数错误' }
+      return
+    }
+    let order = await service.order.find({ orderId: params.id })
+    let ret = null
+    if (!order) {
+      ctx.body = { code: 201, msg: '订单不存在' }
+      return
+    }
+    order = await service.order.updateOne(params.id, {
+      $push: { expressNo: expressNo }
+    })
+    // 更新订单状态 //第二个更新物流不改状态 理论上不需要二次更新
+    if (order.state === 2) {
+      ret = await service.order.sendGoods([params.id])
+    }
+    if (ret.length) {
+      ctx.body = { code: 200, msg: '发货成功', data: order }
+    } else {
+      ctx.body = { code: 201, msg: '发货失败', data: ret }
+    }
+  }
 }
 
 module.exports = OrderController;
