@@ -3,6 +3,9 @@
 module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
+
+  const SchemaTypes = mongoose.Schema.Types
+
   const product = new mongoose.Schema({
     productId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -12,10 +15,10 @@ module.exports = app => {
       source: { type: Object, required: true } // 图片原始信息
     }],
     weight: { type: Number, required: true }, // 排序权重
-    scribingPrice: { type: Number, required: true }, // 折扣价 商场显示用
-    costPrice: { type: Number, required: true }, // 成本价
-    mallPrice: { type: Number, required: true }, // 商城价
-    rebate: { type: Number, required: true }, // 代理回扣
+    scribingPrice: { type: SchemaTypes.Double, required: true }, // 折扣价 商场显示用
+    costPrice: { type: SchemaTypes.Double, required: true }, // 成本价
+    mallPrice: { type: SchemaTypes.Double, required: true }, // 商城价
+    rebate: { type: SchemaTypes.Double, required: true }, // 代理回扣
     unitValue: { type: String, required: true }, // 产品单位
     locking: { type: Number, default: 0 }, // 非0即是商品被占用
     cover: { type: String, required: true }, // 缩略图

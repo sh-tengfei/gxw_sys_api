@@ -4,6 +4,8 @@
 module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
+  const SchemaTypes = mongoose.Schema.Types
+  
   const order = new mongoose.Schema({
     userId: { type: String, required: true }, // 用户信息
     orderId: { type: String, required: true, unique: true },
@@ -15,16 +17,16 @@ module.exports = app => {
         name: { type: String, required: true },
         desc: { type: String, required: true },
         buyNum: { type: Number, required: true },
-        mallPrice: { type: Number, required: true },
+        mallPrice: { type: SchemaTypes.Double, required: true },
         cover: { type: String, required: true },
         unitValue: { type: String, required: true },
         sellerType: { type: Number, required: true },
-        total: { type: Number, required: true },
-        reward: { type: Number, required: true }
+        total: { type: SchemaTypes.Double, required: true },
+        reward: { type: SchemaTypes.Double, required: true }
       }
     ],
     city: { type: String, required: true }, // 订单城市
-    reward: { type: Number, required: true }, // 该订单的团长收益
+    reward: { type: SchemaTypes.Double, required: true }, // 该订单的团长收益
     resultXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
     extractId: { type: String, default: null, required: true }, // 提货点Id
@@ -35,7 +37,7 @@ module.exports = app => {
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
-    total: { type: Number, required: true },
+    total: { type: SchemaTypes.Double, required: true },
     payResult: { type: Object, default: {}},
     orderType: { type: Number, required: true }, // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发
     isExtractReceive: { type: Boolean, default: false } // 是否是收货点接货 收货点的话不用填收货地址信息
