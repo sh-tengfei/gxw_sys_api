@@ -8,7 +8,7 @@ module.exports = app => {
 
   const SchemaTypes = mongoose.Schema.Types
   const Agent = new mongoose.Schema({
-    extractId: { type: String, required: true }, // 提货点id
+    extractId: { type: String, required: true }, // 提货点id 也就是团长ID
     state: { type: Number, default: 1 }, // 1审核中 2已通过 3停用
     openid: { type: String, required: true },
     unionid: { type: String, required: true },

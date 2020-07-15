@@ -39,6 +39,12 @@ class AgentController extends Controller {
     }
     ctx.body = { code: 200, msg: '审核成功', data }
   }
+  async verifyDrawMoney() {
+    let { ctx, app } = this
+    const { service, query } = ctx
+    // 审核通过 调用企业付款
+    ctx.body = { code: 200, msg: '审核成功', data: query }
+  }
 }
 
 module.exports = AgentController;

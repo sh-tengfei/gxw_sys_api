@@ -90,9 +90,51 @@ class AgentController extends Controller {
 
   async postWithdraw() {
     const { ctx } = this
-    const { service, params, request: req } = ctx
-    // 发起企业付
-    console.log(req.body)
+    const { service, request: req, state } = ctx
+    const { userId = '202007151008' } = {} //state.user || {}
+    let { amount } = req.body
+    amount = +amount
+    let agent = await service.agent.findOne({ extractId: userId })
+    if (!agent) {
+      ctx.body = { msg: '用户不存在' , code: 201 }
+      return
+    }
+    if (!amount || amount <= 0) {
+      ctx.body = { msg: '提现金额不正确' , code: 201 }
+      return
+    }
+    if (agent.withdraw <= 0) {
+      ctx.body = { msg: '可提现金额为0' , code: 201 }
+      return
+    }
+    if (amount > agent.withdraw) {
+      ctx.body = { msg: '提现金额大于可提金额' , code: 201 }
+      return
+    }
+    if (agent.withdrawFrozen !== 0) {
+      ctx.body = { msg: '存在冻结中的提现' , code: 201 }
+      return
+    }
+    let draw
+    try {
+      agent = await service.agent.updateOne(userId, {
+        $inc: { withdrawFrozen: amount, withdraw: -amount },
+      })
+
+      draw = await service.drawMoney.create({
+        amount,
+        extractId: userId,
+        state: 1,
+      })
+    } catch (e) {
+      // 
+    }
+
+    if (!draw) {
+      ctx.body = { msg: '提现失败，联系管理员' , code: 201, data: draw }
+      return
+    }
+    ctx.body = { msg: '预计三个工作日审核到账' , code: 200, data: draw }
   }
 }
 
