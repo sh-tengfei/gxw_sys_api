@@ -130,6 +130,7 @@ class LoginController extends Controller {
       } else {
         agent.isReg = false
       }
+
       ctx.body = { 
         code: 200, 
         msg: '登陆成功！', 

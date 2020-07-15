@@ -22,6 +22,13 @@ class AgentService extends Service {
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+      // 数字属性读出对象
+      if (typeof i.withdraw !== 'number') {
+        i.withdraw = +i.withdraw
+      }
+      if (typeof i.withdrawFrozen !== 'number') {
+        i.withdrawFrozen = +i.withdrawFrozen
+      }
     })
 
     const total = await ctx.model.Agent.find(query).countDocuments()
@@ -33,6 +40,13 @@ class AgentService extends Service {
   async findOne(query) {
     const { ctx } = this;
     let agent = await ctx.model.Agent.findOne(query).lean()
+    // 数字属性读出对象
+    if (agent && typeof agent.withdraw !== 'number') {
+      agent.withdraw = Number(agent.withdraw)
+    }
+    if (agent && typeof agent.withdrawFrozen !== 'number') {
+      agent.withdrawFrozen = +agent.withdrawFrozen
+    }
     return agent;
   }
   async create(data) {
@@ -41,6 +55,14 @@ class AgentService extends Service {
     data.extractId = await ctx.service.counters.findAndUpdate(extractId)
     try{
       newAgent = await ctx.model.Agent.create(data)
+      newAgent = newAgent.toObject()
+      // 数字属性读出对象
+      if (newAgent && typeof newAgent.withdraw !== 'number') {
+        newAgent.withdraw = +newAgent.withdraw
+      }
+      if (newAgent && typeof newAgent.withdrawFrozen !== 'number') {
+        newAgent.withdrawFrozen = +newAgent.withdrawFrozen
+      }
     }catch (e) {
       console.log(newAgent, 1);
       if (e.errors) {
@@ -54,6 +76,13 @@ class AgentService extends Service {
   async updateOne(extractId, data, other = { _id: 0, new: true }) {
     const { ctx } = this;
     let newAgent = await ctx.model.Agent.findOneAndUpdate({extractId}, data, other).lean()
+    // 数字属性读出对象
+    if (newAgent && typeof newAgent.withdraw !== 'number') {
+      newAgent.withdraw = +newAgent.withdraw
+    }
+    if (newAgent && typeof newAgent.withdrawFrozen !== 'number') {
+      newAgent.withdrawFrozen = +newAgent.withdrawFrozen
+    }
     return newAgent;
   }
   async delete(extractId) {

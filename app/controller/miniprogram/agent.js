@@ -87,6 +87,13 @@ class AgentController extends Controller {
     const agent = await service.agent.findOne({ extractId: params.id })
     ctx.body = { msg: '获取成功' , code: 200, data: agent }
   }
+
+  async postWithdraw() {
+    const { ctx } = this
+    const { service, params, request: req } = ctx
+    // 发起企业付
+    console.log(req.body)
+  }
 }
 
 module.exports = AgentController;

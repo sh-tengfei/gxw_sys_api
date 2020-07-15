@@ -32,6 +32,8 @@ export default function({ router, controller: contr, jwt }) {
 
   router.get('/small/searbys', jwt, contr.agent.getNearbyAgents)
   router.get('/small/searbys/:id', jwt, contr.agent.getSearbys)
+  // 提现
+  router.post('/small/withdraw', jwt, contr.agent.postWithdraw)
 
   // 收货地址
   router.get('/small/address', jwt, contr.address.getAddress)
