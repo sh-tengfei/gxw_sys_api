@@ -16,7 +16,8 @@ module.exports = app => {
     noteId: { type: String, required: true, unique: true },
     classifyId: { type: String, required: true, unique: true },
     billId: { type: String, required: true, unique: true },
-    addressId: { type: String, required: true, unique: true }
+    addressId: { type: String, required: true, unique: true },
+    drawMoneyId: { type: String, required: true, unique: true },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

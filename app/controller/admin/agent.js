@@ -39,11 +39,45 @@ class AgentController extends Controller {
     }
     ctx.body = { code: 200, msg: '审核成功', data }
   }
-  async verifyDrawMoney() {
+  async getDrawList() {
     let { ctx, app } = this
     const { service, query } = ctx
+    const opt = {
+    }
+    const option = {
+      page: query.page || 1,
+      limit: query.limit || 10
+    }
+    if (query.city) {
+      opt.city = query.city
+    }
+    if (query.state) {
+      opt.state = query.state
+    }
+
+    const { list, total } = await service.drawMoney.find(opt, option)
+    
     // 审核通过 调用企业付款
-    ctx.body = { code: 200, msg: '审核成功', data: query }
+    ctx.body = { code: 200, msg: '获取成功', data: {
+      list,
+      total
+    } }
+  }
+  async verifyDrawMoney() {
+    const { ctx } = this
+    const { service, params } = ctx
+    // 审核通过 调用企业付款
+    let draw = await service.drawMoney.findOne({ drawMoneyId:params.id })
+    // 执行提现请求
+    let agent = await service.agent.updateOne(draw.extractId, {
+      withdrawFrozen: 0
+    })
+
+    draw = await service.drawMoney.updateOne(draw.drawMoneyId, {
+      state: 2,
+    })
+    
+    ctx.body = { code: 200, msg: '审核成功', data: draw }
   }
 }
 

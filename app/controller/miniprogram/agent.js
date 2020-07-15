@@ -91,7 +91,7 @@ class AgentController extends Controller {
   async postWithdraw() {
     const { ctx } = this
     const { service, request: req, state } = ctx
-    const { userId = '202007151008' } = {} //state.user || {}
+    const { userId = '202007121000' } = {} //state.user || {}
     let { amount } = req.body
     amount = +amount
     let agent = await service.agent.findOne({ extractId: userId })
@@ -125,9 +125,11 @@ class AgentController extends Controller {
         amount,
         extractId: userId,
         state: 1,
+        city: agent.areaId
       })
     } catch (e) {
       // 
+      console.log('收益记录创建失败')
     }
 
     if (!draw) {

@@ -6,19 +6,26 @@ import moment from 'moment'
 class DrawMoneyService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this;
+    const { service, model } = ctx
     const { limit = 10, skip = 0 } = option
 
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.DrawMoney.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await model.DrawMoney.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
     
-    list.forEach(i=>{
+    for (const i of list) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
-    })
+      i.cityAddress = await service.sellingCity.getCity({ cityCode: i.city })
+      i.extract = await service.agent.findOne({ extractId: i.extractId })
+      
+      if (typeof i.amount !== 'number') {
+        i.amount = +i.amount
+      }
+    }
     
-    const total = await ctx.model.DrawMoney.find(query).countDocuments()
+    const total = await model.DrawMoney.find(query).countDocuments()
     return {
       list,
       total
