@@ -7,7 +7,6 @@ module.exports = app => {
   require('mongoose-double')(mongoose)
 
   const SchemaTypes = mongoose.Schema.Types
-
   const Agent = new mongoose.Schema({
     extractId: { type: String, required: true }, // 提货点id
     state: { type: Number, default: 1 }, // 1审核中 2已通过 3停用
@@ -33,8 +32,8 @@ module.exports = app => {
       longitude: { type: Number, default: 0 }
     },
     avatarUrl: { type: String, default: '' },
-    withdraw: { type: SchemaTypes.Double, default: 0 }, // 用户账户余额
-    withdrawFrozen: { type: SchemaTypes.Double, default: 0 }, // 冻结的账户余额
+    withdraw: { type: SchemaTypes.Decimal128, default: 0 }, // 用户账户余额
+    withdrawFrozen: { type: SchemaTypes.Decimal128, default: 0 }, // 冻结的账户余额
     address: {} // 省市具体信息
   }, {
     versionKey: false,
