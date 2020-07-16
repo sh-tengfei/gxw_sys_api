@@ -168,6 +168,10 @@ class OrderService extends Service {
     // 这里发送发货通知
     return retList
   }
+  // 订单查询关闭订单时候查询
+  async orderQuery() {
+
+  }
 }
 
 module.exports = OrderService;

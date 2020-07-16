@@ -101,20 +101,21 @@ module.exports = appInfo => {
       }
     },
     // 公众号配置
-    adminWxConfig: {
+    adminWxConfig: { // 团长公众号配置
       AppID: "wx724926f4b76057bc",
       AppSecret: "b441cc3f90ac09308f12d2389a632c20"
     },
-    mallWxConfig: {
+    mallWxConfig: { // 商城公众号配置
       AppID: 'wxf81bdc08e2056b8f',
       AppSecret: '3c63da837b2d3b3e52bdc22bc4147f9a',
     },
+
     // 小程序配置
-    mallMiniprogram: {
+    mallMiniprogram: { // 小程序商城配置
       AppID: 'wxc57433b341246d35',
       AppSecret: 'a511f73c0f4658b733328bc7eca6ffdb',
     },
-    groupMiniprogram: {
+    groupMiniprogram: { // 小程序团长配置
       AppID: 'wx2f5dc897e58b593c',
       AppSecret: 'ed89563528d05cb7bb2af8157bcc1eff',
     },
@@ -125,17 +126,18 @@ module.exports = appInfo => {
       mchid: '1524492701',
       tradeType: 'JSAPI',
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
-      wxurl: 'https://mall.gxianwang.com/api/small/wxPayNotify',
+      wxurl: 'https://mall.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
       spbillCreateIp: '39.99.200.65',
       body: 'guoxianwang',
-      prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder',
+      prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder', // 微信小程序支付
+      orderquery: 'https://api.mch.weixin.qq.com/pay/orderquery', // 微信小程序查询
     },
     wxCompanyPayment: {
-      AppID: 'wxf81bdc08e2056b8f',
+      AppID: 'wx2f5dc897e58b593c', // 就是微信小程序的appid
       mchid: '1524492701',
       spbill_create_ip: '39.99.200.65',
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
-      payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers',
+      payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers', // 微信企业支付
     }
   };
 
