@@ -64,18 +64,52 @@ class AgentController extends Controller {
     } }
   }
   async verifyDrawMoney() {
-    const { ctx } = this
+    const { ctx, app } = this
     const { service, params } = ctx
     // 审核通过 调用企业付款
-    let draw = await service.drawMoney.findOne({ drawMoneyId:params.id })
+    let draw = await service.drawMoney.findOne({ drawMoneyId: params.id })
+    if (draw.state !== 1) {
+      ctx.body = { code: 201, msg: '非法请求', data: draw }
+      return 
+    }
+    // 查询团长
+    let agent = await service.agent.findOne({ extractId: draw.extractId })
+    if (agent.state !== 2) {
+      ctx.body = { code: 201, msg: '用户状态非法', data: agent }
+      return 
+    }
+    const { wxCompanyPayment: conf } = app.config
+    const nonce_str = ctx.helper.createNonceStr()
+    const amount = ctx.helper.getmoney(draw.amount)
+    const opt = {
+      mch_appid: conf.AppID,
+      mchid: conf.mchid,
+      nonce_str: nonce_str,
+      openid: agent.openid,
+      partner_trade_no: draw.drawMoneyId,
+      check_name: 'NO_CHECK',
+      re_user_name: agent.nickName,
+      amount,
+      desc: '团长收益提现',
+      spbill_create_ip: conf.spbill_create_ip,
+      payUrl: conf.payUrl,
+      mchkey: conf.mchkey,
+    }
+    const sign = ctx.helper.companyPaysign(opt)
+
+    const xml = app.wxCompantPay({ ...opt, sign })
+
+    const data = await ctx.postWebSite(conf.payUrl, {body: xml})
+    console.log(xml)
     // 执行提现请求
-    let agent = await service.agent.updateOne(draw.extractId, {
+    agent = await service.agent.updateOne(draw.extractId, {
       withdrawFrozen: 0
     })
 
-    draw = await service.drawMoney.updateOne(draw.drawMoneyId, {
-      state: 2,
-    })
+    // draw = await service.drawMoney.updateOne(draw.drawMoneyId, {
+    //   state: 2,
+    //   drawInfo: { ...opt, sign, ...data }
+    // })
     
     ctx.body = { code: 200, msg: '审核成功', data: draw }
   }

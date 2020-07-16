@@ -50,6 +50,9 @@ class DrawMoneyService extends Service {
     try{
      newDrawMoney = await model.DrawMoney.create(data)
      newDrawMoney = newDrawMoney.toObject()
+      if (typeof newDrawMoney.amount !== 'number') {
+        newDrawMoney.amount = +newDrawMoney.amount
+      }
     }catch (e) {
       console.log(e);
       return e

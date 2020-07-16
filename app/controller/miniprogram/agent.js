@@ -91,7 +91,8 @@ class AgentController extends Controller {
   async postWithdraw() {
     const { ctx } = this
     const { service, request: req, state } = ctx
-    const { userId = '202007121000' } = {} //state.user || {}
+    const { userId } = state.user
+
     let { amount } = req.body
     amount = +amount
     let agent = await service.agent.findOne({ extractId: userId })
@@ -132,7 +133,7 @@ class AgentController extends Controller {
       console.log('收益记录创建失败')
     }
 
-    if (!draw) {
+    if (!draw || draw.errors) {
       ctx.body = { msg: '提现失败，联系管理员' , code: 201, data: draw }
       return
     }

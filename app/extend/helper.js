@@ -65,5 +65,35 @@ module.exports = {
     const pc = new WXBizDataCrypt(appId, sessionKey)
     const data = pc.decryptData(encryptedData, iv)
     return data
-  }
+  },
+  // 支付签名加密算法
+  companyPaysign({ 
+    mch_appid, 
+    mchid, 
+    nonce_str, 
+    openid, 
+    partner_trade_no, 
+    check_name, 
+    re_user_name, 
+    amount, 
+    desc, 
+    spbill_create_ip,
+    mchkey
+  }) {
+    const ret = {
+      mch_appid: mch_appid,
+      mchid: mchid,
+      nonce_str: nonce_str,
+      partner_trade_no: partner_trade_no,
+      openid: openid,
+      check_name: check_name,
+      re_user_name: re_user_name,
+      amount: amount,
+      desc: desc,
+      spbill_create_ip: spbill_create_ip
+    }
+    let string = raw(ret)
+    string = string + '&key=' + mchkey
+    return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase()
+  },
 }

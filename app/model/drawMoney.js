@@ -12,6 +12,7 @@ module.exports = app => {
     amount: { type: SchemaTypes.Decimal128, required: true },
     extractId: { type: String, required: true }, // 提货点id 也就是团长ID
     state: { type: Number, required: true, default: 1 }, // 1.审核中 2.提现通过 3.提现驳回
+    drawInfo: { type: Object },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

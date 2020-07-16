@@ -18,7 +18,7 @@ export default function({ router, controller, jwt }) {
   router.put('/admin/agent/:id', jwt, controller.agent.updateAgent)
   // 提现
   router.get('/admin/getDraws', jwt, controller.agent.getDrawList)
-  router.put('/admin/getDraw/:id', jwt, controller.agent.verifyDrawMoney)
+  router.put('/admin/putDraw/:id',  controller.agent.verifyDrawMoney)
 
   router.get('/admin/order', jwt, controller.order.orderList)
 

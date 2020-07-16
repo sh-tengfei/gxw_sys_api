@@ -24,7 +24,7 @@ module.exports = appInfo => {
   }
 
   config.mongoose = {
-    url: 'mongodb://127.0.0.1:9001/gxianwangDev',
+    url: 'mongodb://www.gxianwang.com:9001/gxianwangDev', //'mongodb://127.0.0.1:9001/gxianwangDev',
     options: {
       user: 'dev1',
       pass: '!Qing001401',
@@ -130,6 +130,13 @@ module.exports = appInfo => {
       body: 'guoxianwang',
       prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder',
     },
+    wxCompanyPayment: {
+      AppID: 'wxf81bdc08e2056b8f',
+      mchid: '1524492701',
+      spbill_create_ip: '39.99.200.65',
+      mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
+      payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers',
+    }
   };
 
   return {
