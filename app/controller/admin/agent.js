@@ -133,6 +133,32 @@ class AgentController extends Controller {
     
     ctx.body = { code: 200, msg: '提现审核通过' }
   }
+  async rejectDrawMoney() {
+    const { ctx, app } = this
+    const { service, params } = ctx
+    // 审核通过 调用企业付款
+    let drawMoney = await service.drawMoney.findOne({ drawMoneyId: params.id })
+    if (drawMoney.state !== 1) {
+      ctx.body = { code: 201, msg: '非法请求', data: drawMoney }
+      return 
+    }
+    // 查询团长
+    let agent = await service.agent.findOne({ extractId: drawMoney.extractId })
+    if (agent.state !== 2) {
+      ctx.body = { code: 201, msg: '用户状态非法', data: agent }
+      return 
+    }
+    // 解除冻结 恢复余额
+    agent = await service.agent.updateOne(draw.extractId, {
+      withdrawFrozen: 0,
+      $inc: { withdraw: agent.withdrawFrozen }
+    })
+    // 关闭提现记录
+    draw = await service.drawMoney.updateOne(draw.drawMoneyId, {
+      state: 3,
+    })
+    ctx.body = { code: 200, msg: '驳回成功', data: agent }
+  }
 }
 
 module.exports = AgentController;

@@ -23,7 +23,7 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/order', jwt, contr.order.getOrders)
   router.post('/small/order', jwt, contr.order.makeOrder)
   router.get('/small/order/:id', jwt, contr.order.getOrder)
-  router.put('/small/order/:id', jwt, contr.order.updateOrder)
+  router.get('/small/rankingUser', contr.order.getRankingUser)
 
   router.get('/small/paySuccessOrder/:id', jwt, contr.order.paySuccessOrder)
 

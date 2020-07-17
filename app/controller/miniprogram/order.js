@@ -479,6 +479,15 @@ class OrderController extends Controller {
     const pause = moment().endOf('day')
     return moment().isBetween(start, pause)
   }
+  async getRankingUser() {
+    const { app, ctx } = this
+    const list = app.getRankingList()
+    const users = []
+    for (const item of list) {
+      users.push(item.user)
+    }
+    ctx.body = { code: 201, msg: '获取成功', data: users }
+  }
 }
 
 module.exports = OrderController;
