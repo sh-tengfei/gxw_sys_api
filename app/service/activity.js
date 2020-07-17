@@ -10,7 +10,7 @@ class ActivityService extends Service {
     delete query.skip
 
 
-    const list = await ctx.model.Activity.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await ctx.model.Activity.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 1})
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')

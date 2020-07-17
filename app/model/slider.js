@@ -5,10 +5,10 @@ module.exports = app => {
   const slider = new mongoose.Schema({
     state: { type: Number, default: 1 }, // 1关闭 2开启 3禁用 删除
     jumpType: { type: Number, default: 1 }, // 1商品 2.活动页
-    productId: { type: Number },
-    activityId: { type: Number },
+    productId: { type: String },
+    activityId: { type: String },
     weight: { type: Number, required: true },
-    sliderId: { type: Number, required: true, unique: true },
+    sliderId: { type: String, required: true, unique: true },
     name: { type: String, required: true, unique: true },
     sliderImg: { type: String, required: true } // 轮播图
   }, {

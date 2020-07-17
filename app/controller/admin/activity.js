@@ -27,14 +27,15 @@ class ActivityController extends Controller {
     }
     ctx.body = { msg: '修改成功', code: 200, data: ret }
   }
-  async destroy() {
+  async delActive() {
     const { ctx, app } = this;
-    let idError = app.validator.validate({id: 'string'}, ctx.params)
-    if (idError) {
-      ctx.body = idError.pop()
+    const { query, request, service, params } = ctx
+    if (!params.id) {
+     ctx.body = { msg: '删除失败', code: 201 }
       return
     }
-    ctx.body = await ctx.service.activity.delete(ctx.params.id)
+    const active = await ctx.service.activity.delete(params.id)
+    ctx.body = { msg: '删除成功', code: 200, data: active }
   }
 }
 module.exports = ActivityController;

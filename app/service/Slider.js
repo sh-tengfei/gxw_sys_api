@@ -31,13 +31,6 @@ class SliderService extends Service {
     data.sliderId = await ctx.service.counters.findAndUpdate(sliderId)
     try{
       newSlider = await ctx.model.Slider.create(data)
-      if (data.jumpType === 1) {
-        await ctx.model.Product.updateOne({ 
-          productId: data.productId 
-        }, { 
-          locking: 1 
-        })
-      }
     }catch (e) {
       console.log(e);
       return e

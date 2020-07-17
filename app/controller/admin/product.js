@@ -12,9 +12,9 @@ class ProductController extends Controller {
     if (_query.name) {
       query.name = _query.name
     }
-    if (_query.locking) {
-      query.locking = _query.locking
-    }
+    // if (_query.locking) {
+    //   query.locking = _query.locking
+    // }
     if (_query.sellerOfType) {
       query['sellerOfType.code'] = _query.sellerOfType
     }
