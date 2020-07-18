@@ -30,6 +30,9 @@ class ProductService extends Service {
       } else {
         item.stockNumber = null
       }
+      if (item.sellerOfType.code !== 101) {
+        item.deliveryTime = moment().add(1, 'days').date()
+      }
     }
     const total = await ctx.model.Product.find(query).countDocuments()
 
@@ -69,6 +72,9 @@ class ProductService extends Service {
       // 存在库存
       product.stockNumber = curStock.stockNumber
     }
+    if (product.sellerOfType.code !== 101) {
+      product.deliveryTime = moment().add(1, 'days').date()
+    }
     return product
   }
   async updateOne(productId, data) {
@@ -77,6 +83,9 @@ class ProductService extends Service {
     delete newProduct._id
     newProduct.createTime = moment(newProduct.createTime).format('YYYY-MM-DD HH:mm:ss')
     newProduct.updateTime = moment(newProduct.updateTime).format('YYYY-MM-DD HH:mm:ss')
+    if (newProduct.sellerOfType.code !== 101) {
+      newProduct.deliveryTime = moment().add(1, 'days').date()
+    }
     return newProduct;
   }
   async delete(productId) {

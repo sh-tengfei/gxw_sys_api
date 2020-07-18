@@ -14,7 +14,7 @@ class ClassifyController extends Controller {
     }
 
     const newBody = await ctx.service.classify.create(body)
-    ctx.body = { code: 201, data: newBody }
+    ctx.body = { code: 200, data: newBody, msg: '' }
   }
   async getClassifys() {
     const { app, ctx } = this
@@ -27,7 +27,7 @@ class ClassifyController extends Controller {
       classifyCity: query.city,
     }
     const { list, total } = await ctx.service.classify.find(opt)
-    ctx.body = { code: 201, msg: '', data: { list, total } }
+    ctx.body = { code: 200, msg: '', data: { list, total } }
   }
   async delClassify() {
     const { app, ctx } = this

@@ -7,6 +7,13 @@ class ActivityController extends Controller {
     const { list, total } = await ctx.service.activity.find(ctx.query)
     ctx.body = { msg: '', code: 200, data: { list, total }}
   }
+  async getActive() {
+    const { ctx, app } = this;
+    const { query, service, params } = ctx
+    const ret = await service.activity.findOne(params.id)
+
+    ctx.body = { msg: '获取成功', code: 200, data: ret }
+  }
   async createActive() {
     const { ctx, app } = this;
     const { query, request: req, service } = ctx
@@ -29,12 +36,12 @@ class ActivityController extends Controller {
   }
   async delActive() {
     const { ctx, app } = this;
-    const { query, request, service, params } = ctx
+    const { service, params } = ctx
     if (!params.id) {
      ctx.body = { msg: '删除失败', code: 201 }
       return
     }
-    const active = await ctx.service.activity.delete(params.id)
+    const active = await ctx.service.activity.findOneAndRemove({sliderId: params.id})
     ctx.body = { msg: '删除成功', code: 200, data: active }
   }
 }

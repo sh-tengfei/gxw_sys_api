@@ -4,7 +4,7 @@ module.exports = app => {
   const mongoose = app.mongoose
   const slider = new mongoose.Schema({
     state: { type: Number, default: 1 }, // 1关闭 2开启 3禁用 删除
-    jumpType: { type: Number, default: 1 }, // 1商品 2.活动页
+    jumpType: { type: Number, default: 1 }, // 1无跳转 2商品 3活动
     productId: { type: String },
     activityId: { type: String },
     weight: { type: Number, required: true },

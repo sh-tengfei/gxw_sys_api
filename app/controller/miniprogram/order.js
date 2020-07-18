@@ -488,6 +488,23 @@ class OrderController extends Controller {
     }
     ctx.body = { code: 201, msg: '获取成功', data: users }
   }
+  async delOrder() {
+    const { ctx, app } = this;
+    const { service, params } = ctx;
+    const order = await service.order.updateOne(params.id, { isDelete: true })
+    if (order) {
+      ctx.body = { code: 200, msg: '删除成功', data: order }
+    } else {
+      ctx.body = { code: 201, msg: '订单不存在', data: order }
+    }
+  }
+  // 归属特定产品的订单
+  async orderOfProduct() {
+    const { ctx, app } = this;
+    const { service, params } = ctx;
+    
+    ctx.body = { code: 200, msg: '获取成功', data: params }
+  }
 }
 
 module.exports = OrderController;

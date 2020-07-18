@@ -36,7 +36,7 @@ class AgentController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
-  	const { list, total } = await service.agent.find({ state: 2 })
+  	const { list, total } = await service.agent.find({ state: 2, areaId: city })
     const ret = []
     list.forEach((item) => {
       const { location, userInfo, communitySite, extractId, applyPhone, applyName } = item
@@ -77,6 +77,7 @@ class AgentController extends Controller {
     s = Math.round(s * 10000) / 10000;
     return s;
   }
+  // 获取单个提货点团长信息
   async getSearbys() {
 	  const { ctx } = this
     const { service, params } = ctx

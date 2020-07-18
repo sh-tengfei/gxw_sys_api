@@ -40,6 +40,7 @@ export default function({ router, controller, jwt }) {
   router.post('/admin/active', jwt, controller.activity.createActive)
   router.put('/admin/active/:id', jwt, controller.activity.putActive)
   router.delete('/admin/active/:id', jwt, controller.activity.delActive)
+  router.get('/admin/active/:id', jwt, controller.activity.getActive)
 
   router.get('/admin/sellingCitys', jwt, controller.sellingCity.getSellingCitys)
 
