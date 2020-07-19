@@ -23,10 +23,10 @@ class SalesController extends Controller {
     }
 
     const { list, total } = await service.order.find(opt, option)
+    const { total: userTotal } = await service.user.find({})
     
     let agentTotal = 0, 
         productTotal = 0, 
-        userTotal = 0,
         totalAmount = 0;
 
     let agentList = [] //代理ID列表
@@ -56,7 +56,6 @@ class SalesController extends Controller {
         productData[e.productId].push(e)
       })
 
-      userList.push(i.userId)
       if (!userData[i.userId]) {
         userData[i.userId] = []
       }
@@ -66,7 +65,6 @@ class SalesController extends Controller {
     // 去重求长度
     agentTotal = new Set(agentList).size
     productTotal = new Set(productList).size
-    userTotal = new Set(userList).size
 
     // 商品数据计算
     const productDataList = []
