@@ -1,4 +1,23 @@
+function rankingUser() {
+  this.list = []
+}
+rankingUser.prototype.push = function (order) {
+  if (this.list.length === 10) {
+    this.list.shift()
+    this.list.push(order)
+  }
+}
+rankingUser.prototype.getList = function () {
+  return this.list
+}
+rankingUser.prototype.setList = function (service) {
+  service.order.find({}, { limit: 10 }).then(({ list }) => {
+    this.list = list
+  })
+}
+
 module.exports = {
+  ranking: new rankingUser(),
   // // 请求基础AccessToken 做缓存用
   // getBaseAccessToken() {
   //   let { mallWxConfig: config } = this.config
@@ -62,5 +81,14 @@ module.exports = {
     <sign>${sign}</sign>
     </xml>`
     return xml
+  },
+  setRankingList(service) {
+    this.ranking.setList(service)
+  },
+  pushRankingUser(order) {
+    this.ranking.push(order)
+  },
+  getRankingList() {
+    return this.ranking.getList()
   }
 };

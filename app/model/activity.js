@@ -14,7 +14,7 @@ module.exports = app => {
       }
     ],
     state: { type: Number, default: 1 }, // 1关闭 2开启
-    activityId: { type: Number, required: true },
+    activityId: { type: String, required: true },
     name: { type: String, required: true, unique: true }
   }, {
     versionKey: false,

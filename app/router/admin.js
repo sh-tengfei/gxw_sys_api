@@ -19,6 +19,7 @@ export default function({ router, controller, jwt }) {
   // 提现
   router.get('/admin/getDraws', jwt, controller.agent.getDrawList)
   router.put('/admin/putDraw/:id',  controller.agent.verifyDrawMoney)
+  router.put('/admin/reject/:id',  controller.agent.rejectDrawMoney)
 
   router.get('/admin/order', jwt, controller.order.orderList)
 
@@ -38,6 +39,8 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/active', jwt, controller.activity.getActives)
   router.post('/admin/active', jwt, controller.activity.createActive)
   router.put('/admin/active/:id', jwt, controller.activity.putActive)
+  router.delete('/admin/active/:id', jwt, controller.activity.delActive)
+  router.get('/admin/active/:id', jwt, controller.activity.getActive)
 
   router.get('/admin/sellingCitys', jwt, controller.sellingCity.getSellingCitys)
 

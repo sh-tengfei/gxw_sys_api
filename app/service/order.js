@@ -154,8 +154,8 @@ class OrderService extends Service {
     }, data, { new: true, _id: 0}).lean()
     return newOrder
   }
-  async delete(adminId) {
-
+  async delete(orderId) {
+    return await this.ctx.model.Activity.findOneAndRemove({orderId})
   }
   // 本地发货方法 产地的也会调用
   async sendGoods(orderIds) {
