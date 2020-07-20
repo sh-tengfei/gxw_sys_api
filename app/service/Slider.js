@@ -37,9 +37,9 @@ class SliderService extends Service {
     }
     return newSlider;
   }
-  async updateOne(sliderId, data) {
+  async updateOne(query, data) {
     const { ctx } = this;
-    let newSlider = await ctx.model.Slider.updateOne({sliderId}, data, { _id: 0, new: true})
+    let newSlider = await ctx.model.Slider.findOneAndUpdate(query, data, { _id: 0, new: true})
     return newSlider;
   }
   async delete(sliderId) {

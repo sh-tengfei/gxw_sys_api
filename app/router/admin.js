@@ -31,6 +31,7 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/stock', jwt, controller.stock.getStock)
   router.post('/admin/stock', jwt, controller.stock.createStock)
   router.put('/admin/stock/:id', jwt, controller.stock.putStock)
+  router.delete('/admin/stock/:id', jwt, controller.stock.delStock)
 
   router.get('/admin/slider', jwt, controller.slider.getSlider)
   router.post('/admin/slider', jwt, controller.slider.createSlider)

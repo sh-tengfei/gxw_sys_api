@@ -4,7 +4,11 @@ import { Controller } from 'egg'
 class ActivityController extends Controller {
   async getActives () {
     const { ctx } = this;
-    const { list, total } = await ctx.service.activity.find(ctx.query)
+    let opt = {}
+    if (ctx.query.name) {
+      opt.name = ctx.query.name
+    }
+    const { list, total } = await ctx.service.activity.find(opt)
     ctx.body = { msg: '', code: 200, data: { list, total }}
   }
   async getActive() {
@@ -39,6 +43,11 @@ class ActivityController extends Controller {
     const { service, params } = ctx
     if (!params.id) {
      ctx.body = { msg: '删除失败', code: 201 }
+      return
+    }
+    const slider = await ctx.service.slider.findOne({activityId: params.id})
+    if (slider && slider.state === 2) {
+      ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
       return
     }
     const active = await ctx.service.activity.findOneAndRemove({sliderId: params.id})

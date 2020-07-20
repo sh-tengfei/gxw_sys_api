@@ -21,6 +21,14 @@ class SliderController extends Controller {
   async createSlider() {
     const { ctx, app } = this
     const { request: req } = ctx
+
+    if (req.body.sliderId) {
+      delete req.body.updateTime
+      const slider = await ctx.service.slider.updateOne({sliderId: req.body.sliderId}, req.body)
+      ctx.body = { msg: '修改成功', code: 200, data: slider }
+      return
+    }
+
     const slider = await ctx.service.slider.findOne({name: req.body.name})
     
     if (slider) {
@@ -47,7 +55,7 @@ class SliderController extends Controller {
     	return
     }
 
-    const newSlider = await ctx.service.slider.updateOne(params.id, { state: req.body.state })
+    const newSlider = await ctx.service.slider.updateOne({sliderId: params.id}, { state: req.body.state })
 
     ctx.body = { code: 200, msg: '修改成功', data: newSlider }
   }

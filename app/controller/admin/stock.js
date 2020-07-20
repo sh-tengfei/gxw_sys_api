@@ -55,6 +55,16 @@ class StockController extends Controller {
 
     ctx.body = { code: 200, msg: '', data: newStock }
   }
+  async delStock() {
+    const { ctx, app } = this
+    const { params } = ctx
+    if (!params.id) {
+    	ctx.body = { code: 201, msg: '参数错误' }
+    	return
+    }
+    const stock = await ctx.service.stocks.delete(params.id)
+    ctx.body = { code: 200, msg: '删除成功', data: stock }
+  }
 }
 
 module.exports = StockController;
