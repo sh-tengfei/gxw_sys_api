@@ -169,8 +169,31 @@ class OrderService extends Service {
     return retList
   }
   // 订单查询关闭订单时候查询
-  async orderQuery() {
-
+  async orderPayQuery() {
+    const { app, ctx } = this
+    const { model, service, requestPost, helper } = ctx
+    const { orderqueryUrl, appid, mchid } = app.config.wxPayment
+    const orders = await model.Order.findOne({ state: 1 }).lean()
+    for (const order of orders) {
+      const { orderId } = order
+      const nonce_str = helper.createNonceStr()
+      const option = {
+        out_trade_no: orderId,
+        nonce_str,
+        mch_id,
+        appid,
+      }
+      const sign = helper.orderPaySign(option)
+      const { data } = requestPost({
+        url: conf.payUrl,
+        key,
+        cert,
+        body: sendXml,
+      })
+      console.log(data)
+    }
+    out_trade_no
+    return order
   }
 }
 

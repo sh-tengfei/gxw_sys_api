@@ -130,7 +130,7 @@ module.exports = appInfo => {
       spbillCreateIp: '39.99.200.65',
       body: 'guoxianwang',
       prepayUrl: 'https://api.mch.weixin.qq.com/pay/unifiedorder', // 微信小程序支付
-      orderquery: 'https://api.mch.weixin.qq.com/pay/orderquery', // 微信小程序查询
+      orderqueryUrl: 'https://api.mch.weixin.qq.com/pay/orderquery', // 微信小程序查询
     },
     wxCompanyPayment: {
       AppID: 'wx2f5dc897e58b593c', // 就是微信小程序的appid

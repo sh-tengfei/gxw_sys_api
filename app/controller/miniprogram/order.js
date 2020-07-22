@@ -498,7 +498,7 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '订单不存在', data: order }
     }
   }
-  // 归属特定产品的订单
+  // 归属特定产品的订单获取 暂时没做
   async orderOfProduct() {
     const { ctx, app } = this;
     const { service, params } = ctx;
