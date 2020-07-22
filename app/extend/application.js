@@ -90,5 +90,15 @@ module.exports = {
   },
   getRankingList() {
     return this.ranking.getList()
+  },
+  orderPayXml({ appid, mch_id, nonce_str, out_trade_no, sign }) {
+    let xml = `<xml>
+       <appid>${appid}</appid>
+       <mch_id>${mch_id}</mch_id>
+       <nonce_str>${nonce_str}</nonce_str>
+       <out_trade_no>${out_trade_no}</out_trade_no>
+       <sign>${sign}</sign>
+    </xml>`
+    return xml
   }
 };

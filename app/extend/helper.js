@@ -96,4 +96,11 @@ module.exports = {
     string = string + '&key=' + mchkey
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase()
   },
+  orderPaySign(opt) {
+    let mchkey = opt.mchkey
+    delete opt.mchkey
+    let string = raw(opt)
+    string = string + '&key=' + mchkey
+    return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase()
+  }
 }

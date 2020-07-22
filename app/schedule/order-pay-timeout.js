@@ -25,10 +25,9 @@ class OrderPayTimeout extends Subscription {
     for (const item of list) {
       // 当前时间大于支付结束时间 判定为要关闭订单
       const isAfter = moment().isAfter(item.payEndTime)
-      const ret = await ctx.service.order.orderPayQuery()
-      console.log(ret, 1)
+      const ret = await ctx.service.order.orderPayQuery(item)
       if (isAfter) {
-        const orderRet = await  ctx.service.order.updateOne(item.orderId, { state: 4 })
+        const orderRet = await ctx.service.order.updateOne(item.orderId, { state: 4 })
         ctx.logger.info(orderRet.orderId, '支付时间超时，订单关闭')
         // 发送订单关闭消息
       } else {
