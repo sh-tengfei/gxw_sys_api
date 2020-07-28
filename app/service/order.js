@@ -2,6 +2,7 @@ import { Service } from 'egg'
 import _ from 'lodash'
 import { Decimal } from 'decimal.js'
 import moment from 'moment'
+import { parseString } from 'xml2js'
 
 class OrderService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
@@ -171,9 +172,9 @@ class OrderService extends Service {
   // 订单查询关闭订单时候查询
   async orderPayQuery({ orderId }) {
     const { app, ctx } = this
-    const { service, helper } = ctx
+    const { helper } = ctx
     const { orderqueryUrl, appid, mchid, mchkey } = app.config.wxPayment
-    const nonce_str = helper.createNonceStr()
+    const nonce_str = ctx.helper.createNonceStr()
     const option = {
       appid,
       mch_id: mchid,
@@ -181,14 +182,17 @@ class OrderService extends Service {
       nonce_str,
       mchkey,
     }
-    const sign = helper.orderPaySign(option)
+    const sign = ctx.helper.orderPaySign(option)
     const sendXml = app.orderPayXml({ ...option, sign })
     const { err, data } = await ctx.requestPost({
       url: orderqueryUrl,
       body: sendXml,
     })
-    console.log(data, 'sendXml', orderqueryUrl)
-    return data
+    let xml
+    if (data) {
+      xml = await ctx.helper.getXML(data)
+    }
+    return xml
   }
 }
 

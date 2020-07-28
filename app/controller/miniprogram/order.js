@@ -130,10 +130,15 @@ class OrderController extends Controller {
       // 已经存在支付信息 直接返回
       return ctx.body = { code: 200, msg: '支付成功！', data: order.paySign }
     }
-    const { openid } = await service.user.findOne({ userId: state.user.userId })
+
+    const user = await service.user.findOne({ userId: state.user.userId })
+    if (user === null) {
+      ctx.body = { code: 201, msg: '用户不存在' }
+      return
+    }
     const { msg, code, data } = await this.orderPayment({
       orderId: order.orderId,
-      openid,
+      openid: user.openid,
       total: order.total,
     })
     if (code !== 200) {
@@ -477,7 +482,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return moment().isBetween(start, pause)
+    return !moment().isBetween(start, pause)
   }
   async getRankingUser() {
     const { app, ctx } = this

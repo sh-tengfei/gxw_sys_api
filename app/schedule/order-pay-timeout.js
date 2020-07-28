@@ -25,7 +25,17 @@ class OrderPayTimeout extends Subscription {
     for (const item of list) {
       // 当前时间大于支付结束时间 判定为要关闭订单
       const isAfter = moment().isAfter(item.payEndTime)
-      const ret = await ctx.service.order.orderPayQuery(item)
+      // const { return_code, result_code, err_code_des } = await ctx.service.order.orderPayQuery(item)
+      // if (return_code !== 'SUCCESS') {
+      //   ctx.logger.error('订单信息异常！')
+      //   return
+      // }
+      // if (trade_state === 'SUCCESS') {
+      //   // 订单已经支付回调未收到
+      //   // 对本机发出请求 改变订单状态以及收益信息
+      // } else {
+      //   ctx.logger.error('订单未支付！', err_code_des)
+      // }
       if (isAfter) {
         const orderRet = await ctx.service.order.updateOne(item.orderId, { state: 4 })
         ctx.logger.info(orderRet.orderId, '支付时间超时，订单关闭')

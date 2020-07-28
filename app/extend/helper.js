@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const { Decimal } = require('decimal.js')
 const WXBizDataCrypt = require('./WXBizDataCrypt')
+const parseString = require('xml2js').parseString
 
 function raw(args) {
   let keys = Object.keys(args)
@@ -102,5 +103,12 @@ module.exports = {
     let string = raw(opt)
     string = string + '&key=' + mchkey
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase()
+  },
+  async getXML(string) {
+    return new Promise((resolve, reject)=>{
+      parseString(string, { explicitArray:false }, async (err, { xml }) => {
+        resolve(xml)
+      })
+    })
   }
 }
