@@ -4,7 +4,7 @@ module.exports = {
   getWebSite(url, query = {}) {
     return this.curlGet(url, query)
   },
-  postWebSite(url, data = {}, key = '', cert = '') {
+  postWebSite(url, data = {}) {
     return this.curl(url, {
       dataType: 'text',
       headers: {

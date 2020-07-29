@@ -32,6 +32,7 @@ export default function({ router, controller: contr, jwt }) {
 
   router.post('/small/payment', jwt, contr.order.payOrder)
   router.post('/small/wxPayNotify', contr.order.wxPayNotify)
+  router.post('/small/payTimeout', contr.order.payTimeout)
 
   router.get('/small/searbys', jwt, contr.agent.getNearbyAgents)
   router.get('/small/searbys/:id', jwt, contr.agent.getSearbys)

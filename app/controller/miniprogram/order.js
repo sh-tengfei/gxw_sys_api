@@ -254,13 +254,32 @@ class OrderController extends Controller {
   }
   async paySuccessOrder() {
     const { ctx } = this;
-    const { service, params, logger } = ctx
-
-    const order = await service.order.findOne({ orderId: params.id })
-    // 理论上不存在腾讯服务调用失败
-    if (order.state === 2) {
-      logger.info({ msg: '微信用户端支付成功通知，已经完成不做修改！', orderId: order.orderId })
-      return ctx.body = { code: 200, msg: '支付成功！', orderId: order.orderId }
+    const { service, params, logger, request: { body } } = ctx
+    // 更新微信端同步过来的用户信息
+    let order = await service.order.findOne({ orderId: params.id })
+    if (order !== null) {
+      order = await service.order.updateOne(params.id, {
+        clientResult: body
+      })
+      ctx.body = { code: 200, msg: '更新成功' }
+      return
+    }
+    ctx.body = { code: 201, msg: '订单不存在！' }
+  }
+  async wxPayNotify() {
+    const { ctx } = this;
+    const { service, request: req, logger } = ctx
+    const { return_code, return_msg, time_end, out_trade_no } = await ctx.helper.getXML(req.body)
+    
+    if (return_code !== 'SUCCESS'){
+      logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
+    } else {
+      logger.info({ msg: '支付成功通知消息。', data: return_code })
+    }
+    const order = await service.order.findOne({ orderId: out_trade_no })
+    if (!order) {
+      logger.error({ msg: '订单不存在！'})
+      return
     }
     // 更新用户购买金额
     const user = await service.user.updateOne(order.userId, {
@@ -269,91 +288,59 @@ class OrderController extends Controller {
     if (user) {
       logger.info({ msg: '用户支付金额修改成功', userId: user.userId })
     }
-
-    if (order.state === 1) {
-      // 执行拆单逻辑
-      const { orders, code, msg, error } = await this.splitChildOrder(order)
-
-      if (code === 200) {
-        // 成功可以不发邮件
-        logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
-      } else {
-        // 失败要发邮件 排查失败原因
-        logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
-      }
-
-      const bill = await this.createBill(orders, Date.now(), {}, 'xml')
-      if (bill.code === 200) {
-        logger.info({ msg: '收益创建成功', orderId: order.orderId  })
-        ctx.body = { code: 200, msg: '支付成功' }
-      } else {
-        logger.info({ msg: '收益创建错误', orderId: order.orderId  })
-        ctx.body = { code: 201, msg: '支付错误', bill }
-      }
-      return
-    }
-    ctx.body = { code: 201, msg: '状态错误，更新失败！' }
-  }
-  async wxPayNotify() {
-    const { ctx } = this;
-    const { service, request: req, logger } = ctx
     
-    parseString(req.body, { explicitArray:false }, async (err, option) => {
-      if (err) {
-        logger.error({ msg: '支付失败通知消息。', err })
-        return
-      }
+    // 执行拆单逻辑
+    const { orders, code, msg, error } = await this.splitChildOrder(order)
+    if (code === 200) {
+      // 成功可以不发邮件
+      logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
+    } else {
+      // 失败要发邮件 排查失败原因
+      logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
+    }
 
-      const { return_code, return_msg, time_end, out_trade_no } = option.xml
-      if (return_code !== 'SUCCESS'){
-        logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
-      } else {
-        logger.info({ msg: '支付成功通知消息。', data: return_code })
-      }
-
-      const order = await service.order.findOne({ orderId: out_trade_no })
-      if (!order) {
-        logger.error({ msg: '订单不存在！'})
-        return
-      }
-      if (order.state === 2) {
-        // 存在延时支付放开限制
-        // logger.error({ msg: '订单状态已支付，不再做修改', orderId: order.orderId })
-        // return
-      }
-      // 更新用户购买金额
-      const user = await service.user.updateOne(order.userId, {
-        $inc: { buyTotal: order.total }
-      })
-      if (user) {
-        logger.info({ msg: '用户支付金额修改成功', userId: user.userId })
-      }
-      
-      // 执行拆单逻辑
-      const { orders, code, msg, error } = await this.splitChildOrder(order)
-
-      if (code === 200) {
-        // 成功可以不发邮件
-        logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
-      } else {
-        // 失败要发邮件 排查失败原因
-        logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
-      }
-
-      const billRet = await this.createBill(orders, time_end, option, req.body)
-      if (billRet.code !== 200) {
-        logger.info({ msg: '收益创建错误', bill: billRet })
-      } else {
-        logger.info({ msg: '收益创建成功' })
-      }
-    })
+    const billRet = await this.createBill(orders, time_end, option.xml, req.body)
+    if (billRet.code !== 200) {
+      logger.info({ msg: '收益创建错误', bill: billRet })
+    } else {
+      logger.info({ msg: '收益创建成功' })
+    }
 
     // 对错都要回复腾讯消息
-    const sendXml = '<xml>\n' +
-      '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
-      '<return_msg><![CDATA[OK]]></return_msg>\n' +
-      '</xml>'
-    ctx.body = sendXml
+    ctx.body = '<xml>\n' +
+    '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
+    '<return_msg><![CDATA[OK]]></return_msg>\n' +
+    '</xml>'
+  }
+
+  async payTimeout() {
+    const { ctx } = this;
+    const { service, request: { body: order }, logger } = ctx
+
+    // 更新用户购买金额
+    const user = await service.user.updateOne(order.userId, {
+      $inc: { buyTotal: order.total }
+    })
+    
+    // 执行拆单逻辑
+    const { orders, code, msg, error } = await this.splitChildOrder(order)
+    if (code === 200) {
+      // 成功可以不发邮件
+      logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
+    } else {
+      // 失败要发邮件 排查失败原因
+      logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
+    }
+
+    const billRet = await this.createBill(orders, Date.now(), { 
+      msg: '订单支付超时查询为支付！' 
+    }, '<xml></xml>')
+    if (billRet.code !== 200) {
+      logger.info({ msg: '收益创建错误', bill: billRet })
+    } else {
+      logger.info({ msg: '收益创建成功' })
+    }
+    ctx.body = { code: 200, msg: '状态修改成功！' }
   }
 
   async makeDeliveryNote(order) {
@@ -417,8 +404,8 @@ class OrderController extends Controller {
       await service.order.updateOne(orderId, {
         payTime: time_end,
         state: 2,
-        payResult: option,
-        resultXml: body,
+        wxResult: option,
+        wxXml: body,
       })
 
       const newOrder = await service.order.findOne({ orderId })
@@ -482,7 +469,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return !moment().isBetween(start, pause)
+    return moment().isBetween(start, pause)
   }
   async getRankingUser() {
     const { app, ctx } = this

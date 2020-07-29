@@ -27,7 +27,7 @@ module.exports = app => {
     ],
     city: { type: String, required: true }, // 订单城市
     reward: { type: SchemaTypes.Double, required: true }, // 该订单的团长收益
-    resultXml: { type: String },
+    wxXml: { type: String },
     payType: { type: String, default: 'void' }, // 支付类型 默认wx 微信wx 支付宝 zfb
     extractId: { type: String, default: null, required: true }, // 提货点Id
     addressId: { type: String, default: null }, // 收货地址Id
@@ -38,7 +38,8 @@ module.exports = app => {
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间
     total: { type: SchemaTypes.Double, required: true },
-    payResult: { type: Object, default: {}},
+    wxResult: { type: Object, default: {}},
+    clientResult: { type: Object, default: {}},
     orderType: { type: Number, required: true }, // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发
     isExtractReceive: { type: Boolean, default: false } // 是否是收货点接货 收货点的话不用填收货地址信息
   }, {
