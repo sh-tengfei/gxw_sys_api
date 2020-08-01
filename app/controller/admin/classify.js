@@ -11,6 +11,7 @@ class ClassifyController extends Controller {
       classifyIndex: req.body.index,
       classifyName: req.body.name,
       classifyProducts: req.body.products,
+      classifyIcon: req.body.classifyIcon,
     }
 
     const newBody = await ctx.service.classify.create(body)
