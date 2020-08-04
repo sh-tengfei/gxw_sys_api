@@ -17,6 +17,9 @@ module.exports = app => {
     picture: { type: String, default: '' },
     buyTotal: { type: SchemaTypes.Double, default: 0 },
     username: { type: String, default: '' },
+    historyExtract: [
+      { type: String }
+    ],
     source: {
       nickName: { type: String, default: '' },
       avatarUrl: { type: String, default: '' },

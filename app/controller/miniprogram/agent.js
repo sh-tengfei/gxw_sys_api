@@ -32,7 +32,7 @@ class AgentController extends Controller {
 	  const { ctx } = this
   	const { service, query } = ctx
     const { latitude, longitude, city } = query
-    if (!latitude || !longitude) {
+    if (!latitude || !longitude || !city) {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }

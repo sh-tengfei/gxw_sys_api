@@ -18,6 +18,8 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/userInfo', jwt, contr.login.getUserInfo)
   router.put('/small/userInfo/:id', contr.login.updateInfo)
   router.get('/small/location', contr.login.getLocation)
+  // 开通的城市
+  router.get('/small/citys', contr.login.getCitys)
 
   router.get('/small/product/:id', contr.product.getProduct)
   router.get('/small/order', jwt, contr.order.getOrders)
@@ -34,8 +36,9 @@ export default function({ router, controller: contr, jwt }) {
   router.post('/small/wxPayNotify', contr.order.wxPayNotify)
   router.post('/small/payTimeout', contr.order.payTimeout)
 
-  router.get('/small/searbys', jwt, contr.agent.getNearbyAgents)
-  router.get('/small/searbys/:id', jwt, contr.agent.getSearbys)
+  // 提货点不验证用户
+  router.get('/small/searbys', contr.agent.getNearbyAgents)
+  router.get('/small/searbys/:id', contr.agent.getSearbys)
   // 提现
   router.post('/small/withdraw', jwt, contr.agent.postWithdraw)
 
