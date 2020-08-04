@@ -3,12 +3,40 @@ import moment from 'moment'
 
 class UserService extends Service {
   async findOne(query) {
-    let user = await this.ctx.model.User.findOne(query)
-    return user;
+    const { service, model } = this.ctx
+    let user = await model.User.findOne(query).lean()
+
+    const extractRet = []
+    for (const extractId of user.historyExtract) {
+      const extract = await service.agent.findOne({ extractId })
+      if (extract && extract.state === 2) {
+        const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone } = extract
+        extractRet.unshift({
+          nickName,
+          avatarUrl,
+          applyName,
+          communitySite,
+          extractId,
+          applyPhone,
+        })
+      }
+    }
+    const { list, total } = await service.address.find({
+      userId: user.userId,
+      isDefault: true
+    })
+
+    if (total !== 0) {
+      user.defaultAddress = list[0]
+    }
+
+    user.historyExtract = extractRet
+
+    return user
   }
   async find(query, option = {}, other = {}) {
     const { ctx } = this
-    const { model } = ctx
+    const { model, service } = ctx
     const { limit = 10, skip = 0 } = option
 
     delete query.limit
@@ -19,6 +47,23 @@ class UserService extends Service {
     for (const i of list ) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+
+      const extractRet = []
+      for (const extractId of i.historyExtract) {
+        const extract = await ervice.agent.findOne({ extractId })
+        if (extract && extract.state === 2) {
+          const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone } = extract
+          extractRet.unshift({
+            nickName,
+            avatarUrl,
+            applyName,
+            communitySite,
+            extractId,
+            applyPhone,
+          })
+        }
+      }
+      i.historyExtract = extractRet
     }
 
     const total = await model.User.find(query).countDocuments()
@@ -43,6 +88,22 @@ class UserService extends Service {
     let newUser = await this.ctx.model.User.findOneAndUpdate({ userId }, data, other).lean()
     newUser.createTime = moment(newUser.createTime).format('YYYY-MM-DD HH:mm:ss')
     newUser.updateTime = moment(newUser.updateTime).format('YYYY-MM-DD HH:mm:ss')
+    const extractRet = []
+    for (const extractId of newUser.historyExtract) {
+      const extract = await this.ctx.service.agent.findOne({ extractId })
+      if (extract && extract.state === 2) {
+        const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone } = extract
+        extractRet.unshift({
+          nickName,
+          avatarUrl,
+          applyName,
+          communitySite,
+          extractId,
+          applyPhone,
+        })
+      }
+    }
+    newUser.historyExtract = extractRet
     return newUser;
   }
   async delete(userId) {

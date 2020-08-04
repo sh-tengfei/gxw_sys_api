@@ -18,8 +18,11 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/userInfo', jwt, contr.login.getUserInfo)
   router.put('/small/userInfo/:id', contr.login.updateInfo)
   router.get('/small/location', contr.login.getLocation)
+
   // 开通的城市
   router.get('/small/citys', contr.login.getCitys)
+  // 添加默认团长地址
+  router.post('/small/userSearbys', contr.login.addSetAgent)
 
   router.get('/small/product/:id', contr.product.getProduct)
   router.get('/small/order', jwt, contr.order.getOrders)
@@ -39,6 +42,7 @@ export default function({ router, controller: contr, jwt }) {
   // 提货点不验证用户
   router.get('/small/searbys', contr.agent.getNearbyAgents)
   router.get('/small/searbys/:id', contr.agent.getSearbys)
+
   // 提现
   router.post('/small/withdraw', jwt, contr.agent.postWithdraw)
 

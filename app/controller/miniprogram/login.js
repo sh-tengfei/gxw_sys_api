@@ -241,6 +241,26 @@ class LoginController extends Controller {
     const citys = await service.sellingCity.getCitys()
     ctx.body = { msg: '获取成功', code: 200, data: citys }
   }
+  async addSetAgent() {
+    const { ctx } = this
+    const { service, request: req } = ctx
+    const { extractId, userId } = req.body
+
+    if (!extractId || !userId) {
+      ctx.body = { msg: '参数错误', code: 201, data: req.body }
+      return
+    }
+    const user = await service.user.updateOne(userId, {
+      $addToSet: {
+        historyExtract: [extractId]
+      }
+    })
+    if (user) {
+      ctx.body = { msg: '修改成功', code: 200, data: user }
+    } else {
+      ctx.body = { msg: '用户不存在', code: 201, data: user }
+    }
+  }
 }
 
 module.exports = LoginController;
