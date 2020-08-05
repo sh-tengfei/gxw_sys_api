@@ -34,6 +34,12 @@ class UserService extends Service {
       user.historyExtract = extractRet
     }
 
+    if (user && user.unionid) {
+      const agent = await service.agent.findOne({ unionid: user.unionid })
+      if (agent) {
+        user.isAgent = true
+      }
+    }
 
     return user
   }
@@ -68,6 +74,13 @@ class UserService extends Service {
         }
       }
       i.historyExtract = extractRet
+
+      if (i.unionid) {
+        const agent = await service.agent.findOne({ unionid: i.unionid })
+        if (agent) {
+          i.isAgent = true
+        }
+      }
     }
 
     const total = await model.User.find(query).countDocuments()
@@ -109,6 +122,13 @@ class UserService extends Service {
         }
       }
       newUser.historyExtract = extractRet
+
+      if (newUser.unionid) {
+        const agent = await service.agent.findOne({ unionid: newUser.unionid })
+        if (agent) {
+          newUser.isAgent = true
+        }
+      }
     }
     const { list, total } = await this.ctx.service.address.find({
       userId: newUser.userId,
