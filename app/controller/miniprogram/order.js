@@ -102,11 +102,21 @@ class OrderController extends Controller {
       ctx.body = { code: error.code, msg, data: error.productId }
       return
     }
-    // 如果是购物车请求 订单成功后清空
+    // 如果是购物车请求 订单成功后清空选择的
     if (isCart) {
-      const cart = await service.shoppingCart.updateOne(userId, {
+      const { products } = await service.shoppingCart.findOne(userId)
+      const selects = []
+      const notSelects = []
+      products.forEach((i)=>{
+        if (i.status) {
+          selects.push(i)
+        } else {
+          notSelects.push(i)
+        }
+      })
+      const newCart = await service.shoppingCart.updateOne(userId, {
         userId,
-        products: [],
+        products: notSelects,
       })
       ctx.logger.error({ msg: '购物车清空完成', userId })
     }
