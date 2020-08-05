@@ -104,13 +104,14 @@ class UserService extends Service {
     return newUser;
   }
   async updateOne(userId, data, other = { new: true, _id: 0 }) {
-    let newUser = await this.ctx.model.User.findOneAndUpdate({ userId }, data, other).lean()
+    const { model, service } = this.ctx
+    let newUser = await model.User.findOneAndUpdate({ userId }, data, other).lean()
     newUser.createTime = moment(newUser.createTime).format('YYYY-MM-DD HH:mm:ss')
     newUser.updateTime = moment(newUser.updateTime).format('YYYY-MM-DD HH:mm:ss')
     if (newUser) {
       const extractRet = [] 
       for (const extractId of newUser.historyExtract) {
-        const extract = await this.ctx.service.agent.findOne({ extractId })
+        const extract = await service.agent.findOne({ extractId })
         if (extract && extract.state === 2) {
           const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone } = extract
           extractRet.unshift({
@@ -133,7 +134,7 @@ class UserService extends Service {
         }
       }
     }
-    const { list, total } = await this.ctx.service.address.find({
+    const { list, total } = await service.address.find({
       userId: newUser.userId,
       isDefault: true
     })
