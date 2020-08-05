@@ -38,6 +38,7 @@ class UserService extends Service {
       const agent = await service.agent.findOne({ unionid: user.unionid })
       if (agent) {
         user.isAgent = true
+        user.extractId = agent.extractId
       }
     }
 
@@ -79,6 +80,7 @@ class UserService extends Service {
         const agent = await service.agent.findOne({ unionid: i.unionid })
         if (agent) {
           i.isAgent = true
+          i.extractId = agent.extractId
         }
       }
     }
@@ -127,6 +129,7 @@ class UserService extends Service {
         const agent = await service.agent.findOne({ unionid: newUser.unionid })
         if (agent) {
           newUser.isAgent = true
+          newUser.extractId = agent.extractId
         }
       }
     }
