@@ -1,10 +1,26 @@
 'use strict';
 import { Controller } from 'egg'
 
-class ProductController extends Controller {    
+class ProductController extends Controller {
+  async getProducts() {
+    const { ctx, app } = this;
+    const { service, query } = ctx
+    const opt = {
+      ['salesTerritory.id']: query.city
+    }
+    if (!query.city) {
+      ctx.body = { code: 201, msg: '参数错误', data: query }
+      return
+    }
+    if (query.name) {
+      opt.name = { $regex: query.name }
+    }
+    const { list, total } = await service.product.find(opt)
+    ctx.body = { code: 200, msg: '', data: { list, total } }
+  }
   async getProduct() {
     const { ctx, app } = this;
-    const { request, service, params } = ctx
+    const { service, params } = ctx
     const query = {
       productId: params.id,
     }

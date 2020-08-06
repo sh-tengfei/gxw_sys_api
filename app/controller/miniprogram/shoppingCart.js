@@ -1,14 +1,41 @@
 'use strict';
 
 import { Controller } from 'egg'
+import { Decimal } from 'decimal.js'
 
 class ShoppingCartController extends Controller {
   async getCard() {
     const { ctx } = this
-    const { service, state } = ctx
+    const { service, state, query } = ctx
     const { userId } = state.user
 
     const card = await service.shoppingCart.findOne(userId)
+    if (+query.isCartSettle === 1) {
+      const selects = []
+      const notSelects = []
+      card.products.forEach((i)=>{
+        if (i.status) {
+          selects.push(i)
+        } else {
+          notSelects.push(i)
+        }
+      })
+      card.products = selects
+    }
+    if (card.products.length === 0) {
+      ctx.body = { code: 201, msg: '请选择结算商品', data: card }
+      return
+    }
+
+    if (card) {
+      let total = 0
+      card.products.forEach((i)=>{
+        i.total = +(new Decimal(i.product.mallPrice).mul(i.buyNum))
+        total = Decimal.add(total, i.total)
+      })
+      card.total = +total
+    }
+
     ctx.body = { code: 200, msg: '', data: card }
   }
   async increaseCard() {

@@ -89,6 +89,18 @@ class OrderController extends Controller {
 
     const { areaId } = await service.agent.findOne({ extractId: extractId })
 
+    let isogeny = true
+    for (const { productId } of products) {
+      const { salesTerritory, sellerOfType } = await service.product.findOne({ productId })
+      if (sellerOfType.code !== 101 && salesTerritory.id !== areaId) {
+        isogeny = false
+      }
+    }
+    if (!isogeny) {
+      ctx.body = { code: 201, msg: '下单失败，提货点商品非同一城市！' }
+      return
+    }
+
     const { code, error, data, msg } = await service.order.create({ 
       products, 
       extractId, 
@@ -114,7 +126,7 @@ class OrderController extends Controller {
           notSelects.push(i)
         }
       })
-      const newCart = await service.shoppingCart.updateOne(userId, {
+      await service.shoppingCart.updateOne(userId, {
         userId,
         products: notSelects,
       })

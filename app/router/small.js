@@ -24,6 +24,7 @@ export default function({ router, controller: contr, jwt }) {
   // 添加默认团长地址
   router.post('/small/userSearbys', contr.login.addSetAgent)
 
+  router.get('/small/products', contr.product.getProducts)
   router.get('/small/product/:id', contr.product.getProduct)
   router.get('/small/order', jwt, contr.order.getOrders)
   router.post('/small/order', jwt, contr.order.makeOrder)
