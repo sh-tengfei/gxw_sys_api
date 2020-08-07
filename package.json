@@ -38,12 +38,13 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-gxw",
-    "stop": "egg-scripts stop --title=egg-server-gxw",
+    "start": "egg-scripts start --daemon --title=gxw",
+    "stop": "egg-scripts stop --title=gxw",
     "dev": "egg-bin dev",
     "dev:aliyun": "egg-bin dev --env=test",
-    "start:test": "egg-scripts start --daemon --env=test --title=egg-server-gxw",
-    "stop:test": "egg-scripts stop --title=egg-server-gxw",
+    "start:test": "egg-scripts start --daemon --env=test --title=gxw",
+    "stop:test": "egg-scripts stop --title=gxw",
+    "restart:text": "npm run stop:test && start:test",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",

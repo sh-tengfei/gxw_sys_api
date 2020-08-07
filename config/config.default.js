@@ -138,7 +138,8 @@ module.exports = appInfo => {
       spbill_create_ip: '39.99.200.65',
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
       payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers', // 微信企业支付
-    }
+    },
+    cache: {}
   };
 
   return {

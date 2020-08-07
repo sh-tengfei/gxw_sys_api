@@ -26,6 +26,7 @@ class OrderController extends Controller {
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
+    // 计算买的最新用户
     ctx.body = { code: 200, msg: '获取成功', data: order }
   }
   async getOrders() {

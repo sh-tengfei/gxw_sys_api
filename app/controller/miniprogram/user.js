@@ -1,5 +1,7 @@
 'use strict';
 import { Controller } from 'egg'
+import fs from 'fs'
+var request = require('request');
 
 class LoginController extends Controller {
   // 商城登录
@@ -102,6 +104,38 @@ class LoginController extends Controller {
     const { query, service } = ctx
     const city = await service.sellingCity.getCity(query)
     ctx.body = { code: 200, msg: '获取成功', data: city }
+  }
+  async getUserPhone() {
+    const { ctx, app } = this;
+    const { request: req, service } = ctx
+
+    const phoneData = await service.user.getPhone({
+      sessionKey: req.body.session_key,
+      iv: req.body.iv,
+      encryptedData: req.body.encryptedData
+    })
+    ctx.body = { msg: '获取成功', code: 200, data: phoneData }
+  }
+  async getAgentOfQrode() {
+    const { ctx, app } = this;
+    const { request: { body } } = ctx
+    const { access_token: token } = app.config.cache
+    if (!token) {
+      ctx.body = { msg: '缓存错误！', code: 201 }
+      return
+    }
+    if (!body.path) {
+      ctx.body = { msg: '参数错误！', code: 201 }
+      return
+    }
+    const url = `https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=${token.access_token}`
+    const data = await ctx.postWxQrcode(url, { path:body.path })
+    if (data.body && typeof data.body === 'string') {
+      ctx.body = { msg: '获取成功！', code: 200, data: 'data:image/png;base64,' + data.body }
+      return
+    }
+    
+    ctx.body = { msg: '获取失败！', code: 201, data: data }
   }
 
 
@@ -211,18 +245,6 @@ class LoginController extends Controller {
 
     ctx.body = { msg: '更新成功', code: 200, data: agent }
   }
-  async getUserPhone() {
-    const { ctx, app } = this;
-    const { request: req, service } = ctx
-
-    const phoneData = await service.user.getPhone({
-      sessionKey: req.body.session_key,
-      iv: req.body.iv,
-      encryptedData: req.body.encryptedData
-    })
-    ctx.body = { msg: '获取成功', code: 200, data: phoneData }
-  }
-
   async getAgentPhone() {
     const { ctx } = this
     const { service, params, request: req, } = ctx
