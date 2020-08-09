@@ -2,7 +2,6 @@ import { Service } from 'egg'
 import _ from 'lodash'
 import { Decimal } from 'decimal.js'
 import moment from 'moment'
-import { parseString } from 'xml2js'
 
 class OrderService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {

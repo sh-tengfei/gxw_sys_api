@@ -100,5 +100,5 @@ module.exports = {
        <sign>${sign}</sign>
     </xml>`
     return xml
-  }
+  },
 };

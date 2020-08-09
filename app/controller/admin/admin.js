@@ -41,7 +41,7 @@ class AdminController extends Controller {
   }
   async getQnToken() {
     let { ctx, app } = this
-    let { accessKey, secretKey } = app.config.qiniuConf
+    let { accessKey, secretKey } = app.config.qiniuConfig
     let mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
     let options = {
       scope: 'gxianwang' //七牛资源目录

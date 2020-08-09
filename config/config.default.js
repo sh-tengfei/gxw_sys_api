@@ -90,15 +90,14 @@ module.exports = appInfo => {
     },
     orderCompleteTimeout: 4, //订单完成超时时间天
     commissionComplete: 4, //收益结算时间天
-    qiniuConf: {
-      accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
-      secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
-    },
     qiniuConfig: {
       cdn: '//static.gxianwang.cn/',
       qiniu: {
         upSite: '//up-z1.qiniup.com'
-      }
+      },
+      accessKey: '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3',
+      secretKey: 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z',
+      bucket: 'gxianwang',
     },
     // 公众号配置
     adminWxConfig: { // 团长公众号配置

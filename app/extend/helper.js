@@ -110,5 +110,10 @@ module.exports = {
         resolve(xml)
       })
     })
+  },
+  async getPromise(func) {
+    return new Promise((resolve, reject)=>{
+      func.call(null, resolve, reject)
+    })
   }
 }

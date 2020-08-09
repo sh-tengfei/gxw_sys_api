@@ -18,36 +18,35 @@ class IndexController extends Controller {
       'sellerOfType.code': 101,
       'limit': 10,
     }
-    // 产地特产
-    const speciQuery = {
-      'sellerOfType.code': 102,
-      'limit': 10,
-    }
     const sliderQuery = {
       'state': 2,
       'limit': 6
     }
 
     // 存在地址代码
-    if (query.cityCode) {
-      localQuery['salesTerritory.id'] = query.cityCode
-      speciQuery['salesTerritory.id'] = query.cityCode
+    if (!query.cityCode) {
+      ctx.body = { code: 201, msg: '参数错误', data: query }
+      return
+      // speciQuery['salesTerritory.id'] = query.cityCode
+    }
+    localQuery['salesTerritory.id'] = query.cityCode
+
+    const classifyOpt = {
+      classifyCity: query.cityCode,
     }
 
     const local = await ctx.service.product.find(localQuery)
     const direct = await ctx.service.product.find(directQuery)
-    const speci = await ctx.service.product.find(speciQuery)
     const slider = await ctx.service.slider.find(sliderQuery)
+
+    const { list: classifys, total } = await ctx.service.classify.find(classifyOpt)
+
     // 本地商品 权重排序
     local.list.sort((a, b) => {
       return b.weight - a.weight
     })
     // 产地直供 
     direct.list.sort((a, b) => {
-      return b.weight - a.weight
-    })
-    // 本地特产
-    speci.list.sort((a, b) => {
       return b.weight - a.weight
     })
     // 轮播图权重排序
@@ -59,10 +58,10 @@ class IndexController extends Controller {
     	msg: '' , 
     	code: 200, 
     	data: {
+        classifys,
 	    	slider,
         local,
         direct,
-        speci,
     	}
     }
   }
@@ -71,12 +70,6 @@ class IndexController extends Controller {
     const { params, service } = ctx
 
     ctx.sendJson({msg: '商品不存在', data: product})
-  }
-  async update() {
-    const { ctx, app } = this;
-    const { query, request, service, params } = ctx
-    let { body } = request
-
   }
   async getIndexSales() {
     const { ctx, app } = this;
