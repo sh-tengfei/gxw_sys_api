@@ -1,36 +1,19 @@
 'use strict';
 import { Controller } from 'egg'
-const qiniu = require('qiniu')
-const fs = require('fs')
+import qiniu from 'qiniu'
+import fs from 'fs'
 import moment from 'moment'
 
-function uptoken(key, bucket) {
-  let putPolicy = new qiniu.rs.PutPolicy({
-      scope: `${bucket}:${key}`,
-      returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
-  })
-  return putPolicy.uploadToken(mac);
-}
-
-function getFormUploader({ config }) {
-  const { accessKey, secretKey } = config.qiniuConfig
-  let mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
-  let conf = new qiniu.conf.Config()
-      // 上传是否使用cdn加速
-      // 是否使用https域名
-      conf.useHttpsDomain = true
-      conf.useCdnDomain = true
-  let formUploader = new qiniu.form_up.FormUploader(conf)
-  let putExtra = new qiniu.form_up.PutExtra()
-  uploader = formUploader
-  extra = putExtra
-  mac = mac
-  return uploader
-}
-
-let uploader
-let extra
-let mac
+let accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3';
+let secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z';
+let mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
+let config = new qiniu.conf.Config();
+    // 上传是否使用cdn加速
+    // 是否使用https域名
+    config.useHttpsDomain = true
+    config.useCdnDomain = true
+let formUploader = new qiniu.form_up.FormUploader(config);
+let putExtra = new qiniu.form_up.PutExtra();
 
 class LoginController extends Controller {
   // 商城登录
@@ -145,25 +128,39 @@ class LoginController extends Controller {
     })
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
-
-  async uploadFile(uptoken, key, localFile) {
-    const formUploader = getFormUploader(this.app)
+  uploadFile(uptoken, key, localFile){
     return new Promise((resolve, reject) => {
-      formUploader.putFile(uptoken, key, localFile, extra, (respErr, respBody, respInfo)=> {
-        resolve(respErr ? respInfo: respBody)
+      // 文件上传
+      formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
+        if (respErr) {
+          reject(respErr)
+          console.log('图片上传至七牛失败', respErr);
+          throw respErr;
+        }
+        if (respInfo.statusCode == 200) {
+          resolve(respBody)
+        } else {
+          reject(respBody)
+          console.log('图片上传至七牛异常', respBody)
+          console.log(JSON.stringify(respBody), JSON.stringify(respInfo))
+        }
       })
     })
   }
-
-  async qiniu(localUrl){
+  async qiniu(localUrl, productId){
     const { cdn, bucket } = this.app.config.qiniuConfig
-    console.log(cdn, bucket)
-    const time = moment(Date.now()).format('YYYY-MM-DD')
-    const key = `shareQr/${Date.now()}-${time}`
+    let key = `weixin_qrcode/${productId}-${Date.now()}`
+    function uptoken(key) {
+        let putPolicy = new qiniu.rs.PutPolicy({
+            scope: `${bucket}:${key}`,
+            returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
+        })
+        return putPolicy.uploadToken(mac);
+    }
 
-    let imgUrl = await this.uploadFile(uptoken(key, bucket), key, localUrl)
+    let imgUrl = await this.uploadFile(uptoken(key), key, localUrl)
     return {
-      url: cdn + imgUrl.key
+        url: cdn + imgUrl.key
     }
   }
   async getAgentOfQrode() {
@@ -178,29 +175,34 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
-    const url = `https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=${token.access_token}`
-    const data = await ctx.postWxQrcode(url, { path: body.path })
-
-    const dataBuffer = new Buffer.from(data.body, 'base64')
+    const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
+    const res = await ctx.postWxQrcode(url, { 
+      page: body.path,
+      scene: `pid=${body.productId}&eid=${body.extractId}`
+    })
+    console.log(res.data, 'data')
+    const dataBuffer = new Buffer.from(res.body, 'base64')
     if (!Buffer.isBuffer(dataBuffer)) {
       ctx.body = { msg: '内部错误！', code: 201 }
       return
     }
+
     const localUrl = `./catch/${body.productId}.jpg`
-    console.log('写入成功！', localUrl);
     const saveRet = await helper.getPromise((resolve, reject) => {
-      console.log('写入', localUrl);
       fs.writeFile(localUrl, dataBuffer, (err) => {
         resolve(err ? err : true)
       })
     })
-    console.log('写入成功！1', saveRet);
     if (saveRet === true) {
-      const fileUrl = await this.qiniu(localUrl)
+      const fileUrl = await this.qiniu(localUrl, body.productId)
       if (fileUrl) {
         ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
         return
+      } else {
+        ctx.body = { msg: '上传失败！', code: 201 }
       }
+    } else {
+      ctx.body = { msg: '获取失败！', code: 201 }
     }
   }
 
