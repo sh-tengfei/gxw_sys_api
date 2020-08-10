@@ -149,18 +149,18 @@ class LoginController extends Controller {
   }
   async qiniu(localUrl, productId){
     const { cdn, bucket } = this.app.config.qiniuConfig
-    let key = `weixin_qrcode/${productId}-${Date.now()}`
+    let key = `wx_share_qrcode/${productId}-${Date.now()}`
     function uptoken(key) {
-        let putPolicy = new qiniu.rs.PutPolicy({
-            scope: `${bucket}:${key}`,
-            returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
-        })
-        return putPolicy.uploadToken(mac);
+      let putPolicy = new qiniu.rs.PutPolicy({
+        scope: `${bucket}:${key}`,
+        returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
+      })
+      return putPolicy.uploadToken(mac);
     }
 
     let imgUrl = await this.uploadFile(uptoken(key), key, localUrl)
     return {
-        url: cdn + imgUrl.key
+      url: cdn + imgUrl.key
     }
   }
   async getAgentOfQrode() {
@@ -175,26 +175,18 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
+    const localUrl = `./catch/${body.productId}.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
-    const res = await ctx.postWxQrcode(url, { 
+    const ret = await ctx.postWxQrcode(url, { 
       page: body.path,
-      scene: `pid=${body.productId}&eid=${body.extractId}`
-    })
-    console.log(res.data, 'data')
-    const dataBuffer = new Buffer.from(res.body, 'base64')
-    if (!Buffer.isBuffer(dataBuffer)) {
-      ctx.body = { msg: '内部错误！', code: 201 }
-      return
-    }
+      scene: `${body.productId},${body.extractId}`,
+      // is_hyaline: true,
+    }, localUrl)
 
-    const localUrl = `./catch/${body.productId}.jpg`
-    const saveRet = await helper.getPromise((resolve, reject) => {
-      fs.writeFile(localUrl, dataBuffer, (err) => {
-        resolve(err ? err : true)
-      })
-    })
-    if (saveRet === true) {
+    if (ret === true) {
       const fileUrl = await this.qiniu(localUrl, body.productId)
+      // 删除文件
+      
       if (fileUrl) {
         ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
         return

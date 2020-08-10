@@ -1,26 +1,24 @@
 const request = require('request')
+const fs = require('fs')
 
 module.exports = {
   getWebSite(url, query = {}) {
     return this.curlGet(url, query)
   },
-  postWxQrcode(url, data) {
+  postWxQrcode(url, data, localUrl) {
     return new Promise((resolve, reject) => {
-      request({
-        url,
-        encoding: 'base64',
-        json: true,
-        headers: {
-          'content-type': 'application/json'
-        },
-        method: 'POST',
-        form: JSON.stringify(data)
-      }, function(error, response) {
-        if (error) {
-          return resolve(error)
-        }
-        resolve(response)
+      const file = fs.createWriteStream(localUrl)
+      file.on('finish', function() {
+        resolve(true)
       })
+      file.on('error', function() {
+        resolve(false)
+      })
+      request({
+        method: 'POST',
+        url,
+        body: JSON.stringify(data)
+      }).pipe(file)
     })
   },
   postWebSite(url, data = {}) {
