@@ -332,11 +332,16 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误', code: 201, data: req.body }
       return
     }
+
+    let { historyExtract } = await service.user.findOne({userId})
+    historyExtract = historyExtract.map(i=>i.extractId)
+    historyExtract.push(extractId)
+    
+    const newHistory = new Set(historyExtract)
     const user = await service.user.updateOne(userId, {
-      $addToSet: {
-        historyExtract: [extractId]
-      }
+      historyExtract: [...newHistory]
     })
+
     if (user) {
       ctx.body = { msg: '修改成功', code: 200, data: user }
     } else {

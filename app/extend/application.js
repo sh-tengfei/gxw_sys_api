@@ -18,40 +18,6 @@ rankingUser.prototype.setList = function (service) {
 
 module.exports = {
   ranking: new rankingUser(),
-  // // 请求基础AccessToken 做缓存用
-  // getBaseAccessToken() {
-  //   let { mallWxConfig: config } = this.config
-  //   let tokenUrl = `https://proxy.gxianwang.com/proxy/cgi-bin/token?grant_type=client_credential&appid=${config.AppID}&secret=${config.AppSecret}`
-  //   return this.curl(tokenUrl, {
-  //     dataType: 'json',
-  //   })
-  // },
-  // getJsapiTicket() {
-  //   const tokenUrl = `https://proxy.gxianwang.com/proxy/cgi-bin/ticket/getticket?access_token=${this.catch.baseWxAccessToken}&type=jsapi`
-  //   return this.curl(tokenUrl, {
-  //     dataType: 'json',
-  //   })
-  // },
-  // 获取微信的用户信息
-  // async getWebAccess({ code }, { ctx, app }) {
-  //   const { mallWxConfig: conf } = app.config
-  //   const url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.AppID}&secret=${conf.AppSecret}&code=${code}&grant_type=authorization_code`;
-  //   // 非基础token 不做缓存
-  //   let accessToken = await ctx.getWebSite(url)
-  //   if (accessToken.errcode && accessToken.errcode === '40029') {
-  //     return ctx.getRefreshAccessToken({ ctx, app }) // 刷新AccessToken
-  //   }
-  //   return accessToken
-  // },
-  // async getRefreshAccessToken({ ctx, app }) {
-  //   const { mallWxConfig: conf } = app.config
-  //   let url = `https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=${conf.AppID}&grant_type=refresh_token&refresh_token=REFRESH_TOKEN`
-  //   let tokenData = await ctx.getWebSite(url)
-  //   if (tokenData.errcode && tokenData.errcode === '40029') {
-  //     return ctx.getRefreshAccessToken({ ctx, app })
-  //   }
-  //   return tokenData
-  // },
   async getBaseUnionid({ openid }, { ctx, app }) {
     // 获取unionid的请求地址
     let { baseWxAccessToken: access_token } = app.catch
@@ -100,5 +66,13 @@ module.exports = {
        <sign>${sign}</sign>
     </xml>`
     return xml
+  },
+  async getTemplateList({ ctx, app }) {
+    let { access_token: token } = app.config.cache
+    return ctx.getWebSite(`https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate?access_token=${token.access_token}`)
+  },
+  async sendTempMsg({ ctx, app }, data) {
+    let { access_token: token } = app.config.cache
+    return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },
 };

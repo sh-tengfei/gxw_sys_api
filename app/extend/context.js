@@ -21,9 +21,9 @@ module.exports = {
       }).pipe(file)
     })
   },
-  postWebSite(url, data = {}) {
+  postWebSite(url, data = {}, dataType = 'text') {
     return this.curl(url, {
-      dataType: 'text',
+      dataType,
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

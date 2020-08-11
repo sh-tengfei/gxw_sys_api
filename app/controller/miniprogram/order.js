@@ -64,7 +64,7 @@ class OrderController extends Controller {
   }
   async makeOrder() {
     const { ctx, app } = this;
-    const { request: req, service, state } = ctx
+    const { request: req, service, state, logger } = ctx
     // 当前登录用户
     const { userId } = state.user
 
@@ -133,6 +133,27 @@ class OrderController extends Controller {
       })
       ctx.logger.error({ msg: '购物车清空完成', userId })
     }
+
+    const { openid } = await service.user.findOne({userId})
+
+    const res = await app.sendTempMsg(this, {
+      touser: openid,
+      template_id: '8OmsPNrOwvFD_Bk8hNz4xhM_DdkebOR54xS3-2nXDD8',
+      data: {
+        "amount1": { "value": data.total },
+        "thing2": { "value": '订单即将取消，请尽快付款' },
+        "thing3": { "value": data.products[0].name },
+        "character_string4": { "value": data.orderId },
+        "time5": { "value": moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
+      }
+    })
+
+    if (res.data.errcode) {
+      logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+    } else {
+      logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+    }
+
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async payOrder() {
@@ -170,7 +191,7 @@ class OrderController extends Controller {
     }
 
     // 签名信息存入订单
-    await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
+    let newOrder = await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
 
     ctx.body = { code, msg: '获取成功', data }
   }
