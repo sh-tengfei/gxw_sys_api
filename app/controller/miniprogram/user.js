@@ -180,6 +180,7 @@ class LoginController extends Controller {
     const ret = await ctx.postWxQrcode(url, { 
       page: body.path,
       scene: `${body.productId},${body.extractId}`,
+      width: 180,
       // is_hyaline: true,
     }, localUrl)
 
