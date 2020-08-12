@@ -17,5 +17,9 @@ module.exports = {
   mongoose: {
     enable: true,
     package: 'egg-mongoose'
+  },
+  alinode: {
+    enable: true,
+    package: 'egg-alinode'
   }
 }

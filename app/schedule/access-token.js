@@ -12,6 +12,6 @@ module.exports = {
       dataType: 'json',
     })
     cache.access_token = res.data
-    console.log(res.data, 'token 刷新')
+    // console.log(res.data, 'token 刷新')
   },
 }

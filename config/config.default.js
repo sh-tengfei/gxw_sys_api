@@ -14,7 +14,13 @@ module.exports = appInfo => {
     jwt: {
       secret: "guoxianwang",
     },
-  };
+  }
+
+  config.alinode = {
+    // 从 `Node.js 性能平台` 获取对应的接入参数
+    appid: '85889',
+    secret: 'd0b3c2fe8bf0bf477e2ce2d71f9fb59cafd1460b',
+  }
 
   config.cluster = {
     listen: {
