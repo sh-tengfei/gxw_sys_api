@@ -26,6 +26,5 @@ module.exports = appInfo => {
    **/
   exports = defaultConfig
 
-  
   return defaultConfig
 };

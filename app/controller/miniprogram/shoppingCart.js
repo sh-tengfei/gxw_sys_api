@@ -61,7 +61,9 @@ class ShoppingCartController extends Controller {
       return
     }
 
-    cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+    if (cart) {
+      cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+    }
 
     ctx.body = { code: 200, msg: '添加成功', data: cart }
   }
