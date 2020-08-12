@@ -84,13 +84,16 @@ class LoginController extends Controller {
   async updateInfo() {
     const { ctx, app } = this;
     const { request: req, params, service } = ctx
-    let { nickName, avatarUrl } = req.body
+    let { nickName, avatarUrl, phoneNumber } = req.body
     const newData = {
       username: nickName,
       picture: avatarUrl,
-      phone: req.body.phoneNumber,
       source: req.body
     }
+    if (phoneNumber) {
+      newData.phone = phoneNumber
+    }
+    console.log(newData, 'newData')
     if (!params.id) {
       ctx.body = { msg: '参数错误', code: 201 }
       return
