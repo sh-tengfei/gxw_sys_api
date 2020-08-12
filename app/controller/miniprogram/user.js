@@ -19,21 +19,22 @@ class LoginController extends Controller {
   // 商城登录
   async getUserLogin() {
     const { ctx, app } = this;
-    const { code } = ctx.request.body
+    const { request, service, logger } = ctx
+    const { code } = request.body
 
     if (!code) {
       ctx.logger.warn({ msg: '参数错误联系管理员', code: 201, data: code })
       return ctx.body = { msg: '参数错误联系管理员', code: 201, data: code }
     }
 
-    const userInfo = await ctx.service.mallToken.get2Session(code) // 获取用户信息
+    const userInfo = await service.mallToken.get2Session(code) // 获取用户信息
 
     if (!userInfo || userInfo.errcode) {
-      ctx.logger.warn({ msg: '回话过期重新登录', code: 401 })
+      logger.warn({ msg: '回话过期重新登录', code: 401 })
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
 
-    let user = await ctx.service.user.findOne({ unionid: userInfo.unionid })
+    let user = await service.user.findOne({ unionid: userInfo.unionid })
     if (user !== null) {
       ctx.body = { 
         code: 200,
@@ -43,16 +44,16 @@ class LoginController extends Controller {
       }
       return
     }
-    ctx.logger.info('用户注册: %j', ctx.request.body)
+    logger.info('用户注册: %j', request.body)
     // 不存在 创建
     try {
-      user = await ctx.service.user.create({
+      user = await service.user.create({
         openid: userInfo.openid,
         unionid: userInfo.unionid,
         userInfo: null
       })
       if (!user) {
-        ctx.logger.error({ msg: '保存失败，联系管理员', data: user })
+        logger.error({ msg: '保存失败，联系管理员', data: user })
         ctx.body = { 
           msg: '保存失败，联系管理员', 
           data: user,
@@ -68,7 +69,7 @@ class LoginController extends Controller {
       return
     } catch (e) {
       let ret = { msg: '保存失败，联系管理员', data: e }
-      ctx.logger.error(ret)
+      logger.error(ret)
       return ctx.body = ret
     }
   }
@@ -104,11 +105,17 @@ class LoginController extends Controller {
   }
   async getUserInfo() {
     const { ctx, app } = this;
-    const user = await ctx.service.user.findOne({ userId: ctx.state.user.userId })
+    const { state, service } = ctx
+    const user = await service.user.findOne({ userId: state.user.userId })
     if (!user) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return
     }
+
+    const card = await service.shoppingCart.findOne(state.user.userId)
+
+    user.cardProNum = service.shoppingCart.getProductNum(card)
+
     ctx.body = { code: 200, msg: '获取成功', data: user }
   }
   async getLocation() {

@@ -146,6 +146,16 @@ class ShoppingCartService extends Service {
     }
     return cart.products.find(i => i.productId === productId)
   }
+  getProductNum(cart) {
+    if (!cart || !cart.products) {
+      return 0
+    }
+    let num = 0
+    cart.products.forEach(i => {
+      num += i.buyNum
+    })
+    return num
+  }
 }
 
 module.exports = ShoppingCartService;

@@ -36,6 +36,8 @@ class ShoppingCartController extends Controller {
       card.total = +total
     }
 
+    card.cardProNum = String(service.shoppingCart.getProductNum(card))
+
     ctx.body = { code: 200, msg: '', data: card }
   }
   async increaseCard() {
@@ -58,6 +60,9 @@ class ShoppingCartController extends Controller {
       ctx.body = { code, msg }
       return
     }
+
+    cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+
     ctx.body = { code: 200, msg: '添加成功', data: cart }
   }
   async deleteCard() {
@@ -77,6 +82,9 @@ class ShoppingCartController extends Controller {
       ctx.body = { code, msg }
       return
     }
+
+    cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+
     ctx.body = { code: 200, msg: '操作成功', data: cart }
   }
   async statusCard() {
@@ -116,6 +124,9 @@ class ShoppingCartController extends Controller {
       ctx.body = { code, msg }
       return
     }
+
+    cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+    
     ctx.body = { code: 200, msg: '操作成功', data: cart }
   }
 }
