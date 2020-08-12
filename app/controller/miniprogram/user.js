@@ -2,7 +2,6 @@
 import { Controller } from 'egg'
 import qiniu from 'qiniu'
 import fs from 'fs'
-import moment from 'moment'
 
 let accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3';
 let secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z';
@@ -93,7 +92,7 @@ class LoginController extends Controller {
     if (phoneNumber) {
       newData.phone = phoneNumber
     }
-    console.log(newData, 'newData')
+
     if (!params.id) {
       ctx.body = { msg: '参数错误', code: 201 }
       return
@@ -152,7 +151,6 @@ class LoginController extends Controller {
         } else {
           reject(respBody)
           console.log('图片上传至七牛异常', respBody)
-          console.log(JSON.stringify(respBody), JSON.stringify(respInfo))
         }
       })
     })
@@ -197,7 +195,7 @@ class LoginController extends Controller {
     if (ret === true) {
       const fileUrl = await this.qiniu(localUrl, body.productId)
       // 删除文件
-      
+      fs.unlinkSync(localUrl)
       if (fileUrl) {
         ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
         return
