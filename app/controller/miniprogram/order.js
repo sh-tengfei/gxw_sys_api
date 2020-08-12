@@ -313,7 +313,8 @@ class OrderController extends Controller {
   async wxPayNotify() {
     const { ctx } = this;
     const { service, request: req, logger } = ctx
-    const { return_code, return_msg, time_end, out_trade_no } = await ctx.helper.getXML(req.body)
+    const option = await ctx.helper.getXML(req.body)
+    const { return_code, return_msg, time_end, out_trade_no } = option
     
     if (return_code !== 'SUCCESS'){
       logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
@@ -343,7 +344,7 @@ class OrderController extends Controller {
       logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
     }
 
-    const billRet = await this.createBill(orders, time_end, option.xml, req.body)
+    const billRet = await this.createBill(orders, time_end, option, req.body)
     if (billRet.code !== 200) {
       logger.info({ msg: '收益创建错误', bill: billRet })
     } else {
@@ -377,7 +378,7 @@ class OrderController extends Controller {
     }
 
     const billRet = await this.createBill(orders, Date.now(), { 
-      msg: '订单支付超时查询为支付！' 
+      msg: '订单支付超时查询结果是支付！' 
     }, '<xml></xml>')
     if (billRet.code !== 200) {
       logger.info({ msg: '收益创建错误', bill: billRet })
