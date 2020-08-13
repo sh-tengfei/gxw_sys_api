@@ -22,6 +22,7 @@ class OrderPayTimeout extends Subscription {
       return
     }
     const { ctx } = this
+    const { logger, service, postWebSite } = ctx
     for (const item of list) {
       // 当前时间大于支付结束时间 判定为要关闭订单
       const isAfter = moment().isAfter(item.payEndTime)
@@ -29,28 +30,35 @@ class OrderPayTimeout extends Subscription {
         const { 
           trade_state_desc, 
           return_code, 
-          trade_state 
-        } = await ctx.service.order.orderPayQuery(item)
+          trade_state,
+          ...other
+        } = await service.order.orderPayQuery(item)
+
         if (return_code !== 'SUCCESS') {
-          ctx.logger.error('订单信息异常！')
+          logger.error('订单信息异常！')
           return
         }
-        if (trade_state === 'SUCCESS') {
+        if (other.result_code === 'FAIL' && other.err_code === 'ORDERNOTEXIST') {
+           // 订单没到腾讯支付直接关闭
+          logger.info(other.err_code_des)
+          const orderRet = await service.order.updateOne(item.orderId, { state: 4 })
+          logger.info(orderRet.orderId, '未起调支付，订单关闭')
+        } else if (trade_state === 'SUCCESS') {
           // 订单已经支付回调未收到
           // 对本机发出请求 改变订单状态以及收益信息
-          const { data } = await ctx.postWebSite('http://127.0.0.1:8100/small/payTimeout', item)
+          const { data } = await postWebSite('http://127.0.0.1:8100/small/payTimeout', item)
           if (data.code === 200) {
-            ctx.logger.info(data)
+            logger.info(data)
           }
         } else if (trade_state === 'NOTPAY') {
           // 订单关闭
-          ctx.logger.info(trade_state_desc)
-          const orderRet = await ctx.service.order.updateOne(item.orderId, { state: 4 })
-          ctx.logger.info(orderRet.orderId, '支付时间超时，订单关闭')
+          logger.info(trade_state_desc)
+          const orderRet = await service.order.updateOne(item.orderId, { state: 4 })
+          logger.info(orderRet.orderId, '支付时间超时，订单关闭')
           // 发送消息
         }
       } else {
-        ctx.logger.info(item.orderId, '支付时间未超时')
+        logger.info(item.orderId, '支付时间未超时')
       }
     }
   }
