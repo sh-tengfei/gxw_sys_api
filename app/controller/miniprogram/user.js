@@ -267,6 +267,25 @@ class LoginController extends Controller {
       ctx.body = { msg: '登陆失败，联系管理员' }
     }
   }
+
+  async getGroupInfo() {
+    const { ctx, app } = this;
+    const { state, service } = ctx
+
+    let agent = await ctx.service.agent.findOne({ extractId: state.user.userId })
+    if (!agent) {
+      ctx.body = { code: 201, msg: '用户不存在', data: agent }
+      return
+    }
+
+    if (agent.areaId) {
+      agent.isReg = true
+    } else {
+      agent.isReg = false
+    }
+
+    ctx.body = { code: 200, msg: '获取成功', data: agent }
+  }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {
     const token = this.app.jwt.sign({ 
@@ -316,7 +335,7 @@ class LoginController extends Controller {
   }
   async getAgentPhone() {
     const { ctx } = this
-    const { service, params, request: req, } = ctx
+    const { service, request: req, } = ctx
 
     const phoneData = await service.user.getPhone({
       sessionKey: req.body.sessionkey,

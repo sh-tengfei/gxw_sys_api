@@ -3,14 +3,13 @@ var crypto = require('crypto')
 function WXBizDataCrypt(appId, sessionKey) {
   this.appId = appId
   this.sessionKey = sessionKey
-  console.log(sessionKey, appId, 'config')
 }
 
 WXBizDataCrypt.prototype.decryptData = function(encryptedData, iv) {
   // base64 decode
-  const sessionKey = new Buffer(this.sessionKey, 'base64')
-  encryptedData = new Buffer(encryptedData, 'base64')
-  iv = new Buffer(iv, 'base64')
+  const sessionKey = Buffer.from(this.sessionKey, 'base64')
+  encryptedData = Buffer.from(encryptedData, 'base64')
+  iv = Buffer.from(iv, 'base64')
 
   try {
     // 解密

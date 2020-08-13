@@ -57,6 +57,7 @@ export default function({ router, controller: contr, jwt }) {
 
   // 团长端登录
   router.get('/small/groupLogin', contr.user.getGroupLogin)
+  router.get('/small/groupInfo', jwt, contr.user.getGroupInfo)
   router.put('/small/agent/:id', jwt, contr.user.updateAgent) // 登陆后更新信息
   router.post('/small/getAgentPhone', jwt, contr.user.getAgentPhone)
 
