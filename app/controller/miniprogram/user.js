@@ -116,7 +116,7 @@ class LoginController extends Controller {
 
     const card = await service.shoppingCart.findOne(state.user.userId)
 
-    user.cardProNum = Number(service.shoppingCart.getProductNum(card))
+    user.cardProNum = String(service.shoppingCart.getProductNum(card))
 
     ctx.body = { code: 200, msg: '获取成功', data: user }
   }
