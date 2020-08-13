@@ -519,11 +519,17 @@ class OrderController extends Controller {
   async getRankingUser() {
     const { app, ctx } = this
     const list = app.getRankingList()
-    const users = []
+    let users = []
+
     for (const item of list) {
-      users.push(item.user)
+      if (item.user) {
+        users.push(item.user.picture)
+      }
     }
-    ctx.body = { code: 201, msg: '获取成功', data: users }
+
+    users = new Set(users)
+
+    ctx.body = { code: 201, msg: '获取成功', data: [...users] }
   }
   async delOrder() {
     const { ctx, app } = this;

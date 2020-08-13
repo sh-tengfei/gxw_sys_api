@@ -11,7 +11,7 @@ rankingUser.prototype.getList = function () {
   return this.list
 }
 rankingUser.prototype.setList = function (service) {
-  service.order.find({}, { limit: 10 }).then(({ list }) => {
+  service.order.find({ state: [2, 3] }, { limit: 10 }).then(({ list }) => {
     this.list = list
   })
 }

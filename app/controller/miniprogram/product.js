@@ -25,6 +25,20 @@ class ProductController extends Controller {
       productId: params.id,
     }
     let pro = await service.product.findOne(query)
+
+    const { list } = await service.order.find({ 
+      products: { 
+        $elemMatch:  {
+          productId: params.id
+        }
+      } 
+    })
+
+    let usedUser = list.filter(i=>i.user)
+    usedUser = usedUser.map(i=>i.user.picture)
+    usedUser = new Set(usedUser)
+    pro.used = [...usedUser]
+
     ctx.body = { code: 200, msg: '', data: pro }
   }
   async update() {
