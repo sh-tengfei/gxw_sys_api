@@ -285,14 +285,14 @@ class OrderController extends Controller {
   async updateOrder() {
     const { ctx } = this;
     const { request: req, service, params } = ctx
-    if (!params.id || !req.body) {
+    if (!params.id) {
       ctx.body = { code: 201, msg: '参数不正确' }
       return
     }
 
     const data = await service.order.updateOne(params.id, req.body)
     if (!data) {
-      ctx.body = { code: 201, msg: '更新失败！', data }
+      ctx.body = { code: 201, msg: '修改失败！', data }
       return
     }
     ctx.body = { code: 200, msg: '更新成功！', data }
@@ -515,7 +515,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return moment().isBetween(start, pause)
+    return !moment().isBetween(start, pause)
   }
   async getRankingUser() {
     const { app, ctx } = this

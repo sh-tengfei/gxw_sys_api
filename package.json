@@ -27,8 +27,10 @@
     "xmlreader": "^0.2.3"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.11.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
+    "babel-core": "^6.26.3",
     "egg-bin": "^4.11.0",
     "egg-ci": "^1.11.0",
     "egg-mock": "^3.21.0",
@@ -41,17 +43,14 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-gxw",
     "stop": "egg-scripts stop --title=egg-server-gxw",
-    
     "dev:local": "egg-bin dev --env=local",
     "start:local": "egg-scripts start --daemon --env=local --title=egg-server-gxw",
     "stop:local": "egg-scripts stop --title=egg-server-gxw",
     "restart:local": "npm run stop:local && npm run start:local",
-
     "dev": "egg-bin dev --env=dev",
     "start:dev": "egg-scripts start --daemon --env=dev --title=egg-server-gxw",
     "stop:dev": "egg-scripts stop --title=egg-server-gxw",
     "restart:dev": "npm run stop:dev && npm run start:dev",
-
     "debug": "egg-bin debug",
     "test:fix": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",

@@ -22,6 +22,12 @@ class ShoppingCartController extends Controller {
       })
       card.products = selects
     }
+
+    if(!card) {
+      ctx.body = { code: 200, msg: '购物车无商品', data: card }
+      return
+    }
+
     if (card.products.length === 0) {
       ctx.body = { code: 201, msg: '请选择结算商品', data: card }
       return
