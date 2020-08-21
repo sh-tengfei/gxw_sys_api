@@ -12,9 +12,7 @@ class ProductController extends Controller {
     if (_query.name) {
       query.name = _query.name
     }
-    // if (_query.locking) {
-    //   query.locking = _query.locking
-    // }
+
     if (_query.sellerOfType) {
       query['sellerOfType.code'] = _query.sellerOfType
     }
@@ -75,7 +73,8 @@ class ProductController extends Controller {
         weight,
         unitValue,
         address,
-        salesTerritory
+        salesTerritory,
+        shareTitle,
       } = request.body
     if (!name) {
       ctx.body = { code: 201, msg: '商品名称不存在！'}
@@ -122,7 +121,8 @@ class ProductController extends Controller {
       weight,
       unitValue,
       address,
-      salesTerritory
+      salesTerritory,
+      shareTitle,
     }
     let newPro = await service.product.create(opt)
     if (!newPro.productId) {
@@ -157,6 +157,8 @@ class ProductController extends Controller {
     if (!retPro) {
       ctx.body = { code: 201, msg: '更新失败' }
       return
+    } else if (retPro.state === 2) {
+      
     }
     ctx.body = ctx.body = { code: 200, msg: '更新成功', data: retPro }
   }

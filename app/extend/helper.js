@@ -1,7 +1,8 @@
 const crypto = require('crypto')
 const { Decimal } = require('decimal.js')
+
 const WXBizDataCrypt = require('./WXBizDataCrypt')
-const parseString = require('xml2js').parseString
+const { parseString } = require('xml2js')
 
 function raw(args) {
   let keys = Object.keys(args)

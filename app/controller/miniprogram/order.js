@@ -4,6 +4,7 @@ import { read } from 'xmlreader'
 import { parseString } from 'xml2js'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
+import { weappTemp } from '../../../config/noticeTemp'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -141,7 +142,7 @@ class OrderController extends Controller {
       template_id: '8OmsPNrOwvFD_Bk8hNz4xhM_DdkebOR54xS3-2nXDD8',
       data: {
         "amount1": { "value": data.total },
-        "thing2": { "value": '订单即将取消，请尽快付款' },
+        "thing2": { "value": '订单即将关闭，请尽快付款！' },
         "thing3": { "value": data.products[0].name },
         "character_string4": { "value": data.orderId },
         "time5": { "value": moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },

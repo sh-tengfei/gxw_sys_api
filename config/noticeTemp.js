@@ -1,3 +1,7 @@
-export const wxTemp = {
+const weappTemp = {
 
+}
+
+module.exports = {
+  weappTemp,
 }
