@@ -1,10 +1,9 @@
 'use strict';
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
-import { parseString } from 'xml2js'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
-import { weappTemp } from '../../../config/noticeTemp'
+import { weAppTemp } from '../../../config/noticeTemp'
 
 class OrderController extends Controller {
   async getOrder() {
@@ -139,14 +138,15 @@ class OrderController extends Controller {
 
     const res = await app.sendTempMsg(this, {
       touser: openid,
-      template_id: '8OmsPNrOwvFD_Bk8hNz4xhM_DdkebOR54xS3-2nXDD8',
+      template_id: weAppTemp.payment,
       data: {
         "amount1": { "value": data.total },
         "thing2": { "value": '订单即将关闭，请尽快付款！' },
         "thing3": { "value": data.products[0].name },
         "character_string4": { "value": data.orderId },
         "time5": { "value": moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
-      }
+      },
+      page: `/pages/orderDetail/detail?orderId=${data.orderId}`,
     })
 
     if (res.data.errcode) {
@@ -194,7 +194,7 @@ class OrderController extends Controller {
     // 签名信息存入订单
     let newOrder = await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
 
-    ctx.body = { code, msg: '获取成功', data }
+    ctx.body = { code, msg: '获取成功', data: newOrder }
   }
 	orderPayment({ orderId, openid, total }) {
     const { app, ctx } = this
@@ -515,7 +515,7 @@ class OrderController extends Controller {
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
     const pause = moment().endOf('day')
-    return !moment().isBetween(start, pause)
+    return moment().isBetween(start, pause)
   }
   async getRankingUser() {
     const { app, ctx } = this

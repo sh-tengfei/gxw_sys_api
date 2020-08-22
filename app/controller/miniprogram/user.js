@@ -2,6 +2,7 @@
 import { Controller } from 'egg'
 import qiniu from 'qiniu'
 import fs from 'fs'
+import { weAppTemp } from '../../../config/noticeTemp'
 
 let accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3';
 let secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z';
@@ -38,7 +39,7 @@ class LoginController extends Controller {
       ctx.body = { 
         code: 200,
         msg: '登陆成功！',
-        data: { token: this.createUserToken(user), user },
+        data: { token: this.createUserToken(user), user, weAppTemp },
         session_key: userInfo.session_key,
       }
       return
@@ -62,7 +63,7 @@ class LoginController extends Controller {
       ctx.body = { 
         code: 200, 
         msg: '登陆成功！', 
-        data: { token: this.createUserToken(user), user }, 
+        data: { token: this.createUserToken(user), user, weAppTemp}, 
         session_key: userInfo.session_key
       }
       return
@@ -118,7 +119,7 @@ class LoginController extends Controller {
 
     user.cardProNum = String(service.shoppingCart.getProductNum(card))
 
-    ctx.body = { code: 200, msg: '获取成功', data: user }
+    ctx.body = { code: 200, msg: '获取成功', data: { user, weAppTemp } }
   }
   async getLocation() {
     const { ctx, app } = this;
@@ -219,7 +220,6 @@ class LoginController extends Controller {
     }
 
     const userInfo = await ctx.service.groupToken.get2Session(code) // 获取团长用户信息
-
     if (!userInfo || userInfo.errcode) {
       ctx.logger.warn({ msg: '回话过期重新登录', code: 401 })
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
