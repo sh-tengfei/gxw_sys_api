@@ -237,7 +237,7 @@ class LoginController extends Controller {
       ctx.body = { 
         code: 200, 
         msg: '登陆成功！', 
-        data: { token, user: agent },
+        data: { token, user: agent, weAppTemp },
         session_key: userInfo.session_key
       }
       return
@@ -258,7 +258,7 @@ class LoginController extends Controller {
       ctx.body = { 
         code: 200,
         msg: '登陆成功！',
-        data: { token, user: agent },
+        data: { token, user: agent, weAppTemp },
         session_key: userInfo.session_key
       }
       return
@@ -284,7 +284,7 @@ class LoginController extends Controller {
       agent.isReg = false
     }
 
-    ctx.body = { code: 200, msg: '获取成功', data: agent }
+    ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp } }
   }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {

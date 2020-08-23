@@ -68,11 +68,16 @@ module.exports = {
     return xml
   },
   async getTemplateList({ ctx, app }) {
-    let { access_token: token } = app.config.cache
+    let { mall_access_token: token } = app.config.cache
     return ctx.getWebSite(`https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate?access_token=${token.access_token}`)
   },
   async sendTempMsg({ ctx, app }, data) {
-    let { access_token: token } = app.config.cache
+    let { token_type } = data
+    delete data.token_type
+    if (!token_type) {
+      token_type = 'mall'
+    }
+    let { [token_type + '_access_token']: token } = app.config.cache
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },
 };

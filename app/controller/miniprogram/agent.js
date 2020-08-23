@@ -1,9 +1,11 @@
 'use strict';
 import { Controller } from 'egg'
+import { weAppTemp } from '../../../config/noticeTemp'
+
 const EARTH_RADIUS = 6378.137 //地球半径
 
 function rad(d) {
-    return d * Math.PI / 180.0;
+  return d * Math.PI / 180.0;
 }
 
 class AgentController extends Controller {
@@ -23,7 +25,7 @@ class AgentController extends Controller {
 	    	msg: '注册成功' , 
 	    	code: 200,
 	    	data: agent,
-	    }
+      }
 	    return
     }
     ctx.body = { msg: '创建失败！', code: 201 }

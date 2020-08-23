@@ -3,6 +3,8 @@
 import { Controller } from 'egg'
 import fs from 'fs'
 import { parseStringPromise } from 'xml2js'
+import moment from 'moment'
+import { weAppTemp } from '../../../config/noticeTemp'
 
 class AgentController extends Controller {
   async agentList() {
@@ -31,10 +33,14 @@ class AgentController extends Controller {
       if (req.body.state === 2 && data.state === 2) {
         service.tempMsg.sendWxMsg({ 
           openid: data.openid, 
-          action: 'agentVerify', 
-          type: 'admin',
-          temp: {
-            first: '恭喜您代理审核获得通过',
+          template_id: weAppTemp.leaderCheck, 
+          tokenType: 'group',
+          data: {
+            phrase1: { value: '通过' },
+            thing2: { value: '申请成为团长！' },
+            date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
+            date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
+            thing5: { value: '恭喜您团长审核获得通过' }
           },
         })
       }

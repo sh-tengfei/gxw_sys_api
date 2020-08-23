@@ -5,13 +5,21 @@ module.exports = {
     immediate: true,
   },
   async task(ctx) {
-    const { mallMiniprogram: config, cache } = ctx.app.config
-    const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.AppID}&secret=${config.AppSecret}`
+    const { mallMiniprogram: config, cache, groupMiniprogram: groupConfig  } = ctx.app.config
+    const mallUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.AppID}&secret=${config.AppSecret}`
+    const groupUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${groupConfig.AppID}&secret=${groupConfig.AppSecret}`
 
-    const res = await ctx.curl(url, {
+    const mallRes = await ctx.curl(mallUrl, {
       dataType: 'json',
     })
-    cache.access_token = res.data
-    // console.log(res.data, 'token 刷新')
+
+    const groupRes = await ctx.curl(groupUrl, {
+      dataType: 'json',
+    })
+    
+    cache.mall_access_token = mallRes.data
+    cache.group_access_token = groupRes.data
+
+    console.log(cache, 'token 刷新')
   },
 }

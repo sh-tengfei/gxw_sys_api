@@ -39,7 +39,7 @@ class CommissionComplete extends Subscription {
           ctx.logger.info(agent.withdraw, '用户收益计算成功')
           // 可以发结算消息
         } else {
-          ctx.logger.info(agent.withdraw, '用户收益计算失败')
+          ctx.logger.info(extractId, '团长不存在')
         }
 
         const bill = await ctx.service.bill.updateOne(billId, { state: 2 })
