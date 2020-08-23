@@ -134,27 +134,6 @@ class OrderController extends Controller {
       ctx.logger.error({ msg: '购物车清空完成', userId })
     }
 
-    const { openid } = await service.user.findOne({userId})
-
-    const res = await app.sendTempMsg(this, {
-      touser: openid,
-      template_id: weAppTemp.payment,
-      data: {
-        "amount1": { "value": data.total },
-        "thing2": { "value": '订单即将关闭，请尽快付款！' },
-        "thing3": { "value": data.products[0].name },
-        "character_string4": { "value": data.orderId },
-        "time5": { "value": moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
-      },
-      page: `/pages/orderDetail/detail?orderId=${data.orderId}`,
-    })
-
-    if (res.data.errcode) {
-      logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
-    } else {
-      logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
-    }
-
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async payOrder() {
@@ -298,14 +277,41 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '更新成功！', data }
   }
   async paySuccessOrder() {
-    const { ctx } = this;
-    const { service, params, logger, request: { body } } = ctx
+    const { ctx, app } = this;
+    const { service, params, logger, request: { body }, query } = ctx
+
     // 更新微信端同步过来的用户信息
     let order = await service.order.findOne({ orderId: params.id })
+
+    let res
     if (order !== null) {
-      order = await service.order.updateOne(params.id, {
-        clientResult: body
-      })
+      if (+query.state === 0) {
+        const { openid } = await service.user.findOne({ userId: order.userId })
+        res = await app.sendTempMsg(this, {
+          touser: openid,
+          template_id: weAppTemp.payment,
+          data: {
+            "amount1": { "value": order.total },
+            "thing2": { "value": '订单即将关闭，请尽快付款！' },
+            "thing3": { "value": order.products[0].name },
+            "character_string4": { "value": order.orderId },
+            "time5": { "value": moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
+          },
+          page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
+        })
+        if (res.data.errcode) {
+          logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+        } else {
+          logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+        }
+      }
+      if (res) {
+        // 客户端发过来的数据暂时没有
+        order = await service.order.updateOne(params.id, {
+          clientResult: res.data
+        })
+      }
+
       ctx.body = { code: 200, msg: '更新成功' }
       return
     }
@@ -331,10 +337,33 @@ class OrderController extends Controller {
     const user = await service.user.updateOne(order.userId, {
       $inc: { buyTotal: order.total }
     })
+
     if (user) {
-      logger.info({ msg: '用户支付金额修改成功', userId: user.userId })
+      logger.info({ msg: '用户消费金额修改成功', userId: user.userId })
+    } else {
+      logger.info({ msg: '用户信息错误', userId: user.userId })
+      return
     }
     
+    const res = await app.sendTempMsg(this, {
+      touser: user.openid,
+      template_id: weAppTemp.paySuccess,
+      data: {
+        "thing1": { "value": order.products[0].name },
+        "amount2": { "value": order.total },
+        "character_string3": { "value": order.orderId },
+        "time4": { "value": moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
+        "thing6": { "value": '品质生活，优选果仙！' },
+      },
+      page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
+    })
+
+    if (res.data.errcode) {
+      logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+    } else {
+      logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+    }
+
     // 执行拆单逻辑
     const { orders, code, msg, error } = await this.splitChildOrder(order)
     if (code === 200) {
