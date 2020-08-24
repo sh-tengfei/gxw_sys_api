@@ -318,7 +318,7 @@ class OrderController extends Controller {
     ctx.body = { code: 201, msg: '订单不存在！' }
   }
   async wxPayNotify() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { service, request: req, logger } = ctx
     const option = await ctx.helper.getXML(req.body)
     const { return_code, return_msg, time_end, out_trade_no } = option

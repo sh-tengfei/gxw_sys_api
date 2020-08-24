@@ -56,9 +56,9 @@ class OrderService extends Service {
       if (order.addressId) {
         order.address = await service.address.findOne(order.addressId)
       }
+      order.payEndTime = moment(order.payEndTime).format('YYYY-MM-DD HH:mm:ss')
+      order.createTime = moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')
     }
-    order.payEndTime = moment(order.payEndTime).format('YYYY-MM-DD HH:mm:ss')
-    order.createTime = moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')
     return order
   }
   // payEndTime 拆单时会传递过来 payEndTime
