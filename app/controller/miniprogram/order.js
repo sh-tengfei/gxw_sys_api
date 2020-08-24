@@ -287,8 +287,8 @@ class OrderController extends Controller {
     if (order !== null) {
       if (+query.state === 0) {
         const { openid } = await service.user.findOne({ userId: order.userId })
-        res = await app.sendTempMsg(this, {
-          touser: openid,
+        res = await service.tempMsg.sendWxMsg(this, {
+          openid: openid,
           template_id: weAppTemp.payment,
           data: {
             "amount1": { "value": order.total },
@@ -299,16 +299,16 @@ class OrderController extends Controller {
           },
           page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
         })
-        if (res.data.errcode) {
-          logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+        if (res.errcode) {
+          logger.error({ code: 201, msg: '模板消息发送失败', data: res })
         } else {
-          logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+          logger.error({ code: 200, msg: '模板消息发送成功', data: res })
         }
       }
       if (res) {
         // 客户端发过来的数据暂时没有
         order = await service.order.updateOne(params.id, {
-          clientResult: res.data
+          clientResult: res
         })
       }
 

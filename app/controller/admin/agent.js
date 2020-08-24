@@ -31,16 +31,32 @@ class AgentController extends Controller {
     const data = await service.agent.updateOne(params.id, req.body)
     if (data !== null) {
       if (req.body.state === 2 && data.state === 2) {
-        service.tempMsg.sendWxMsg({ 
-          openid: data.openid, 
+        await service.tempMsg.sendWxMsg({
+          openid: data.openid,
           template_id: weAppTemp.leaderCheck, 
           tokenType: 'group',
+          page: '/pages/agent/agent',
           data: {
             phrase1: { value: '通过' },
             thing2: { value: '申请成为团长！' },
             date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
             date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
             thing5: { value: '恭喜您团长审核获得通过' }
+          },
+        })
+      }
+      if(req.body.state === 3 && data.state === 3) {
+        await service.tempMsg.sendWxMsg({
+          openid: data.openid,
+          template_id: weAppTemp.leaderCheck, 
+          tokenType: 'group',
+          page: '/pages/agent/agent',
+          data: {
+            phrase1: { value: '停用' },
+            thing2: { value: '您的团长已停用！' },
+            date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
+            date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
+            thing5: { value: '请联系果仙网复核。' }
           },
         })
       }

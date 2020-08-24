@@ -12,11 +12,13 @@ class TempMsgService extends Service {
       page,
       tokenType,
     })
+
     if (res.data.errcode) {
       ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
     } else {
       ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
     }
+    return res.data
   }
   sendmail({ mailbox, subject, text, html }) {
     if (os.hostname() !== 'gxianwang') {

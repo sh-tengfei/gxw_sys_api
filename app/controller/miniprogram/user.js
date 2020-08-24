@@ -331,7 +331,7 @@ class LoginController extends Controller {
       agent.isReg = false
     }
 
-    ctx.body = { msg: '更新成功', code: 200, data: agent }
+    ctx.body = { msg: '更新成功', code: 200, data: { agent, weAppTemp } }
   }
   async getAgentPhone() {
     const { ctx } = this
