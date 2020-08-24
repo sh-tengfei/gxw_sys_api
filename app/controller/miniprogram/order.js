@@ -277,7 +277,7 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '更新成功！', data }
   }
   async paySuccessOrder() {
-    const { ctx, app } = this;
+    const { ctx } = this;
     const { service, params, logger, request: { body }, query } = ctx
 
     // 更新微信端同步过来的用户信息
@@ -286,9 +286,8 @@ class OrderController extends Controller {
     let res
     if (order !== null) {
       if (+query.state === 0) {
-        const { openid } = await service.user.findOne({ userId: order.userId })
-        res = await service.tempMsg.sendWxMsg(this, {
-          openid: openid,
+        res = await service.tempMsg.sendWxMsg({
+          openid: order.user.openid,
           template_id: weAppTemp.payment,
           data: {
             "amount1": { "value": order.total },
@@ -299,11 +298,6 @@ class OrderController extends Controller {
           },
           page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
         })
-        if (res.errcode) {
-          logger.error({ code: 201, msg: '模板消息发送失败', data: res })
-        } else {
-          logger.error({ code: 200, msg: '模板消息发送成功', data: res })
-        }
       }
       if (res) {
         // 客户端发过来的数据暂时没有
@@ -311,8 +305,7 @@ class OrderController extends Controller {
           clientResult: res
         })
       }
-
-      ctx.body = { code: 200, msg: '更新成功' }
+      ctx.body = { code: 200, msg: '更新成功', data: order }
       return
     }
     ctx.body = { code: 201, msg: '订单不存在！' }
@@ -345,8 +338,8 @@ class OrderController extends Controller {
       return
     }
     
-    const res = await app.sendTempMsg(this, {
-      touser: user.openid,
+    await service.tempMsg.sendWxMsg({
+      openid: user.openid,
       template_id: weAppTemp.paySuccess,
       data: {
         "thing1": { "value": order.products[0].name },
@@ -357,12 +350,6 @@ class OrderController extends Controller {
       },
       page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
     })
-
-    if (res.data.errcode) {
-      logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
-    } else {
-      logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
-    }
 
     // 执行拆单逻辑
     const { orders, code, msg, error } = await this.splitChildOrder(order)
