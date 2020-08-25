@@ -25,43 +25,41 @@ class AgentController extends Controller {
     ctx.body = { code: 200, msg: '', data: { list, total } }
   }
   async updateAgent() {
-    let { ctx, app } = this
+    const { ctx, app } = this
     const { request: req, service, params } = ctx
+    const { body } = req
 
-    const data = await service.agent.updateOne(params.id, req.body)
-    if (data !== null) {
-      if (req.body.state === 2 && data.state === 2) {
-        await service.tempMsg.sendWxMsg({
-          openid: data.openid,
-          template_id: weAppTemp.leaderCheck, 
-          tokenType: 'group',
-          page: '/pages/agent/agent',
-          data: {
-            phrase1: { value: '通过' },
-            thing2: { value: '申请成为团长！' },
-            date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
-            date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
-            thing5: { value: '恭喜您团长审核获得通过' }
-          },
-        })
-      }
-      if(req.body.state === 3 && data.state === 3) {
-        await service.tempMsg.sendWxMsg({
-          openid: data.openid,
-          template_id: weAppTemp.leaderCheck, 
-          tokenType: 'group',
-          page: '/pages/agent/agent',
-          data: {
-            phrase1: { value: '停用' },
-            thing2: { value: '您的团长已停用！' },
-            date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
-            date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
-            thing5: { value: '请联系果仙网复核。' }
-          },
-        })
+    const data = await service.agent.updateOne(params.id, body)
+    if (data === null) {
+      ctx.body = { code: 201, msg: '团长不存在！' }
+      return
+    }
+    const opt = {
+      openid: data.openid,
+      template_id: weAppTemp.leaderCheck, 
+      tokenType: 'group',
+      page: '/pages/agent/agent',
+    }
+    if (body.state === 2 && data.state === 2) {
+      opt.data = {
+        phrase1: { value: '通过' },
+        thing2: { value: '申请成为团长！' },
+        date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
+        date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
+        thing5: { value: '恭喜您团长审核获得通过' }
       }
     }
-    ctx.body = { code: 200, msg: '审核成功', data }
+    if(body.state === 3 && data.state === 3) {
+      opt.data = {
+        phrase1: { value: '停用' },
+        thing2: { value: '您的团长已停用！' },
+        date3: { value: moment().format('YYYY-MM-DD HH:mm:ss') },
+        date4: { value: moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') },
+        thing5: { value: '请联系果仙网复核。' }
+      }
+    }
+    const res = await service.tempMsg.sendWxMsg(opt)
+    ctx.body = { code: 200, msg: '审核成功', data: res }
   }
   async getDrawList() {
     let { ctx, app } = this

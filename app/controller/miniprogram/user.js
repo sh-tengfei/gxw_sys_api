@@ -299,7 +299,7 @@ class LoginController extends Controller {
   async updateAgent() {
     const { ctx, app } = this;
     const { request: req, params, service } = ctx
-    let { nickName, applyPhone } = req.body
+    let { nickName, applyPhone, avatarUrl } = req.body
 
     let oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
     if (oldAgent !== null) {
@@ -310,6 +310,7 @@ class LoginController extends Controller {
     const newData = {
       nickName,
       applyPhone,
+      avatarUrl,
       userInfo: {
         ...req.body
       }
