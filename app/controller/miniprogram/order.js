@@ -12,6 +12,10 @@ class OrderController extends Controller {
 
     const order = await service.order.findOne({ orderId: params.id })
 
+    if (!order) {
+      return ctx.body = { code: 201, msg: '订单不存在！' }
+    }
+    
     if (order.state === 1) {
       const countdown = moment(order.payEndTime).valueOf() - moment().valueOf()
       // 一秒内直接更新状态
@@ -23,9 +27,6 @@ class OrderController extends Controller {
       order.countdown = countdown
     }
 
-    if (!order) {
-      return ctx.body = { code: 201, msg: '订单不存在！' }
-    }
     // 计算买的最新用户
     ctx.body = { code: 200, msg: '获取成功', data: order }
   }
