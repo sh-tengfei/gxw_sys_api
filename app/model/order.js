@@ -5,7 +5,7 @@ module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
   const SchemaTypes = mongoose.Schema.Types
-  
+
   const order = new mongoose.Schema({
     userId: { type: String, required: true }, // 用户信息
     orderId: { type: String, required: true, unique: true },

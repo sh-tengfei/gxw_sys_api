@@ -1,6 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict';
+'use strict'
 
 var defaultConfig = require('./config.default')
 
@@ -26,6 +26,5 @@ module.exports = appInfo => {
    **/
   exports = defaultConfig
 
-  
   return defaultConfig
-};
+}

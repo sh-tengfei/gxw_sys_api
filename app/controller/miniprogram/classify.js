@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 
@@ -18,4 +18,4 @@ class ClassifyController extends Controller {
   // }
 }
 
-module.exports = ClassifyController;
+module.exports = ClassifyController

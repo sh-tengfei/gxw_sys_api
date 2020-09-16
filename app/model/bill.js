@@ -4,7 +4,7 @@ module.exports = app => {
   const uniqueValidator = require('mongoose-unique-validator')
   const mongoose = app.mongoose
   const SchemaTypes = mongoose.Schema.Types
-  
+
   const Bill = new mongoose.Schema({
     billId: { type: String, required: true, unique: true },
     orderId: { type: String }, // 支出没有订单ID
