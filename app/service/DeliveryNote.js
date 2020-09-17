@@ -4,7 +4,7 @@ import { Decimal } from 'decimal.js'
 
 class DeliveryNoteService extends Service {
   async findOne(query) {
-    const { ctx } = this;
+    const { ctx } = this
     const { service, model } = ctx
     const note = await model.DeliveryNote.findOne(query).lean()
     note.extract = await service.agent.findOne({ extractId: note.extractId })
@@ -22,7 +22,7 @@ class DeliveryNoteService extends Service {
     return note
   }
   async find(query = {}, option = {}, other = { _id: 0 }) {
-    const { ctx } = this;
+    const { ctx } = this
     const { service, model } = ctx
     const { limit = 10, skip = 0 } = option
 
@@ -36,8 +36,8 @@ class DeliveryNoteService extends Service {
 
     if (query.dateTime) {
       const time = moment(query.dateTime)
-      query.createTime = { 
-        $gte: time.startOf('day').valueOf(), 
+      query.createTime = {
+        $gte: time.startOf('day').valueOf(),
         $lt: time.endOf('day').valueOf(),
       }
       delete query.dateTime
@@ -46,9 +46,9 @@ class DeliveryNoteService extends Service {
     delete query.limit
     delete query.page
 
-    const list = await model.DeliveryNote.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await model.DeliveryNote.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
-    for (const i of list ) {
+    for (const i of list) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
       const orders = await service.order.find({
@@ -73,7 +73,7 @@ class DeliveryNoteService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newNote, noteId = 'noteId'
+    let newNote; const noteId = 'noteId'
     data.noteId = await ctx.service.counters.findAndUpdate(noteId)
     try {
       newNote = await ctx.model.DeliveryNote.create(data)
@@ -81,14 +81,14 @@ class DeliveryNoteService extends Service {
       newNote.updateTime = moment(newNote.updateTime).format('YYYY-MM-DD HH:mm:ss')
     } catch (e) {
       if (e.errors) {
-        console.log(e.errors);
+        console.log(e.errors)
       }
       return e._message
     }
-    return newNote;
+    return newNote
   }
-  async joinDeliveryNote ({ extractId, orderId, extract }) {
-    const { ctx } = this;
+  async joinDeliveryNote({ extractId, orderId, extract }) {
+    const { ctx } = this
     const curNote = await ctx.model.DeliveryNote.findOne({ extractId, state: 1 })
     let note
     if (curNote === null) {
@@ -98,22 +98,22 @@ class DeliveryNoteService extends Service {
         orderIds: [orderId],
       })
     } else {
-      const option = { $push: { orderIds: orderId } }
+      const option = { $push: { orderIds: orderId }}
       note = await ctx.model.DeliveryNote.findOneAndUpdate({
         noteId: curNote.noteId,
-      }, option, { new: true, _id: 0}).lean()
+      }, option, { new: true, _id: 0 }).lean()
     }
     return note
   }
   async updateOne(noteId, data) {
     const { ctx } = this
     const { service, model } = ctx
-    const newNote = await model.DeliveryNote.findOneAndUpdate({ 
+    const newNote = await model.DeliveryNote.findOneAndUpdate({
       noteId
-    }, data, { new: true, _id: 0}).lean()
+    }, data, { new: true, _id: 0 }).lean()
     const sendRet = await service.order.sendGoods(newNote.orderIds)
     return newNote
   }
 }
 
-module.exports = DeliveryNoteService;
+module.exports = DeliveryNoteService

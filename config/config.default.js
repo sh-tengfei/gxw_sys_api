@@ -1,6 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict';
+'use strict'
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -12,7 +12,7 @@ module.exports = appInfo => {
    **/
   const config = exports = {
     jwt: {
-      secret: "guoxianwang",
+      secret: 'guoxianwang',
     },
   }
 
@@ -30,7 +30,7 @@ module.exports = appInfo => {
   }
 
   config.mongoose = {
-    url: 'mongodb://www.gxianwang.com:9001/gxianwangDev', //'mongodb://www.gxianwang.com:9001/gxianwangDev', //'mongodb://127.0.0.1:9001/gxianwangDev',
+    url: 'mongodb://www.gxianwang.com:9001/gxianwangDev', // 'mongodb://www.gxianwang.com:9001/gxianwangDev', //'mongodb://127.0.0.1:9001/gxianwangDev',
     options: {
       user: 'dev1',
       pass: '!Qing001401',
@@ -55,7 +55,7 @@ module.exports = appInfo => {
     httpOnly: true,
     encrypt: true,
     renew: true, // 每次刷新页面，Session 都会被延期。
-  };
+  }
 
   config.bodyParser = {
     enable: true,
@@ -69,12 +69,12 @@ module.exports = appInfo => {
     extendTypes: {
       text: ['text/xml', 'application/xml'],
     },
-  };
+  }
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1586274558093_9882';
+  config.keys = appInfo.name + '_1586274558093_9882'
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = []
 
   // add your user config here
   const userConfig = {
@@ -94,8 +94,8 @@ module.exports = appInfo => {
       addressId: '1000',
       drawMoneyId: '1000'
     },
-    orderCompleteTimeout: 4, //订单完成超时时间天
-    commissionComplete: 4, //收益结算时间天
+    orderCompleteTimeout: 4, // 订单完成超时时间天
+    commissionComplete: 4, // 收益结算时间天
     qiniuConfig: {
       cdn: '//static.gxianwang.cn/',
       qiniu: {
@@ -107,8 +107,8 @@ module.exports = appInfo => {
     },
     // 公众号配置
     adminWxConfig: { // 团长公众号配置
-      AppID: "wx724926f4b76057bc",
-      AppSecret: "b441cc3f90ac09308f12d2389a632c20"
+      AppID: 'wx724926f4b76057bc',
+      AppSecret: 'b441cc3f90ac09308f12d2389a632c20'
     },
     mallWxConfig: { // 商城公众号配置
       AppID: 'wxf81bdc08e2056b8f',
@@ -145,10 +145,10 @@ module.exports = appInfo => {
       payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers', // 微信企业支付
     },
     cache: {}
-  };
+  }
 
   return {
     ...config,
     ...userConfig,
-  };
-};
+  }
+}

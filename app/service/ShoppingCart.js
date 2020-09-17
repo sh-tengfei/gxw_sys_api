@@ -17,7 +17,7 @@ class ShoppingCartService extends Service {
     return cart
   }
   async increase(data) {
-    let { model, service } = this.ctx
+    const { model, service } = this.ctx
     let cart = await this.findOne(data.userId)
     const product = await service.product.findOne({ productId: data.productId })
     if (product.stockNumber <= 0) {
@@ -38,7 +38,7 @@ class ShoppingCartService extends Service {
               status: false,
             }
           ]
-        } 
+        }
         cart = await model.ShoppingCart.create(cart)
       } catch (e) {
         console.log(e)
@@ -96,13 +96,13 @@ class ShoppingCartService extends Service {
     delete data._id
     delete data.userId
 
-    let newCart = await ctx.model.ShoppingCart.findOneAndUpdate({userId}, data, other).lean()
+    const newCart = await ctx.model.ShoppingCart.findOneAndUpdate({ userId }, data, other).lean()
     for (const item of newCart.products) {
       const product = await ctx.service.product.findOne({ productId: item.productId })
       item.product = product
       item.stockNumber = product.stockNumber
     }
-    return newCart;
+    return newCart
   }
   async reduce(data) {
     const { ctx } = this
@@ -158,4 +158,4 @@ class ShoppingCartService extends Service {
   }
 }
 
-module.exports = ShoppingCartService;
+module.exports = ShoppingCartService

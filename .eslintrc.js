@@ -2,8 +2,10 @@ module.exports = {
   root: true,
   parserOptions: {
     parser: 'babel-eslint',
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaVersion: 7,
   },
+  parser: 'babel-eslint',
   env: {
     browser: false,
     node: true,
@@ -14,34 +16,24 @@ module.exports = {
   // add your custom rules here
   //it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
-    'accessor-pairs': 2,
-    'arrow-spacing': [2, {
-      'before': true,
-      'after': true
-    }],
-    'block-spacing': [2, 'always'],
-    'brace-style': [2, '1tbs', {
-      'allowSingleLine': true
-    }],
-    'camelcase': [0, {
-      'properties': 'always'
-    }],
+    'accessor-pairs': 0,
+    'arrow-spacing': 0,
+    'block-spacing': 0,
+    'brace-style': 0,
+    'camelcase': 0,
     'comma-dangle': 0,
-    'comma-spacing': [2, {
-      'before': false,
-      'after': true
-    }],
-    'comma-style': [2, 'last'],
+    'comma-spacing': 0,
+    'comma-style': 0,
     'constructor-super': 2,
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 2,
-    'eqeqeq': ["error", "always", {"null": "ignore"}],
+    'eqeqeq': 0,
     'generator-star-spacing': [2, {
       'before': true,
       'after': true
     }],
-    'handle-callback-err': [2, '^(err|error)$'],
+    'handle-callback-err': 0,
     'indent': [2, 2, {
       'SwitchCase': 1
     }],
@@ -54,10 +46,7 @@ module.exports = {
       'before': true,
       'after': true
     }],
-    'new-cap': [2, {
-      'newIsCap': true,
-      'capIsNew': false
-    }],
+    'new-cap': 0,
     'new-parens': 2,
     'no-array-constructor': 2,
     'no-caller': 2,
@@ -69,7 +58,7 @@ module.exports = {
     'no-delete-var': 2,
     'no-dupe-args': 2,
     'no-dupe-class-members': 2,
-    'no-dupe-keys': 2,
+    'no-dupe-keys': 0,
     'no-duplicate-case': 2,
     'no-empty-character-class': 2,
     'no-empty-pattern': 2,
@@ -112,7 +101,7 @@ module.exports = {
     'no-proto': 2,
     'no-redeclare': 2,
     'no-regex-spaces': 2,
-    'no-return-assign': [2, 'except-parens'],
+    'no-return-assign': 0,
     'no-self-assign': 2,
     'no-self-compare': 2,
     'no-sequences': 2,
@@ -122,7 +111,7 @@ module.exports = {
     'no-this-before-super': 2,
     'no-throw-literal': 2,
     'no-trailing-spaces': 2,
-    'no-undef': 2,
+    'no-undef': 0,
     'no-undef-init': 2,
     'no-unexpected-multiline': 2,
     'no-unmodified-loop-condition': 2,
@@ -131,11 +120,8 @@ module.exports = {
     }],
     'no-unreachable': 2,
     'no-unsafe-finally': 2,
-    'no-unused-vars': [2, {
-      'vars': 'all',
-      'args': 'none'
-    }],
-    'no-useless-call': 2,
+    'no-unused-vars': 0,
+    'no-useless-call': 0,
     'no-useless-computed-key': 2,
     'no-useless-constructor': 2,
     'no-useless-escape': 0,
@@ -177,7 +163,7 @@ module.exports = {
     'wrap-iife': [2, 'any'],
     'yield-star-spacing': [2, 'both'],
     'yoda': [2, 'never'],
-    'prefer-const': 2,
+    'prefer-const': 0,
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     'object-curly-spacing': [2, 'always', {
       objectsInObjects: false

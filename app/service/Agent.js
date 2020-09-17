@@ -3,7 +3,7 @@ import moment from 'moment'
 
 class AgentService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
-    const { ctx } = this;
+    const { ctx } = this
     const { limit = 10, skip = 0 } = option
 
     if (!query.state) {
@@ -17,7 +17,7 @@ class AgentService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Agent.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await ctx.model.Agent.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
@@ -35,11 +35,11 @@ class AgentService extends Service {
     return {
       list,
       total
-    };
+    }
   }
   async findOne(query) {
-    const { ctx } = this;
-    let agent = await ctx.model.Agent.findOne(query).lean()
+    const { ctx } = this
+    const agent = await ctx.model.Agent.findOne(query).lean()
     // 数字属性读出对象
     if (agent && typeof agent.withdraw !== 'number') {
       agent.withdraw = Number(agent.withdraw)
@@ -47,13 +47,13 @@ class AgentService extends Service {
     if (agent && typeof agent.withdrawFrozen !== 'number') {
       agent.withdrawFrozen = +agent.withdrawFrozen
     }
-    return agent;
+    return agent
   }
   async create(data) {
-    const { ctx } = this;
-    let newAgent, extractId = 'extractId';
+    const { ctx } = this
+    let newAgent; const extractId = 'extractId'
     data.extractId = await ctx.service.counters.findAndUpdate(extractId)
-    try{
+    try {
       newAgent = await ctx.model.Agent.create(data)
       newAgent = newAgent.toObject()
       // 数字属性读出对象
@@ -63,19 +63,19 @@ class AgentService extends Service {
       if (newAgent && typeof newAgent.withdrawFrozen !== 'number') {
         newAgent.withdrawFrozen = +newAgent.withdrawFrozen
       }
-    }catch (e) {
-      console.log(newAgent, 1);
+    } catch (e) {
+      console.log(newAgent, 1)
       if (e.errors) {
-        console.log(e.errors);
+        console.log(e.errors)
       }
       return e
     }
 
-    return newAgent;
+    return newAgent
   }
   async updateOne(extractId, data, other = { _id: 0, new: true }) {
-    const { ctx } = this;
-    let newAgent = await ctx.model.Agent.findOneAndUpdate({extractId}, data, other).lean()
+    const { ctx } = this
+    const newAgent = await ctx.model.Agent.findOneAndUpdate({ extractId }, data, other).lean()
     // 数字属性读出对象
     if (newAgent && typeof newAgent.withdraw !== 'number') {
       newAgent.withdraw = +newAgent.withdraw
@@ -83,11 +83,11 @@ class AgentService extends Service {
     if (newAgent && typeof newAgent.withdrawFrozen !== 'number') {
       newAgent.withdrawFrozen = +newAgent.withdrawFrozen
     }
-    return newAgent;
+    return newAgent
   }
   async delete(extractId) {
 
   }
 }
 
-module.exports = AgentService;
+module.exports = AgentService

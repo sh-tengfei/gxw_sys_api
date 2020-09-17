@@ -1,10 +1,9 @@
 import { Service } from 'egg'
 import moment from 'moment'
 
-
 class ProductService extends Service {
   async find(query = {}, option = {}, other = { _id: 0 }) {
-    const { ctx } = this;
+    const { ctx } = this
     const { limit = 10, skip = 0 } = option
 
     if (!query.state) {
@@ -18,7 +17,7 @@ class ProductService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: 0})
+    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -39,34 +38,34 @@ class ProductService extends Service {
     return {
       list,
       total
-    };
+    }
   }
   async create(data) {
-    const { ctx } = this;
-    let newProduct, productId = 'productId';
+    const { ctx } = this
+    let newProduct; let productId = 'productId'
 
     productId = await ctx.service.counters.findAndUpdate(productId)
 
     delete data.productId
-    data.productId = `SP${(Math.random()*1000).toFixed(0)}${productId}`
-    try{
-     newProduct = await ctx.model.Product.create(data)
-     newProduct = newProduct.toObject()
-     delete newProduct._id
+    data.productId = `SP${(Math.random() * 1000).toFixed(0)}${productId}`
+    try {
+      newProduct = await ctx.model.Product.create(data)
+      newProduct = newProduct.toObject()
+      delete newProduct._id
     } catch (e) {
-      console.log(e);
+      console.log(e)
       return e
     }
-    return newProduct;
+    return newProduct
   }
-  async findOne(query = {}, other = { createTime: 0, updateTime:0, _id: 0}) {
-    const { ctx } = this;
+  async findOne(query = {}, other = { createTime: 0, updateTime: 0, _id: 0 }) {
+    const { ctx } = this
     const product = await ctx.model.Product.findOne(query, other).lean()
     if (!product) {
       return product
     }
     product.stockNumber = 0
-    
+
     const curStock = await ctx.model.Stock.findOne({ productId: product.productId })
     if (curStock) {
       // 存在库存
@@ -78,21 +77,21 @@ class ProductService extends Service {
     return product
   }
   async updateOne(productId, data) {
-    const { ctx } = this;
-    let newProduct = await ctx.model.Product.findOneAndUpdate({productId}, data, { new: true, _id: 0}).lean()
+    const { ctx } = this
+    const newProduct = await ctx.model.Product.findOneAndUpdate({ productId }, data, { new: true, _id: 0 }).lean()
     delete newProduct._id
     newProduct.createTime = moment(newProduct.createTime).format('YYYY-MM-DD HH:mm:ss')
     newProduct.updateTime = moment(newProduct.updateTime).format('YYYY-MM-DD HH:mm:ss')
     if (newProduct.sellerOfType.code !== 101) {
       newProduct.deliveryTime = moment().add(1, 'days').date()
     }
-    return newProduct;
+    return newProduct
   }
   async delete(productId) {
-    const { ctx } = this;
-    let product = await ctx.model.Product.findOneAndRemove({productId})
-    return product;
+    const { ctx } = this
+    const product = await ctx.model.Product.findOneAndRemove({ productId })
+    return product
   }
 }
 
-module.exports = ProductService;
+module.exports = ProductService

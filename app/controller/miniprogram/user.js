@@ -1,24 +1,24 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import qiniu from 'qiniu'
 import fs from 'fs'
 import { weAppTemp } from '../../../config/noticeTemp'
 
-let accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3';
-let secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z';
-let mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
-let config = new qiniu.conf.Config();
-    // 上传是否使用cdn加速
-    // 是否使用https域名
-    config.useHttpsDomain = true
-    config.useCdnDomain = true
-let formUploader = new qiniu.form_up.FormUploader(config);
-let putExtra = new qiniu.form_up.PutExtra();
+const accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3'
+const secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
+const mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
+const config = new qiniu.conf.Config()
+// 上传是否使用cdn加速
+// 是否使用https域名
+config.useHttpsDomain = true
+config.useCdnDomain = true
+const formUploader = new qiniu.form_up.FormUploader(config)
+const putExtra = new qiniu.form_up.PutExtra()
 
 class LoginController extends Controller {
   // 商城登录
   async getUserLogin() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request, service, logger } = ctx
     const { code } = request.body
 
@@ -36,7 +36,7 @@ class LoginController extends Controller {
 
     let user = await service.user.findOne({ unionid: userInfo.unionid })
     if (user !== null) {
-      ctx.body = { 
+      ctx.body = {
         code: 200,
         msg: '登陆成功！',
         data: { token: this.createUserToken(user), user, weAppTemp },
@@ -54,21 +54,21 @@ class LoginController extends Controller {
       })
       if (!user) {
         logger.error({ msg: '保存失败，联系管理员', data: user })
-        ctx.body = { 
-          msg: '保存失败，联系管理员', 
+        ctx.body = {
+          msg: '保存失败，联系管理员',
           data: user,
         }
         return
       }
-      ctx.body = { 
-        code: 200, 
-        msg: '登陆成功！', 
-        data: { token: this.createUserToken(user), user, weAppTemp}, 
+      ctx.body = {
+        code: 200,
+        msg: '登陆成功！',
+        data: { token: this.createUserToken(user), user, weAppTemp },
         session_key: userInfo.session_key
       }
       return
     } catch (e) {
-      let ret = { msg: '保存失败，联系管理员', data: e }
+      const ret = { msg: '保存失败，联系管理员', data: e }
       logger.error(ret)
       return ctx.body = ret
     }
@@ -82,9 +82,9 @@ class LoginController extends Controller {
   }
   // 更新用户
   async updateInfo() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request: req, params, service } = ctx
-    let { nickName, avatarUrl, phoneNumber } = req.body
+    const { nickName, avatarUrl, phoneNumber } = req.body
     const newData = {
       username: nickName,
       picture: avatarUrl,
@@ -98,7 +98,7 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误', code: 201 }
       return
     }
-    let user = await service.user.updateOne(params.id, newData)
+    const user = await service.user.updateOne(params.id, newData)
 
     if (!user) {
       ctx.body = { msg: '更新失败', data: user, code: 201 }
@@ -107,7 +107,7 @@ class LoginController extends Controller {
     ctx.body = { msg: '更新成功', code: 200, data: user }
   }
   async getUserInfo() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { state, service } = ctx
     const user = await service.user.findOne({ userId: state.user.userId })
     if (!user) {
@@ -119,16 +119,16 @@ class LoginController extends Controller {
 
     user.cardProNum = String(service.shoppingCart.getProductNum(card))
 
-    ctx.body = { code: 200, msg: '获取成功', data: { user, weAppTemp } }
+    ctx.body = { code: 200, msg: '获取成功', data: { user, weAppTemp }}
   }
   async getLocation() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { query, service } = ctx
     const city = await service.sellingCity.getCity(query)
     ctx.body = { code: 200, msg: '获取成功', data: city }
   }
   async getUserPhone() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request: req, service } = ctx
 
     const phoneData = await service.user.getPhone({
@@ -138,14 +138,14 @@ class LoginController extends Controller {
     })
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
-  uploadFile(uptoken, key, localFile){
+  uploadFile(uptoken, key, localFile) {
     return new Promise((resolve, reject) => {
       // 文件上传
       formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
         if (respErr) {
           reject(respErr)
-          console.log('图片上传至七牛失败', respErr);
-          throw respErr;
+          console.log('图片上传至七牛失败', respErr)
+          throw respErr
         }
         if (respInfo.statusCode == 200) {
           resolve(respBody)
@@ -156,24 +156,24 @@ class LoginController extends Controller {
       })
     })
   }
-  async qiniu(localUrl, productId){
+  async qiniu(localUrl, productId) {
     const { cdn, bucket } = this.app.config.qiniuConfig
-    let key = `wx_share_qrcode/${productId}-${Date.now()}`
+    const key = `wx_share_qrcode/${productId}-${Date.now()}`
     function uptoken(key) {
-      let putPolicy = new qiniu.rs.PutPolicy({
+      const putPolicy = new qiniu.rs.PutPolicy({
         scope: `${bucket}:${key}`,
         returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
       })
-      return putPolicy.uploadToken(mac);
+      return putPolicy.uploadToken(mac)
     }
 
-    let imgUrl = await this.uploadFile(uptoken(key), key, localUrl)
+    const imgUrl = await this.uploadFile(uptoken(key), key, localUrl)
     return {
       url: cdn + imgUrl.key
     }
   }
   async getAgentOfQrode() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request: { body }, helper } = ctx
     const { access_token: token } = app.config.cache
     if (!token) {
@@ -186,7 +186,7 @@ class LoginController extends Controller {
     }
     const localUrl = `./catch/${body.productId}.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
-    const ret = await ctx.postWxQrcode(url, { 
+    const ret = await ctx.postWxQrcode(url, {
       page: body.path,
       scene: `${body.productId},${body.extractId}`,
       width: 180,
@@ -208,10 +208,9 @@ class LoginController extends Controller {
     }
   }
 
-
   // 团长端登录
   async getGroupLogin() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { code } = ctx.query
 
     if (!code) {
@@ -234,9 +233,9 @@ class LoginController extends Controller {
         agent.isReg = false
       }
 
-      ctx.body = { 
-        code: 200, 
-        msg: '登陆成功！', 
+      ctx.body = {
+        code: 200,
+        msg: '登陆成功！',
         data: { token, user: agent, weAppTemp },
         session_key: userInfo.session_key
       }
@@ -255,7 +254,7 @@ class LoginController extends Controller {
         return
       }
       const token = this.createAgentToken(agent)
-      ctx.body = { 
+      ctx.body = {
         code: 200,
         msg: '登陆成功！',
         data: { token, user: agent, weAppTemp },
@@ -269,10 +268,10 @@ class LoginController extends Controller {
   }
 
   async getGroupInfo() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { state, service } = ctx
 
-    let agent = await ctx.service.agent.findOne({ extractId: state.user.userId })
+    const agent = await ctx.service.agent.findOne({ extractId: state.user.userId })
     if (!agent) {
       ctx.body = { code: 201, msg: '用户不存在', data: agent }
       return
@@ -284,12 +283,12 @@ class LoginController extends Controller {
       agent.isReg = false
     }
 
-    ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp } }
+    ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp }}
   }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {
-    const token = this.app.jwt.sign({ 
-      userId: extractId 
+    const token = this.app.jwt.sign({
+      userId: extractId
     }, this.app.config.jwt.secret, {
       expiresIn: '1d',
     }) // 生成token
@@ -297,16 +296,16 @@ class LoginController extends Controller {
   }
   // 更新团长
   async updateAgent() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request: req, params, service } = ctx
-    let { nickName, applyPhone, avatarUrl } = req.body
+    const { nickName, applyPhone, avatarUrl } = req.body
 
-    let oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
+    const oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
     if (oldAgent !== null) {
-    	ctx.body = { msg: '该手机号码已使用！', code: 201 }
-    	return
+      ctx.body = { msg: '该手机号码已使用！', code: 201 }
+      return
     }
-    
+
     const newData = {
       nickName,
       applyPhone,
@@ -320,7 +319,7 @@ class LoginController extends Controller {
       return
     }
 
-    let agent = await service.agent.updateOne(params.id, newData)
+    const agent = await service.agent.updateOne(params.id, newData)
 
     if (!agent) {
       ctx.body = { msg: '更新失败', data: agent, code: 201 }
@@ -332,7 +331,7 @@ class LoginController extends Controller {
       agent.isReg = false
     }
 
-    ctx.body = { msg: '更新成功', code: 200, data: { agent, weAppTemp } }
+    ctx.body = { msg: '更新成功', code: 200, data: { agent, weAppTemp }}
   }
   async getAgentPhone() {
     const { ctx } = this
@@ -362,10 +361,10 @@ class LoginController extends Controller {
       return
     }
 
-    let { historyExtract } = await service.user.findOne({userId})
+    let { historyExtract } = await service.user.findOne({ userId })
     historyExtract = historyExtract.map(i=>i.extractId)
     historyExtract.push(extractId)
-    
+
     const newHistory = new Set(historyExtract)
     const user = await service.user.updateOne(userId, {
       historyExtract: [...newHistory]
@@ -379,4 +378,4 @@ class LoginController extends Controller {
   }
 }
 
-module.exports = LoginController;
+module.exports = LoginController

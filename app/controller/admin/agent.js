@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 import fs from 'fs'
@@ -8,21 +8,21 @@ import { weAppTemp } from '../../../config/noticeTemp'
 
 class AgentController extends Controller {
   async agentList() {
-    let { ctx, app } = this
-    let { query } = ctx.request
+    const { ctx, app } = this
+    const { query } = ctx.request
     const { page = 1, limit = 10 } = query
     const option = {
       limit: query.limit || 10,
       skip: (page - 1) * limit
     }
-    let opt = {
+    const opt = {
       state: query.state || -1,
     }
     if (query.city) {
       opt.areaId = query.city
     }
     const { list, total } = await ctx.service.agent.find(opt, option)
-    ctx.body = { code: 200, msg: '', data: { list, total } }
+    ctx.body = { code: 200, msg: '', data: { list, total }}
   }
   async updateAgent() {
     const { ctx, app } = this
@@ -36,7 +36,7 @@ class AgentController extends Controller {
     }
     const opt = {
       openid: data.openid,
-      template_id: weAppTemp.leaderCheck, 
+      template_id: weAppTemp.leaderCheck,
       tokenType: 'group',
       page: '/pages/agent/agent',
     }
@@ -49,7 +49,7 @@ class AgentController extends Controller {
         thing5: { value: '恭喜您团长审核获得通过' }
       }
     }
-    if(body.state === 3 && data.state === 3) {
+    if (body.state === 3 && data.state === 3) {
       opt.data = {
         phrase1: { value: '停用' },
         thing2: { value: '您的团长已停用！' },
@@ -62,7 +62,7 @@ class AgentController extends Controller {
     ctx.body = { code: 200, msg: '审核成功', data: res }
   }
   async getDrawList() {
-    let { ctx, app } = this
+    const { ctx, app } = this
     const { service, query } = ctx
     const opt = {
     }
@@ -78,29 +78,29 @@ class AgentController extends Controller {
     }
 
     const { list, total } = await service.drawMoney.find(opt, option)
-    
+
     // 审核通过 调用企业付款
     ctx.body = { code: 200, msg: '获取成功', data: {
       list,
       total
-    } }
+    }}
   }
   async verifyDrawMoney() {
     const { ctx, app } = this
     const { service, params } = ctx
     // 审核通过 调用企业付款
-    let drawMoney = await service.drawMoney.findOne({ drawMoneyId: params.id })
+    const drawMoney = await service.drawMoney.findOne({ drawMoneyId: params.id })
     if (drawMoney.state !== 1) {
       ctx.body = { code: 201, msg: '非法请求', data: drawMoney }
-      return 
+      return
     }
     // 查询团长
-    let agent = await service.agent.findOne({ extractId: drawMoney.extractId })
+    const agent = await service.agent.findOne({ extractId: drawMoney.extractId })
     if (agent.state !== 2) {
       ctx.body = { code: 201, msg: '用户状态非法', data: agent }
-      return 
+      return
     }
-    
+
     // 执行提现请求
     const { wxCompanyPayment: conf } = app.config
     const nonce_str = ctx.helper.createNonceStr()
@@ -150,23 +150,23 @@ class AgentController extends Controller {
     //   state: 2,
     //   drawInfo: { ...opt, sign, ...data }
     // })
-    
+
     ctx.body = { code: 200, msg: '提现审核通过' }
   }
   async rejectDrawMoney() {
     const { ctx, app } = this
     const { service, params } = ctx
     // 审核通过 调用企业付款
-    let drawMoney = await service.drawMoney.findOne({ drawMoneyId: params.id })
+    const drawMoney = await service.drawMoney.findOne({ drawMoneyId: params.id })
     if (drawMoney.state !== 1) {
       ctx.body = { code: 201, msg: '非法请求', data: drawMoney }
-      return 
+      return
     }
     // 查询团长
     let agent = await service.agent.findOne({ extractId: drawMoney.extractId })
     if (agent.state !== 2) {
       ctx.body = { code: 201, msg: '用户状态非法', data: agent }
-      return 
+      return
     }
     // 解除冻结 恢复余额
     agent = await service.agent.updateOne(draw.extractId, {
@@ -181,4 +181,4 @@ class AgentController extends Controller {
   }
 }
 
-module.exports = AgentController;
+module.exports = AgentController

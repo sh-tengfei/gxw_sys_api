@@ -1,4 +1,4 @@
-const Subscription = require('egg').Subscription;
+const Subscription = require('egg').Subscription
 const moment = require('moment')
 const Decimal = require('decimal.js').Decimal
 
@@ -9,7 +9,7 @@ class CommissionComplete extends Subscription {
       cron: '0 0 1 * * ?', // 每日1点执行
       type: 'all', // 指定所有的 worker 都需要执行
       immediate: true,
-    };
+    }
   }
 
   // subscribe 是真正定时任务执行时被运行的函数
@@ -24,15 +24,14 @@ class CommissionComplete extends Subscription {
     }
     const { ctx } = this
     const curTime = moment().endOf('day')
-  	for (let { createTime, billId, extractId, amount, type } of list) {
+    for (let { createTime, billId, extractId, amount, type } of list) {
       const targetTime = moment(createTime).startOf('day').add(commissionComplete, 'm')
       if (curTime.isAfter(targetTime)) {
-
         amount = type === 1 ? amount : -amount
 
         // 要去相关团长计算收益
         // const { withdraw } = await ctx.service.agent.findOne({ extractId })
-        const agent = await ctx.service.agent.updateOne(extractId, { 
+        const agent = await ctx.service.agent.updateOne(extractId, {
           $inc: { withdraw: amount }
         })
         if (agent) {
@@ -51,8 +50,8 @@ class CommissionComplete extends Subscription {
       } else {
         console.log(billId, '收益未到期不结算')
       }
-  	}
+    }
   }
 }
 
-module.exports = CommissionComplete;
+module.exports = CommissionComplete

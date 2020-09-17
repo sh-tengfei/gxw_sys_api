@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 import moment from 'moment'
@@ -17,7 +17,7 @@ class OrderController extends Controller {
       skip: (page - 1) * limit
     }
     if (query.phone) {
-      let user = await service.user.findOne({phone: query.phone})
+      const user = await service.user.findOne({ phone: query.phone })
       if (user) {
         opt.userId = user.userId
       } else {
@@ -26,7 +26,7 @@ class OrderController extends Controller {
       }
     }
     if (query.agentPhone) {
-      let extract = await service.agent.findOne({applyPhone: query.agentPhone})
+      const extract = await service.agent.findOne({ applyPhone: query.agentPhone })
       if (extract) {
         opt.extractId = extract.extractId
       } else {
@@ -36,7 +36,7 @@ class OrderController extends Controller {
     }
 
     if (query.city) {
-      let city = await service.agent.findOne({areaId: query.city})
+      const city = await service.agent.findOne({ areaId: query.city })
       if (city) {
         opt.extractId = city.extractId
       } else {
@@ -58,7 +58,7 @@ class OrderController extends Controller {
       opt.state = opt.state.split(',')
     }
     const { list, total } = await service.order.find(opt, option)
-    ctx.body = { code: 200, msg: '', data: { list, total } }
+    ctx.body = { code: 200, msg: '', data: { list, total }}
   }
   async sendGoodsOrder() {
     const { ctx, app } = this
@@ -89,4 +89,4 @@ class OrderController extends Controller {
   }
 }
 
-module.exports = OrderController;
+module.exports = OrderController

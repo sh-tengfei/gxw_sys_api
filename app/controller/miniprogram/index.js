@@ -1,7 +1,8 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
+import { productType } from '../../config/productType'
 
 class IndexController extends Controller {
   async index() {
@@ -11,7 +12,7 @@ class IndexController extends Controller {
     // 本地产品
     const localQuery = {
       'sellerOfType.code': 100,
-      'limit': 10,
+      'limit': 100,
     }
     // 产地直供
     const directQuery = {
@@ -27,25 +28,24 @@ class IndexController extends Controller {
     if (!query.cityCode) {
       ctx.body = { code: 201, msg: '参数错误', data: query }
       return
-      // speciQuery['salesTerritory.id'] = query.cityCode
     }
+
     localQuery['salesTerritory.id'] = query.cityCode
 
     const classifyOpt = {
       classifyCity: query.cityCode,
     }
 
-    const local = await ctx.service.product.find(localQuery)
+    const localHot = await ctx.service.product.find(localQuery)
     const direct = await ctx.service.product.find(directQuery)
     const slider = await ctx.service.slider.find(sliderQuery)
 
     const { list: classifys, total } = await ctx.service.classify.find(classifyOpt)
-
-    // 本地商品 权重排序
-    local.list.sort((a, b) => {
-      return b.weight - a.weight
+    const hotList = localHot.list.sort((a, b) => {
+      return b.salesNumber - a.salesNumber
     })
-    // 产地直供 
+
+    // 产地直供
     direct.list.sort((a, b) => {
       return b.weight - a.weight
     })
@@ -55,24 +55,25 @@ class IndexController extends Controller {
     })
 
     ctx.body = {
-    	msg: '' , 
-    	code: 200, 
-    	data: {
-        classifys,
-	    	slider,
-        local,
-        direct,
-    	}
+      msg: '' ,
+      code: 200,
+      data: {
+        slider: slider.list,
+        classifys: classifys,
+        direct: direct.list,
+        hotList,
+        productType,
+      }
     }
   }
   async show() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { params, service } = ctx
 
-    ctx.sendJson({msg: '商品不存在', data: product})
+    ctx.sendJson({ msg: '商品不存在', data: product })
   }
   async getIndexSales() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { service, state } = ctx
     const { userId } = state.user
     const todayStart = moment().startOf('day')
@@ -81,22 +82,22 @@ class IndexController extends Controller {
     const yesterday = moment().subtract(1, 'days')
     const yesterdayStart = yesterday.startOf('day')
     const yesterdayEnd = yesterday.endOf('day')
-    
-    const todayOrders = await service.order.find({ 
+
+    const todayOrders = await service.order.find({
       extractId: userId,
       state: [2, 3],
-      createTime: { 
-        '$gte': todayStart, 
-        '$lte': todayEnd 
+      createTime: {
+        '$gte': todayStart,
+        '$lte': todayEnd
       }
     })
 
-    const yesterdayOrders = await service.order.find({ 
-      extractId: userId, 
+    const yesterdayOrders = await service.order.find({
+      extractId: userId,
       state: [2, 3],
-      createTime: { 
-        '$gte': yesterdayStart, 
-        '$lte': yesterdayEnd 
+      createTime: {
+        '$gte': yesterdayStart,
+        '$lte': yesterdayEnd
       }
     })
 
@@ -110,7 +111,7 @@ class IndexController extends Controller {
       yesterReward = Decimal.add(yesterReward, reward)
     })
     todayOrders.list.forEach(({ total, reward }) => {
-      todaySalesTotal = Decimal.add(todaySalesTotal,  new Decimal(total))
+      todaySalesTotal = Decimal.add(todaySalesTotal, new Decimal(total))
       todayReward = Decimal.add(todayReward, new Decimal(reward))
     })
     ctx.body = { code: 200, msg: '获取成功！', data: {
@@ -124,4 +125,4 @@ class IndexController extends Controller {
   }
 }
 
-module.exports = IndexController;
+module.exports = IndexController

@@ -7,8 +7,8 @@ module.exports = {
   //   enable: true,
   // }
   jwt: {
-	  enable: true,
-	  package: 'egg-jwt'
+    enable: true,
+    package: 'egg-jwt'
   },
   curl: {
     enable: true,

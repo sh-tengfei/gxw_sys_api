@@ -1,35 +1,35 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import moment from 'moment'
 import officegen from 'officegen'
 import fs from 'fs'
 import path from 'path'
 
-function getTabelCell (title) {
+function getTabelCell(title) {
   return {
     val: title,
     opts: {
-      b:true,
+      b: true,
       sz: '20',
       spacingBefore: 120,
       spacingAfter: 120,
       spacingLine: 240,
       spacingLineRule: 'atLeast',
       shd: {
-        fill: "f5f5f5",
-        themeFill: "text1",
-        "themeFillTint": "80"
+        fill: 'f5f5f5',
+        themeFill: 'text1',
+        'themeFillTint': '80'
       },
-      fontFamily: "Avenir Book"
+      fontFamily: 'Avenir Book'
     }
   }
 }
 
-async function generateDownload({ 
-  extract, 
-  orders, 
-  area, 
-  createTime, 
+async function generateDownload({
+  extract,
+  orders,
+  area,
+  createTime,
   noteId,
   totalAmount,
 }, url) {
@@ -43,10 +43,10 @@ async function generateDownload({
   docx.on('error', function(err) {
     console.log('配送单文档生成错误')
   })
-  const pObj = docx.createP({align: 'center'})
-  pObj.addText('果仙网-团长配送单', { 
-    font_face: 'Arial', 
-    font_size: 22, 
+  const pObj = docx.createP({ align: 'center' })
+  pObj.addText('果仙网-团长配送单', {
+    font_face: 'Arial',
+    font_size: 22,
     color: '#333',
   })
   const table = [
@@ -73,14 +73,14 @@ async function generateDownload({
       unitValue.push(w.unitValue)
     })
     table.push([
-      n+1, 
-      orderId, 
-      user.username, 
-      user.mobile + '', 
-      names, 
-      unitValue, 
-      buys, 
-      total, 
+      n + 1,
+      orderId,
+      user.username,
+      user.mobile + '',
+      names,
+      unitValue,
+      buys,
+      total,
       createTime
     ])
   })
@@ -88,9 +88,9 @@ async function generateDownload({
   const tableStyle = {
     tableColWidth: 4261,
     tableSize: 20,
-    tableColor: "ada",
-    tableAlign: "left",
-    tableFontFamily: "Comic Sans MS",
+    tableColor: 'ada',
+    tableAlign: 'left',
+    tableFontFamily: 'Comic Sans MS',
     spacingBefor: 120, // default is 100
     spacingAfter: 120, // default is 100
     spacingLine: 240, // default is 240
@@ -105,129 +105,129 @@ async function generateDownload({
   const data = [
     [
       {
-        type: "text",
+        type: 'text',
         val: `团长信息：`,
         opt: {
-          font_face: 'Arial', 
-          font_size: 12, 
+          font_face: 'Arial',
+          font_size: 12,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    姓名：${extract.applyName}，`,
         opt: {
-          font_face: 'Arial', 
-          font_size: 10, 
+          font_face: 'Arial',
+          font_size: 10,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    手机：${extract.applyPhone}，`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "text",
+        type: 'text',
         val: `    微信昵称：${extract.nickName}，`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `配送信息：`,
         opt: {
-          font_face: 'Arial', 
-          font_size: 10, 
+          font_face: 'Arial',
+          font_size: 10,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    配送城市：${area.fullname}`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#000',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    配送单号：${noteId}`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#000',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    配送日期：${createTime}`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#000',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    配送金额：${totalAmount}元`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#000',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    社区名称：${extract.communityName}`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#333',
           align: 'left'
         }
       }, {
-        type: "linebreak"
+        type: 'linebreak'
       }, {
-        type: "text",
+        type: 'text',
         val: `    社区地址：${extract.communitySite}`,
-        opt: { 
-          font_face: 'Arial', 
-          font_size: 10, 
+        opt: {
+          font_face: 'Arial',
+          font_size: 10,
           color: '#000',
           align: 'left'
         }
       }
     ], {
-      type: "table",
+      type: 'table',
       val: table,
       opt: tableStyle
     }, {
-      type: "pagebreak"
+      type: 'pagebreak'
     }
   ]
 
@@ -236,12 +236,12 @@ async function generateDownload({
   docx.putPageBreak()
 
   return new Promise((resolve, reject) => {
-    let out = fs.createWriteStream(url)
+    const out = fs.createWriteStream(url)
 
     docx.on('error', function(err) {
       reject(err)
     })
-  
+
     out.on('error', function(err) {
       reject(err)
     })
@@ -249,7 +249,7 @@ async function generateDownload({
     out.on('close', function() {
       resolve()
     })
-  
+
     docx.generate(out)
   })
 }
@@ -277,7 +277,7 @@ class DeliveryNoteController extends Controller {
     }
 
     const { list, total } = await service.deliveryNote.find(opt, option)
-    ctx.body = { code: 200, msg: '获取成功', data: { list, total } }
+    ctx.body = { code: 200, msg: '获取成功', data: { list, total }}
   }
   async putDeliveryNote() {
     const { ctx, app } = this
@@ -296,7 +296,7 @@ class DeliveryNoteController extends Controller {
       ctx.body = { code: 200, msg: '配送单不存在' }
       return
     }
-    
+
     const fileName = `团长-${note.extract.applyName}-配送单.docx`
     const url = path.resolve('./delivery-note', fileName)
     const docx = await generateDownload(note, url)
@@ -306,4 +306,4 @@ class DeliveryNoteController extends Controller {
   }
 }
 
-module.exports = DeliveryNoteController;
+module.exports = DeliveryNoteController

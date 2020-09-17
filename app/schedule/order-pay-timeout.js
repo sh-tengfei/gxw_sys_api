@@ -1,4 +1,4 @@
-const Subscription = require('egg').Subscription;
+const Subscription = require('egg').Subscription
 const moment = require('moment')
 
 class OrderPayTimeout extends Subscription {
@@ -27,7 +27,7 @@ class OrderPayTimeout extends Subscription {
       // 当前时间大于支付结束时间 判定为要关闭订单
       const isAfter = moment().isAfter(item.payEndTime)
       if (isAfter) {
-        const { 
+        const {
           trade_state_desc,
           return_code,
           trade_state,
@@ -39,7 +39,7 @@ class OrderPayTimeout extends Subscription {
           return
         }
         if (other.result_code === 'FAIL' && other.err_code === 'ORDERNOTEXIST') {
-           // 订单没到腾讯支付直接关闭
+          // 订单没到腾讯支付直接关闭
           logger.info(other.err_code_des)
           const orderRet = await service.order.updateOne(item.orderId, { state: 4 })
           logger.info(orderRet.orderId, '未起调支付，订单关闭')
@@ -64,4 +64,4 @@ class OrderPayTimeout extends Subscription {
   }
 }
 
-module.exports = OrderPayTimeout;
+module.exports = OrderPayTimeout

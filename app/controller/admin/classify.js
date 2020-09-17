@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 
@@ -28,7 +28,7 @@ class ClassifyController extends Controller {
       classifyCity: query.city,
     }
     const { list, total } = await ctx.service.classify.find(opt)
-    ctx.body = { code: 200, msg: '', data: { list, total } }
+    ctx.body = { code: 200, msg: '', data: { list, total }}
   }
   async delClassify() {
     const { app, ctx } = this
@@ -46,4 +46,4 @@ class ClassifyController extends Controller {
   }
 }
 
-module.exports = ClassifyController;
+module.exports = ClassifyController

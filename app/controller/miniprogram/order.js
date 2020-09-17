@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import { read } from 'xmlreader'
 import moment from 'moment'
@@ -7,7 +7,7 @@ import { weAppTemp } from '../../../config/noticeTemp'
 
 class OrderController extends Controller {
   async getOrder() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { service, params, state } = ctx
 
     const order = await service.order.findOne({ orderId: params.id })
@@ -15,7 +15,7 @@ class OrderController extends Controller {
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
-    
+
     if (order.state === 1) {
       const countdown = moment(order.payEndTime).valueOf() - moment().valueOf()
       // 一秒内直接更新状态
@@ -31,7 +31,7 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '获取成功', data: order }
   }
   async getOrders() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { service, query, state } = ctx
     const { userId } = state.user
 
@@ -61,10 +61,10 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '获取成功', data: {
       list,
       total
-    } }
+    }}
   }
   async makeOrder() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request: req, service, state, logger } = ctx
     // 当前登录用户
     const { userId } = state.user
@@ -80,7 +80,7 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '商品有误' }
       return
     }
-    if (!extractId ) {
+    if (!extractId) {
       ctx.body = { code: 201, msg: '请选择提货点' }
       return
     }
@@ -103,10 +103,10 @@ class OrderController extends Controller {
       return
     }
 
-    const { code, error, data, msg } = await service.order.create({ 
-      products, 
-      extractId, 
-      userId, 
+    const { code, error, data, msg } = await service.order.create({
+      products,
+      extractId,
+      userId,
       addressId,
       isExtractReceive,
       city: areaId,
@@ -138,9 +138,9 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async payOrder() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { service, request: req, state } = ctx
-    let { payType, orderId } = req.body
+    const { payType, orderId } = req.body
 
     if (['wx', 'zfb'].indexOf(payType) === -1) {
       return { code: 201, msg: '订单创建失败，支付方式不正确', error: payType }
@@ -172,43 +172,43 @@ class OrderController extends Controller {
     }
 
     // 签名信息存入订单
-    let newOrder = await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
+    const newOrder = await ctx.service.order.updateOne(data.orderId, { paySign: data, payType })
 
     ctx.body = { code, msg: '获取成功', data: newOrder }
   }
-	orderPayment({ orderId, openid, total }) {
+  orderPayment({ orderId, openid, total }) {
     const { app, ctx } = this
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       const wxConfig = app.config.wxPayment
-      let { appid, mchid, spbillCreateIp, tradeType, prepayUrl, wxurl, mchkey, body } = wxConfig
-      let nonceStr = ctx.helper.createNonceStr()
-      let totalFee = ctx.helper.getmoney(total)
+      const { appid, mchid, spbillCreateIp, tradeType, prepayUrl, wxurl, mchkey, body } = wxConfig
+      const nonceStr = ctx.helper.createNonceStr()
+      const totalFee = ctx.helper.getmoney(total)
 
-      let sign = ctx.helper.paysignjsapi({ ...wxConfig, totalFee, nonceStr, orderId, openid })
-      //组装xml数据
-      let xml = "<xml>";
-          xml  += "<appid>"+appid+"</appid>";  //appid
-          xml  += "<body>"+body+"</body>";
-          xml  += "<mch_id>"+mchid+"</mch_id>";  //商户号
-          xml  += "<nonce_str>"+nonceStr+"</nonce_str>"; //随机字符串，不长于32位。
-          xml  += "<notify_url>"+wxurl+"</notify_url>";
-          xml  += "<openid>"+openid+"</openid>";
-          xml  += "<out_trade_no>"+orderId+"</out_trade_no>";
-          xml  += "<spbill_create_ip>"+spbillCreateIp+"</spbill_create_ip>";
-          xml  += "<total_fee>"+totalFee+"</total_fee>";
-          xml  += "<trade_type>"+tradeType+"</trade_type>";
-          xml  += "<sign>"+sign+"</sign>";
-          xml  += "</xml>";
+      const sign = ctx.helper.paysignjsapi({ ...wxConfig, totalFee, nonceStr, orderId, openid })
+      // 组装xml数据
+      let xml = '<xml>'
+      xml += '<appid>' + appid + '</appid>' // appid
+      xml += '<body>' + body + '</body>'
+      xml += '<mch_id>' + mchid + '</mch_id>' // 商户号
+      xml += '<nonce_str>' + nonceStr + '</nonce_str>' // 随机字符串，不长于32位。
+      xml += '<notify_url>' + wxurl + '</notify_url>'
+      xml += '<openid>' + openid + '</openid>'
+      xml += '<out_trade_no>' + orderId + '</out_trade_no>'
+      xml += '<spbill_create_ip>' + spbillCreateIp + '</spbill_create_ip>'
+      xml += '<total_fee>' + totalFee + '</total_fee>'
+      xml += '<trade_type>' + tradeType + '</trade_type>'
+      xml += '<sign>' + sign + '</sign>'
+      xml += '</xml>'
 
-      let { data: resultXml, status } = await ctx.postWebSite(prepayUrl, {body: xml})
-      if(!resultXml || status !== 200){
+      let { data: resultXml, status } = await ctx.postWebSite(prepayUrl, { body: xml })
+      if (!resultXml || status !== 200) {
         ctx.logger.error({ code: 201, msg: '支付下单失败，请重试', data: resultXml })
         return reject({ code: 201, msg: '支付下单失败，请重试' })
       }
-      resultXml = resultXml.toString("utf-8")
+      resultXml = resultXml.toString('utf-8')
 
       // xml存入指定 订单
-      let order = await ctx.service.order.updateOne(orderId, { resultXml })
+      const order = await ctx.service.order.updateOne(orderId, { resultXml })
 
       read(resultXml, (errors, value)=>{
         const {
@@ -219,7 +219,7 @@ class OrderController extends Controller {
           result_code,
         } = value.xml
 
-        if (result_code.text() !== 'SUCCESS' ) {
+        if (result_code.text() !== 'SUCCESS') {
           if (err_code) {
             const errCode = err_code.text()
             if (errCode === 'ORDERPAID') {
@@ -236,9 +236,9 @@ class OrderController extends Controller {
           }
         }
 
-        const prepayId = prepay_id.text();
+        const prepayId = prepay_id.text()
         const timestamp = ctx.helper.createTimeStamp()
-        //将预支付订单和其他信息一起签名后返回给前端
+        // 将预支付订单和其他信息一起签名后返回给前端
         const finalsign = ctx.helper.paysignjsapifinal({
           appid,
           prepayId,
@@ -246,7 +246,7 @@ class OrderController extends Controller {
           timestamp,
           mchkey
         })
-        let opt = {
+        const opt = {
           code: 200,
           msg: '下单成功！',
           data: {
@@ -261,9 +261,9 @@ class OrderController extends Controller {
         resolve(opt)
       })
     })
-	}
+  }
   async updateOrder() {
-    const { ctx } = this;
+    const { ctx } = this
     const { request: req, service, params } = ctx
     if (!params.id) {
       ctx.body = { code: 201, msg: '参数不正确' }
@@ -278,7 +278,7 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '更新成功！', data }
   }
   async paySuccessOrder() {
-    const { ctx } = this;
+    const { ctx } = this
     const { service, params, logger, request: { body }, query } = ctx
 
     // 更新微信端同步过来的用户信息
@@ -291,11 +291,11 @@ class OrderController extends Controller {
           openid: order.user.openid,
           template_id: weAppTemp.payment,
           data: {
-            "amount1": { "value": order.total },
-            "thing2": { "value": '订单即将关闭，请尽快付款！' },
-            "thing3": { "value": order.products[0].name },
-            "character_string4": { "value": order.orderId },
-            "time5": { "value": moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
+            'amount1': { 'value': order.total },
+            'thing2': { 'value': '订单即将关闭，请尽快付款！' },
+            'thing3': { 'value': order.products[0].name },
+            'character_string4': { 'value': order.orderId },
+            'time5': { 'value': moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
           },
           page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
         })
@@ -312,19 +312,19 @@ class OrderController extends Controller {
     ctx.body = { code: 201, msg: '订单不存在！' }
   }
   async wxPayNotify() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { service, request: req, logger } = ctx
     const option = await ctx.helper.getXML(req.body)
     const { return_code, return_msg, time_end, out_trade_no } = option
-    
-    if (return_code !== 'SUCCESS'){
+
+    if (return_code !== 'SUCCESS') {
       logger.error({ msg: '支付失败通知消息。', error: return_msg || return_code })
     } else {
       logger.info({ msg: '支付成功通知消息。', data: return_code })
     }
     const order = await service.order.findOne({ orderId: out_trade_no })
     if (!order) {
-      logger.error({ msg: '订单不存在！'})
+      logger.error({ msg: '订单不存在！' })
       return
     }
     // 更新用户购买金额
@@ -338,16 +338,16 @@ class OrderController extends Controller {
       logger.info({ msg: '用户信息错误', userId: user.userId })
       return
     }
-    
+
     await service.tempMsg.sendWxMsg({
       openid: user.openid,
       template_id: weAppTemp.paySuccess,
       data: {
-        "thing1": { "value": order.products[0].name },
-        "amount2": { "value": order.total },
-        "character_string3": { "value": order.orderId },
-        "time4": { "value": moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
-        "thing6": { "value": '品质生活，优选果仙！' },
+        'thing1': { 'value': order.products[0].name },
+        'amount2': { 'value': order.total },
+        'character_string3': { 'value': order.orderId },
+        'time4': { 'value': moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
+        'thing6': { 'value': '品质生活，优选果仙！' },
       },
       page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
     })
@@ -356,10 +356,10 @@ class OrderController extends Controller {
     const { orders, code, msg, error } = await this.splitChildOrder(order)
     if (code === 200) {
       // 成功可以不发邮件
-      logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
+      logger.info({ msg: '拆单创建成功', orderId: order.orderId })
     } else {
       // 失败要发邮件 排查失败原因
-      logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
+      logger.info({ msg: '拆单创建失败', orderId: order.orderId })
     }
 
     const billRet = await this.createBill(orders, time_end, option, req.body)
@@ -377,26 +377,26 @@ class OrderController extends Controller {
   }
 
   async payTimeout() {
-    const { ctx } = this;
+    const { ctx } = this
     const { service, request: { body: order }, logger } = ctx
 
     // 更新用户购买金额
     const user = await service.user.updateOne(order.userId, {
       $inc: { buyTotal: order.total }
     })
-    
+
     // 执行拆单逻辑
     const { orders, code, msg, error } = await this.splitChildOrder(order)
     if (code === 200) {
       // 成功可以不发邮件
-      logger.info({ msg: '拆单创建成功', orderId: order.orderId  })
+      logger.info({ msg: '拆单创建成功', orderId: order.orderId })
     } else {
       // 失败要发邮件 排查失败原因
-      logger.info({ msg: '拆单创建失败', orderId: order.orderId  })
+      logger.info({ msg: '拆单创建失败', orderId: order.orderId })
     }
 
-    const billRet = await this.createBill(orders, Date.now(), { 
-      msg: '订单支付超时查询结果是支付！' 
+    const billRet = await this.createBill(orders, Date.now(), {
+      msg: '订单支付超时查询结果是支付！'
     }, '<xml></xml>')
     if (billRet.code !== 200) {
       logger.info({ msg: '收益创建错误', bill: billRet })
@@ -412,8 +412,8 @@ class OrderController extends Controller {
     return deliveryRet
   }
   async splitChildOrder({ products, ...other }) {
-    const { ctx, app } = this;
-    const { service } = ctx;
+    const { ctx, app } = this
+    const { service } = ctx
     const orders = []
 
     const types = {}
@@ -423,7 +423,7 @@ class OrderController extends Controller {
       }
       types[i.sellerType].push(i)
     }
-    
+
     const typeList = Object.keys(types)
     // 单个类型商品不需要拆单 直接更新数据
     if (typeList.length === 1) {
@@ -445,8 +445,8 @@ class OrderController extends Controller {
       // 第零个修改老订单
       if (+index === 0) {
         // 更新订单需要手动创建ID
-        let orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
-        order.orderId = `WXD${(Math.random()*10000).toFixed(0)}${orderId}`
+        const orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
+        order.orderId = `WXD${(Math.random() * 10000).toFixed(0)}${orderId}`
         retOrder = await service.order.updateOne(order.parentId, order)
         orders.push(retOrder.orderId)
       } else {
@@ -460,7 +460,7 @@ class OrderController extends Controller {
     return { code: 200, msg: '拆单成功', orders }
   }
   async createBill(orders, time_end, option, body) {
-    const { ctx } = this;
+    const { ctx } = this
     const { service, logger } = ctx
     for (const orderId of orders) {
       // 更新订单状态支付信息
@@ -484,8 +484,8 @@ class OrderController extends Controller {
       }
 
       // 生成收益
-      const bill = await service.bill.create({ 
-        orderId: newOrder.orderId, 
+      const bill = await service.bill.create({
+        orderId: newOrder.orderId,
         extractId: newOrder.extractId,
         areaId: newOrder.extract.areaId,
         orderType: newOrder.orderType,
@@ -500,8 +500,8 @@ class OrderController extends Controller {
     return { code: 200 }
   }
   async getChildOrder(products, order) {
-    const { ctx, app } = this;
-    const { service } = ctx;
+    const { ctx, app } = this
+    const { service } = ctx
 
     let total = 0
     let reward = 0 // 当前订单总金额
@@ -519,7 +519,7 @@ class OrderController extends Controller {
     } else {
       orderType = 1
     }
-    let newOrder = {
+    const newOrder = {
       ...order,
       parentId: order.orderId,
       products: products,
@@ -550,8 +550,8 @@ class OrderController extends Controller {
     ctx.body = { code: 201, msg: '获取成功', data: [...users] }
   }
   async delOrder() {
-    const { ctx, app } = this;
-    const { service, params } = ctx;
+    const { ctx, app } = this
+    const { service, params } = ctx
     const order = await service.order.updateOne(params.id, { isDelete: true })
     if (order) {
       ctx.body = { code: 200, msg: '删除成功', data: order }
@@ -561,11 +561,11 @@ class OrderController extends Controller {
   }
   // 归属特定产品的订单获取 暂时没做
   async orderOfProduct() {
-    const { ctx, app } = this;
-    const { service, params } = ctx;
-    
+    const { ctx, app } = this
+    const { service, params } = ctx
+
     ctx.body = { code: 200, msg: '获取成功', data: params }
   }
 }
 
-module.exports = OrderController;
+module.exports = OrderController

@@ -30,29 +30,29 @@ class TempMsgService extends Service {
         message: '数据不正确'
       }
     }
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: '163',
       auth: {
         user: formMail.user,
         pass: formMail.pass,
       }
-    });
-    let mailOpt = {
+    })
+    const mailOpt = {
       from: formMail.mailBox, // sender address
       to: mailbox, // list of receivers
       subject: subject, // Subject line
       text: text, // plaintext body
       html: html
-    };
+    }
     transporter.sendMail(mailOpt, (error, info)=>{
-      if(!error){
-        return {message: "邮件发送成功，请注意查收！", code: 1}
-      }else{
-        console.log(error);
-        return {message: "邮件发送失败，请稍后重试！", error, code: 0}
+      if (!error) {
+        return { message: '邮件发送成功，请注意查收！', code: 1 }
+      } else {
+        console.log(error)
+        return { message: '邮件发送失败，请稍后重试！', error, code: 0 }
       }
     })
   }
 }
 
-module.exports = TempMsgService;
+module.exports = TempMsgService

@@ -1,11 +1,11 @@
 // app.js
-'use strict';
-require('babel-core/register');
-let crypto = require('crypto');
+'use strict'
+require('babel-core/register')
+let crypto = require('crypto')
 
 class AppBootHook {
   constructor(app) {
-    this.app = app;
+    this.app = app
   }
   configWillLoad() {
 
@@ -18,11 +18,11 @@ class AppBootHook {
   async didReady() {
   }
   async serverDidReady() {
-    const { service } = await this.app.createAnonymousContext();
+    const { service } = await this.app.createAnonymousContext()
     await service.counters.startCheck()
     await service.admin.initialUser()
     this.app.setRankingList(service)
   }
 }
 
-module.exports = AppBootHook;
+module.exports = AppBootHook

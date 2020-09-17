@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 
 class ProductController extends Controller {
   async getProducts() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request, service } = ctx
     const { query: _query } = request
     const query = {
@@ -27,8 +27,8 @@ class ProductController extends Controller {
       skip: (page - 1) * limit,
     }
 
-    let { list, total } = await service.product.find(query, option)
-    let newList = list.filter((i)=>{
+    const { list, total } = await service.product.find(query, option)
+    const newList = list.filter((i)=>{
       if (!_query.sellOut) {
         return i
       }
@@ -45,42 +45,42 @@ class ProductController extends Controller {
     })
     ctx.body = { code: 200, msg: '', data: newList, total: newList.length }
   }
-    
+
   async getProduct() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { request, service, params } = ctx
     const query = {
       productId: params.id,
     }
-    let product = await service.product.findOne(query)
+    const product = await service.product.findOne(query)
     ctx.body = { code: 200, msg: '', data: product }
   }
   async createProduct() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { query, request, service } = ctx
-    let { name,
-        slide,
-        cover,
-        desc,
-        scribingPrice,
-        costPrice,
-        mallPrice,
-        imageDetail,
-        sellerOfType,
-        productType,
-        isAgentSendOnlineMsg,
-        rebate,
-        weight,
-        unitValue,
-        address,
-        salesTerritory,
-        shareTitle,
-      } = request.body
+    const { name,
+      slide,
+      cover,
+      desc,
+      scribingPrice,
+      costPrice,
+      mallPrice,
+      imageDetail,
+      sellerOfType,
+      productType,
+      isAgentSendOnlineMsg,
+      rebate,
+      weight,
+      unitValue,
+      address,
+      salesTerritory,
+      shareTitle,
+    } = request.body
     if (!name) {
-      ctx.body = { code: 201, msg: '商品名称不存在！'}
+      ctx.body = { code: 201, msg: '商品名称不存在！' }
       return
     }
-    
+
     const queryName = {
       name,
     }
@@ -90,7 +90,7 @@ class ProductController extends Controller {
       queryName['sellerOfType.code'] = sellerOfType.code
       localType = '本地产品'
       if (!salesTerritory) {
-        ctx.body = { code: 201, msg: '商品销售区域必须填！'}
+        ctx.body = { code: 201, msg: '商品销售区域必须填！' }
         return
       } else {
         await service.sellingCity.PushCity(salesTerritory)
@@ -100,12 +100,12 @@ class ProductController extends Controller {
       localType = '产地特供'
     }
 
-    let pro = await service.product.findOne({ name })
+    const pro = await service.product.findOne({ name })
     if (pro !== null) {
-      ctx.body = { code: 201, msg: `${localType}-该商品名称已存在！`}
+      ctx.body = { code: 201, msg: `${localType}-该商品名称已存在！` }
       return
     }
-    let opt = {
+    const opt = {
       name,
       slide,
       cover,
@@ -124,7 +124,7 @@ class ProductController extends Controller {
       salesTerritory,
       shareTitle,
     }
-    let newPro = await service.product.create(opt)
+    const newPro = await service.product.create(opt)
     if (!newPro.productId) {
       ctx.body = { code: 201, msg: '创建失败' }
       return
@@ -132,35 +132,33 @@ class ProductController extends Controller {
     ctx.body = { code: 200, msg: '创建成功', data: newPro }
   }
   async update() {
-    const { ctx, app } = this;
+    const { ctx, app } = this
     const { query, request, service, params } = ctx
 
-    let { id } = params
-    let opt = {
+    const { id } = params
+    const opt = {
       ...request.body
     }
 
     if (opt.state === 2) {
-      let stock = await ctx.service.stocks.findOne({ productId: id })
+      const stock = await ctx.service.stocks.findOne({ productId: id })
       if (stock === null || stock.stockNumber === 0) {
         ctx.body = { code: 201, msg: '商品没有库存无法上线！' }
         return
       }
     }
 
-    let curPro = service.product.findOne({ productId: id })
+    const curPro = service.product.findOne({ productId: id })
     if (!curPro) {
       ctx.body = { code: 201, msg: '商品不存在' }
       return
     }
-    let retPro = await service.product.updateOne(id, opt)
+    const retPro = await service.product.updateOne(id, opt)
     if (!retPro) {
       ctx.body = { code: 201, msg: '更新失败' }
       return
-    } else if (retPro.state === 2) {
-      
     }
     ctx.body = ctx.body = { code: 200, msg: '更新成功', data: retPro }
   }
 }
-module.exports = ProductController;
+module.exports = ProductController

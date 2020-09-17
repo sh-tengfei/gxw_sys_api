@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 
 class DeliveryNoteController extends Controller {
@@ -42,4 +42,4 @@ class DeliveryNoteController extends Controller {
   }
 }
 
-module.exports = DeliveryNoteController;
+module.exports = DeliveryNoteController

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 import { Decimal } from 'decimal.js'
@@ -23,7 +23,7 @@ class ShoppingCartController extends Controller {
       card.products = selects
     }
 
-    if(!card) {
+    if (!card) {
       ctx.body = { code: 200, msg: '购物车无商品', data: card }
       return
     }
@@ -134,9 +134,9 @@ class ShoppingCartController extends Controller {
     }
 
     cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
-    
+
     ctx.body = { code: 200, msg: '操作成功', data: cart }
   }
 }
 
-module.exports = ShoppingCartController;
+module.exports = ShoppingCartController

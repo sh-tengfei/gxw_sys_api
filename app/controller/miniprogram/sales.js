@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
@@ -32,30 +32,30 @@ class SalesController extends Controller {
     const { list, total } = await service.order.find(opt)
     let salesAmount = 0 // 销售额
     let rewardAmount = 0 // 销售收益
-    let userIds = []
+    const userIds = []
     for (const item of list) {
-      salesAmount = new Decimal(salesAmount).add(new Decimal(item.total)) 
+      salesAmount = new Decimal(salesAmount).add(new Decimal(item.total))
       rewardAmount = new Decimal(rewardAmount).add(new Decimal(item.reward))
       userIds.push(item.userId)
     }
-    let setId = new Set(userIds) // 购买商品的会员ID去重
+    const setId = new Set(userIds) // 购买商品的会员ID去重
     let cup = 0
     if (setId.size) {
       cup = new Decimal(salesAmount).div(new Decimal(setId.size))
     }
- 
-    ctx.body = { 
-      code: 200, 
-      msg: '获取成功', 
+
+    ctx.body = {
+      code: 200,
+      msg: '获取成功',
       data: {
         totalOrder: total,
         salesAmount,
         rewardAmount,
         userIds: setId.size,
         cup,
-      } 
+      }
     }
   }
 }
 
-module.exports = SalesController;
+module.exports = SalesController

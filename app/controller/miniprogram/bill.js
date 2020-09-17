@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import { Controller } from 'egg'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
@@ -33,15 +33,15 @@ class BillController extends Controller {
       state: 2,
     })
 
-    ctx.body = { 
-      code: 200, 
-      msg: '获取成功', 
+    ctx.body = {
+      code: 200,
+      msg: '获取成功',
       data: {
-        wait: {waitList, waitTotal},
-        done: {doneList, doneTotal}
+        wait: { waitList, waitTotal },
+        done: { doneList, doneTotal }
       }
     }
   }
 }
 
-module.exports = BillController;
+module.exports = BillController

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import { Controller } from 'egg'
 import moment from 'moment'
@@ -6,7 +6,7 @@ import { Decimal } from 'decimal.js'
 
 class SalesController extends Controller {
   async salesData() {
-    let { ctx, app } = this
+    const { ctx, app } = this
     const { service, query } = ctx
     const opt = { state: [2,3,4,5] }
     const option = {}
@@ -17,25 +17,25 @@ class SalesController extends Controller {
       option.page = query.page
     }
 
-    opt.createTime = { 
-      '$gte': moment(query.startTime), 
-      '$lte': moment(query.endTime) 
+    opt.createTime = {
+      '$gte': moment(query.startTime),
+      '$lte': moment(query.endTime)
     }
 
     const { list, total } = await service.order.find(opt, option)
     const { total: userTotal } = await service.user.find({})
-    
-    let agentTotal = 0, 
-        productTotal = 0, 
-        totalAmount = 0;
 
-    let agentList = [] //代理ID列表
-    let productList = [] //商品ID列表
-    let userList = [] //用户ID列表
+    let agentTotal = 0
+    let productTotal = 0
+    let totalAmount = 0
 
-    let productData = {} //商品数据列表
-    let agentData = {} //代理数据列表
-    let userData = {} //用户ID列表
+    const agentList = [] // 代理ID列表
+    const productList = [] // 商品ID列表
+    const userList = [] // 用户ID列表
+
+    const productData = {} // 商品数据列表
+    const agentData = {} // 代理数据列表
+    const userData = {} // 用户ID列表
 
     // 订单分类汇总
     list.forEach((i) => {
@@ -61,7 +61,7 @@ class SalesController extends Controller {
       }
       userData[i.userId].push(i)
     })
-    
+
     // 去重求长度
     agentTotal = new Set(agentList).size
     productTotal = new Set(productList).size
@@ -69,13 +69,13 @@ class SalesController extends Controller {
     // 商品数据计算
     const productDataList = []
     for (const key in productData) {
-      let product = await service.product.findOne({
+      const product = await service.product.findOne({
         productId: key
       })
 
       let totalNum = 0
       let rewardAmount = 0
-      let orderIds = []
+      const orderIds = []
       let buyNum = 0
       for (const item of productData[key]) {
         totalNum = new Decimal(totalNum).add(item.total)
@@ -83,7 +83,7 @@ class SalesController extends Controller {
         buyNum = new Decimal(buyNum).add(item.buyNum)
         orderIds.push(item.orderId)
       }
-      
+
       productDataList.push({
         product,
         orderIds,
@@ -97,19 +97,19 @@ class SalesController extends Controller {
     // 代理数据计算
     const agentDataList = []
     for (const key in agentData) {
-      let agent = await service.agent.findOne({
+      const agent = await service.agent.findOne({
         extractId: key
       })
 
       let totalNum = 0
       let rewardAmount = 0
-      let orderIds = []
+      const orderIds = []
       for (const item of agentData[key]) {
         totalNum = new Decimal(totalNum).add(item.total)
         rewardAmount = new Decimal(rewardAmount).add(item.reward)
         orderIds.push(item.orderId)
       }
-      
+
       agentDataList.push({
         agent,
         orderIds,
@@ -122,19 +122,19 @@ class SalesController extends Controller {
     // 代理数据计算
     const userDataList = []
     for (const key in userData) {
-      let user = await service.user.findOne({
+      const user = await service.user.findOne({
         userId: key
       })
 
       let totalNum = 0
       let rewardAmount = 0
-      let orderIds = []
+      const orderIds = []
       for (const item of userData[key]) {
         totalNum = new Decimal(totalNum).add(item.total)
         rewardAmount = new Decimal(rewardAmount).add(item.reward)
         orderIds.push(item.orderId)
       }
-      
+
       userDataList.push({
         user,
         orderIds,
@@ -155,8 +155,8 @@ class SalesController extends Controller {
       agentDataList,
       productDataList,
       userDataList,
-    } }
+    }}
   }
 }
 
-module.exports = SalesController;
+module.exports = SalesController

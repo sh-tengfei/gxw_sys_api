@@ -20,9 +20,9 @@ class OrderService extends Service {
     delete query.limit
     delete query.skip
 
-    const list = await model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({createTime: -1})
-    
-    for (const i of list ) {
+    const list = await model.Order.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: -1 })
+
+    for (const i of list) {
       // 读出订单的代理点信息
       if (i.extractId) {
         i.extract = await service.agent.findOne({ extractId: i.extractId })
@@ -45,7 +45,7 @@ class OrderService extends Service {
       total
     }
   }
-  async findOne(query = {}, other = { updateTime:0, _id: 0}) {
+  async findOne(query = {}, other = { updateTime: 0, _id: 0 }) {
     const { model, service } = this.ctx
     const order = await model.Order.findOne(query, other).lean()
     if (order !== null) {
@@ -62,24 +62,24 @@ class OrderService extends Service {
     return order
   }
   // payEndTime 拆单时会传递过来 payEndTime
-  async create({ 
-    products, 
-    extractId, 
-    userId, 
-    addressId, 
-    parentId='0', 
-    orderType = 0, 
-    payEndTime, 
+  async create({
+    products,
+    extractId,
+    userId,
+    addressId,
+    parentId = '0',
+    orderType = 0,
+    payEndTime,
     isExtractReceive, city }) {
     const { service, model } = this.ctx
 
     let total = 0
     let reward = 0
     let error = null
-    let productList = []
+    const productList = []
     for (const item of products) {
-      let { productId, buyNum } = item
-      let product = await service.product.findOne({ productId })
+      const { productId, buyNum } = item
+      const product = await service.product.findOne({ productId })
       // 商品不存在
       if (product === null) {
         error = { code: 201, msg: '下单失败，购买商品不存在', productId }
@@ -90,8 +90,8 @@ class OrderService extends Service {
         error = { code: 201, msg: '下单失败，商品库存不足', productId }
         break
       }
-      let { mallPrice, name, desc, cover, unitValue, sellerOfType, rebate } = product
-      // 求订单总金额 
+      const { mallPrice, name, desc, cover, unitValue, sellerOfType, rebate } = product
+      // 求订单总金额
       total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
       reward = Decimal.add(reward, new Decimal(rebate).mul(buyNum))
       productList.push({
@@ -111,14 +111,14 @@ class OrderService extends Service {
     if (error) {
       return { code: 201, msg: error.msg, error }
     }
-    let orderId = await service.counters.findAndUpdate('orderId')
+    const orderId = await service.counters.findAndUpdate('orderId')
     let newOrder = {
       total,
       products: productList,
       extractId,
       addressId,
       orderType,
-      orderId: `WXD${(Math.random()*10000).toFixed(0)}${orderId}`,
+      orderId: `WXD${(Math.random() * 10000).toFixed(0)}${orderId}`,
       parentId,
       userId,
       reward,
@@ -133,29 +133,28 @@ class OrderService extends Service {
       for (const product of newOrder.products) {
         // 更新增加已售数
         await service.product.updateOne(product.productId, {
-          $inc: { salesNumber: product.buyNum}
+          $inc: { salesNumber: product.buyNum }
         })
         // 更新减少库存数
         await service.stocks.updateOneOfProductId(product.productId, {
-          $inc: { stockNumber: -product.buyNum}
+          $inc: { stockNumber: -product.buyNum }
         })
       }
-
     } catch (e) {
       this.ctx.logger.warn({ msg: '订单创建错误', error: e })
       return { code: 201, msg: '订单创建失败!', error: e }
     }
-    return { code: 200, msg: '订单创建成功！', data: newOrder };
+    return { code: 200, msg: '订单创建成功！', data: newOrder }
   }
   async updateOne(orderId, data) {
-    const { ctx } = this;
-    const newOrder = await ctx.model.Order.findOneAndUpdate({ 
+    const { ctx } = this
+    const newOrder = await ctx.model.Order.findOneAndUpdate({
       orderId
-    }, data, { new: true, _id: 0}).lean()
+    }, data, { new: true, _id: 0 }).lean()
     return newOrder
   }
   async delete(orderId) {
-    return await this.ctx.model.Activity.findOneAndRemove({orderId})
+    return await this.ctx.model.Activity.findOneAndRemove({ orderId })
   }
   // 本地发货方法 产地的也会调用
   async sendGoods(orderIds) {
@@ -195,4 +194,4 @@ class OrderService extends Service {
   }
 }
 
-module.exports = OrderService;
+module.exports = OrderService

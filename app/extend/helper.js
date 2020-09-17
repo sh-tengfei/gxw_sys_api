@@ -69,16 +69,16 @@ module.exports = {
     return data
   },
   // 支付签名加密算法
-  companyPaysign({ 
-    mch_appid, 
-    mchid, 
-    nonce_str, 
-    openid, 
-    partner_trade_no, 
-    check_name, 
-    re_user_name, 
-    amount, 
-    desc, 
+  companyPaysign({
+    mch_appid,
+    mchid,
+    nonce_str,
+    openid,
+    partner_trade_no,
+    check_name,
+    re_user_name,
+    amount,
+    desc,
     spbill_create_ip,
     mchkey
   }) {
@@ -99,7 +99,7 @@ module.exports = {
     return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase()
   },
   orderPaySign(opt) {
-    let mchkey = opt.mchkey
+    const mchkey = opt.mchkey
     delete opt.mchkey
     let string = raw(opt)
     string = string + '&key=' + mchkey
@@ -107,7 +107,7 @@ module.exports = {
   },
   async getXML(string) {
     return new Promise((resolve, reject)=>{
-      parseString(string, { explicitArray:false }, async (err, { xml }) => {
+      parseString(string, { explicitArray: false }, async(err, { xml }) => {
         resolve(xml)
       })
     })
