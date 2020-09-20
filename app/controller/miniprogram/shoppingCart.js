@@ -67,7 +67,7 @@ class ShoppingCartController extends Controller {
       return
     }
 
-    if (cart) {
+    if (cart.cardProNum) {
       cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
     }
 

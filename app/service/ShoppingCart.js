@@ -50,6 +50,7 @@ class ShoppingCartService extends Service {
       return {
         code: 200,
         msg: '添加成功！',
+        cart,
       }
     }
     // 存在购物车数据
