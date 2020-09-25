@@ -61,16 +61,19 @@ class IndexController extends Controller {
         slider: slider.list,
         classifys: classifys,
         direct: direct.list,
-        hotList,
-        productType,
+        hotList
       }
     }
   }
-  async show() {
-    const { ctx, app } = this
-    const { params, service } = ctx
-
-    ctx.sendJson({ msg: '商品不存在', data: product })
+  async getTypes() {
+    const { ctx } = this
+    ctx.body = {
+      msg: '获取成功！',
+      code: 200,
+      data: {
+        productType
+      }
+    }
   }
   async getIndexSales() {
     const { ctx, app } = this

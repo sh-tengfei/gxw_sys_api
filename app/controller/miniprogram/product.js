@@ -15,6 +15,10 @@ class ProductController extends Controller {
     if (query.name) {
       opt.name = { $regex: query.name }
     }
+    if (query.productType) {
+      opt.productType = query.productType
+    }
+
     const { list, total } = await service.product.find(opt)
     ctx.body = { code: 200, msg: '', data: { list, total }}
   }
