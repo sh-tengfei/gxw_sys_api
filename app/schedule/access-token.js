@@ -19,7 +19,5 @@ module.exports = {
 
     cache.mall_access_token = mallRes.data
     cache.group_access_token = groupRes.data
-
-    console.log(cache, 'token 刷新')
   },
 }
