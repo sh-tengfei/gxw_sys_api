@@ -2,7 +2,7 @@ export default function({ router, controller: contr, jwt }) {
   // 小程序 api
   router.get('/small/index', contr.index.index)
   router.get('/small/types', contr.index.getTypes)
-  
+
   router.post('/small/login', contr.user.getUserLogin)
   router.post('/small/getUserPhone', contr.user.getUserPhone)
   // router.get('/small/classify', contr.classify.getClassifys)
