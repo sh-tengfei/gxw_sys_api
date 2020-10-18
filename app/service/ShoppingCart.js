@@ -87,7 +87,7 @@ class ShoppingCartService extends Service {
     cart = await this.updateOne(data.userId, cart)
     return {
       code: 200,
-      msg: '',
+      msg: '修改成功！',
       cart,
     }
   }
@@ -98,6 +98,7 @@ class ShoppingCartService extends Service {
     delete data.userId
 
     const newCart = await ctx.model.ShoppingCart.findOneAndUpdate({ userId }, data, other).lean()
+    // 返回更新后的数据
     for (const item of newCart.products) {
       const product = await ctx.service.product.findOne({ productId: item.productId })
       item.product = product
@@ -140,6 +141,16 @@ class ShoppingCartService extends Service {
       msg: '',
       cart,
     }
+  }
+  async setProducts(cart, status) {
+    if (!cart.products && cart.products.length === 0) {
+      return cart
+    }
+    cart.products.forEach(i => {
+      i.status = status
+    })
+    const ret = await this.updateOne(cart.userId, cart)
+    return ret
   }
   getProductId(cart, productId) {
     if (!cart || !cart.products) {
