@@ -541,7 +541,7 @@ class OrderController extends Controller {
 
     for (const item of list) {
       if (item.user) {
-        users.push(item.user.picture)
+        users.push(item.user)
       }
     }
 
