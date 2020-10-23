@@ -78,6 +78,9 @@ module.exports = {
       tokenType = 'mall'
     }
     const { [tokenType + '_access_token']: token } = app.config.cache
+    if (!token) {
+      return Promise.reject()
+    }
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },
 }

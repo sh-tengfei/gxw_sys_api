@@ -15,19 +15,19 @@ class OrderController extends Controller {
     if (!order) {
       return ctx.body = { code: 201, msg: '订单不存在！' }
     }
-
+    // 订单未支付
     if (order.state === 1) {
       const countdown = moment(order.payEndTime).valueOf() - moment().valueOf()
       // 一秒内直接更新状态
       if (countdown <= 1000) {
         const orderRet = await service.order.updateOne(order.orderId, { state: 4 })
+        orderRet.countdown = 0
         ctx.body = { code: 200, msg: '获取成功', data: orderRet }
         return
       }
       order.countdown = countdown
     }
 
-    // 计算买的最新用户
     ctx.body = { code: 200, msg: '获取成功', data: order }
   }
   async getOrders() {
@@ -140,7 +140,7 @@ class OrderController extends Controller {
   async payOrder() {
     const { ctx, app } = this
     const { service, request: req, state } = ctx
-    const { payType, orderId } = req.body
+    const { payType, orderId, acceptName, acceptPhone } = req.body
 
     if (['wx', 'zfb'].indexOf(payType) === -1) {
       return { code: 201, msg: '订单创建失败，支付方式不正确', error: payType }
@@ -152,8 +152,9 @@ class OrderController extends Controller {
     }
     // 后期可能要加判断 当前支付信息是否过期
     if (order.payType !== 'void') {
-      // 已经存在支付信息 直接返回
-      return ctx.body = { code: 200, msg: '支付成功！', data: order.paySign }
+      // 已经存在支付信息 直接返回订单
+      ctx.body = { code: 200, msg: '已支付！', data: order }
+      return
     }
 
     const user = await service.user.findOne({ userId: state.user.userId })
