@@ -328,7 +328,7 @@ class OrderController extends Controller {
       logger.error({ msg: '订单不存在！' })
       return
     }
-    // 更新用户购买金额
+    // 更新用户购买金额 存在小数点问题
     const user = await service.user.updateOne(order.userId, {
       $inc: { buyTotal: order.total }
     })
@@ -381,7 +381,7 @@ class OrderController extends Controller {
     const { ctx } = this
     const { service, request: { body: order }, logger } = ctx
 
-    // 更新用户购买金额
+    // 更新用户购买金额 存在小数点问题
     const user = await service.user.updateOne(order.userId, {
       $inc: { buyTotal: order.total }
     })
