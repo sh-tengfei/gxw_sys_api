@@ -35,6 +35,7 @@ class LoginController extends Controller {
     }
 
     let user = await service.user.findOne({ unionid: userInfo.unionid })
+
     if (user !== null) {
       ctx.body = {
         code: 200,

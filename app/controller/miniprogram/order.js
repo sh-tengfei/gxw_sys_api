@@ -329,19 +329,20 @@ class OrderController extends Controller {
       return
     }
     // 更新用户购买金额 存在小数点问题
-    const user = await service.user.updateOne(order.userId, {
-      $inc: { buyTotal: order.total }
+    const user = await service.user.findOne({ userId: order.userId })
+    const retUser = await service.user.updateOne(order.userId, {
+      buyTotal: new Decimal(user.buyTotal).add(order.total)
     })
 
-    if (user) {
-      logger.info({ msg: '用户消费金额修改成功', userId: user.userId })
+    if (retUser) {
+      logger.info({ msg: '用户消费金额修改成功', userId: retUser.userId })
     } else {
-      logger.info({ msg: '用户信息错误', userId: user.userId })
+      logger.info({ msg: '用户信息错误', userId: retUser.userId })
       return
     }
 
     await service.tempMsg.sendWxMsg({
-      openid: user.openid,
+      openid: retUser.openid,
       template_id: weAppTemp.paySuccess,
       data: {
         'thing1': { 'value': order.products[0].name },
@@ -382,8 +383,9 @@ class OrderController extends Controller {
     const { service, request: { body: order }, logger } = ctx
 
     // 更新用户购买金额 存在小数点问题
-    const user = await service.user.updateOne(order.userId, {
-      $inc: { buyTotal: order.total }
+    const user = await service.user.findOne({ userId: order.userId })
+    await service.user.updateOne(order.userId, {
+      buyTotal: new Decimal(user.buyTotal).add(order.total)
     })
 
     // 执行拆单逻辑
