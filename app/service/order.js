@@ -45,7 +45,7 @@ class OrderService extends Service {
       total
     }
   }
-  async findOne(query = {}, other = { updateTime: 0, _id: 0 }) {
+  async findOne(query = {}, other = { _id: 0 }) {
     const { model, service } = this.ctx
     const order = await model.Order.findOne(query, other).lean()
     if (order !== null) {
@@ -58,6 +58,7 @@ class OrderService extends Service {
       }
       order.payEndTime = moment(order.payEndTime).format('YYYY-MM-DD HH:mm:ss')
       order.createTime = moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')
+      order.updateTime = moment(order.updateTime).format('YYYY-MM-DD HH:mm:ss')
     }
     return order
   }
