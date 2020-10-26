@@ -276,7 +276,8 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '修改失败！', data }
       return
     }
-    ctx.body = { code: 200, msg: '更新成功！', data }
+    const order = await service.order.findOne({ orderId: params.id })
+    ctx.body = { code: 200, msg: '更新成功！', data: order }
   }
   async paySuccessOrder() {
     const { ctx } = this

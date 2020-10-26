@@ -35,7 +35,7 @@ class ShoppingCartService extends Service {
             {
               productId: data.productId,
               buyNum: 1,
-              status: false,
+              status: true,
             }
           ]
         }
@@ -81,7 +81,7 @@ class ShoppingCartService extends Service {
       cart.products.push({
         productId: data.productId,
         buyNum: 1,
-        status: false
+        status: true
       })
     }
     cart = await this.updateOne(data.userId, cart)
