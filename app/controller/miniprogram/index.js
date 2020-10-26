@@ -75,6 +75,7 @@ class IndexController extends Controller {
       }
     }
   }
+  // 果仙网团长端接口
   async getIndexSales() {
     const { ctx, app } = this
     const { service, state } = ctx
