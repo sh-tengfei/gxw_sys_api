@@ -84,7 +84,7 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '请选择提货点' }
       return
     }
-    if (isExtractReceive === false && !addressId) {
+    if (isExtractReceive === true && !addressId) {
       ctx.body = { code: 201, msg: '请选择收货地址' }
       return
     }
