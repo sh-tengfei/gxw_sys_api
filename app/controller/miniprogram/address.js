@@ -51,6 +51,10 @@ class AddressController extends Controller {
       ...request.body,
       userId
     }
+    if (!body.name || !body.phone || !body.province || !body.city || !body.county || !body.detail) {
+      ctx.body = { code: 201, msg: '地址信息填写不正确！' }
+      return
+    }
     if (body.addressId) {
       const upAddr = await service.address.updateOne(body.addressId, body)
       if (upAddr !== null) {
