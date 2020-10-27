@@ -25,7 +25,7 @@ export const productType = [
     iconSrc: '//static.gxianwang.cn/fe-static/mall/pcjte8ootoo0'
   },
   {
-    label: '外套',
+    label: '外衣服装',
     id: 6,
     iconSrc: '//static.gxianwang.cn/fe-static/mall/lvrlq7gcvlc0'
   }
