@@ -44,7 +44,7 @@ class AgentController extends Controller {
       const { location, userInfo, communitySite, extractId, applyPhone, applyName } = item
       const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
       ret.push({
-        distance: Math.floor(distance * 100) / 100,
+        distance: Math.floor(distance * 100) / 100 || 0,
         nickName: userInfo.nickName,
         avatarUrl: userInfo.avatarUrl,
         applyName,
