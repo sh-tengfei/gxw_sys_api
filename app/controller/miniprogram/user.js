@@ -298,7 +298,8 @@ class LoginController extends Controller {
   // 更新团长
   async updateAgent() {
     const { ctx, app } = this
-    const { request: req, params, service } = ctx
+    const { request: req, service, state } = ctx
+    const { userId } = state.user
     const { nickName, applyPhone, avatarUrl } = req.body
 
     const oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
@@ -307,7 +308,7 @@ class LoginController extends Controller {
       return
     }
 
-    const newData = {
+    const newAgent = {
       nickName,
       applyPhone,
       avatarUrl,
@@ -315,12 +316,8 @@ class LoginController extends Controller {
         ...req.body
       }
     }
-    if (!params.id) {
-      ctx.body = { msg: '参数错误', code: 201 }
-      return
-    }
 
-    const agent = await service.agent.updateOne(params.id, newData)
+    const agent = await service.agent.updateOne(userId, newAgent)
 
     if (!agent) {
       ctx.body = { msg: '更新失败', data: agent, code: 201 }
