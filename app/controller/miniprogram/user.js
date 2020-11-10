@@ -14,6 +14,7 @@ config.useHttpsDomain = true
 config.useCdnDomain = true
 const formUploader = new qiniu.form_up.FormUploader(config)
 const putExtra = new qiniu.form_up.PutExtra()
+const contact = '13739668118'
 
 class LoginController extends Controller {
   // 商城登录
@@ -215,7 +216,7 @@ class LoginController extends Controller {
     const { code } = ctx.query
 
     if (!code) {
-      ctx.logger.warn({ msg: '参数错误联系管理员', code: 201, code })
+      ctx.logger.warn({ msg: '参数错误联系管理员', code: 201 })
       return ctx.body = { msg: '参数错误联系管理员', code: 201 }
     }
 
@@ -228,16 +229,10 @@ class LoginController extends Controller {
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
       const token = this.createAgentToken(agent)
-      if (agent.areaId) {
-        agent.isReg = true
-      } else {
-        agent.isReg = false
-      }
-
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
-        data: { token, user: agent, weAppTemp },
+        data: { token, agent, weAppTemp, contact },
         session_key: userInfo.session_key
       }
       return
@@ -258,7 +253,7 @@ class LoginController extends Controller {
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
-        data: { token, user: agent, weAppTemp },
+        data: { token, agent, weAppTemp, contact },
         session_key: userInfo.session_key
       }
       return
@@ -278,13 +273,7 @@ class LoginController extends Controller {
       return
     }
 
-    if (agent.areaId) {
-      agent.isReg = true
-    } else {
-      agent.isReg = false
-    }
-
-    ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp }}
+    ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp, contact }}
   }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {
@@ -323,13 +312,8 @@ class LoginController extends Controller {
       ctx.body = { msg: '更新失败', data: agent, code: 201 }
       return
     }
-    if (agent.areaId) {
-      agent.isReg = true
-    } else {
-      agent.isReg = false
-    }
 
-    ctx.body = { msg: '更新成功', code: 200, data: { agent, weAppTemp }}
+    ctx.body = { msg: '更新成功', code: 200, data: { agent, weAppTemp, contact }}
   }
   async getAgentPhone() {
     const { ctx } = this
