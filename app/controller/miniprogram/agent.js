@@ -11,29 +11,28 @@ function rad(d) {
 class AgentController extends Controller {
   async regGroupUser() {
     const { ctx } = this
-    const { request: req, service, state } = ctx
+    const { request: { body }, service, state } = ctx
     let info = await service.agent.findOne({ extractId: state.user.userId })
     if (info && info.communityName) {
       ctx.body = { msg: '用户已注册，重复提交！', code: 202 }
       return
     }
 
-    let agent = await service.agent.findOne({ communityName: req.body.communityName })
+    let agent = await service.agent.findOne({ communityName: body.communityName })
+
     if (agent !== null) {
       ctx.body = { msg: '该社区名称已使用！', code: 201 }
       return
     }
 
+
+    agent = await service.agent.updateOne(state.user.userId, { ...body, state: 1 })
+
     if (agent !== null) {
-      agent.isReg = true
-      ctx.body = {
-        msg: '注册成功' ,
-        code: 200,
-        data: agent,
-      }
+      ctx.body = { msg: '注册成功', code: 200, data: agent }
       return
     }
-    ctx.body = { msg: '创建失败！', code: 201 }
+    ctx.body = { msg: '创建失败！', code: 201, data: agent, info }
   }
   async getNearbyAgents() {
     const { ctx } = this

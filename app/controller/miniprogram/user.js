@@ -289,18 +289,16 @@ class LoginController extends Controller {
     const { ctx, app } = this
     const { request: req, service, state } = ctx
     const { userId } = state.user
-    const { nickName, applyPhone, avatarUrl } = req.body
+    const { applyPhone } = req.body
 
-    const oldAgent = await service.agent.findOne({ applyPhone: req.body.applyPhone })
+    const oldAgent = await service.agent.findOne({ applyPhone: applyPhone })
     if (oldAgent !== null) {
       ctx.body = { msg: '该手机号码已使用！', code: 201 }
       return
     }
 
     const newAgent = {
-      nickName,
       applyPhone,
-      avatarUrl,
       userInfo: {
         ...req.body
       }
