@@ -35,16 +35,28 @@ class OrderController extends Controller {
     const { service, query, state } = ctx
     const { userId } = state.user
 
-    query.state = query.state || -1
-    query.userId = userId
-
-    query.state = query.state.split(',')
+    const opt = {
+      state: -1, 
+      userId, 
+      extractType: query.extractType, 
+      state: query.state.split(',')
+    }
+    if (query.state) {
+      opt.state = query.state
+    }
 
     // 团长端查收货地址用 extractId 参数待extractType为此类型查询
-    if (query.extractType) {
-      query.extractId = userId
-      delete query.userId
-      delete query.extractType
+    if (+query.extractType === 1) {
+      opt.extractId = userId
+      delete opt.userId
+      delete opt.extractType
+    }
+    
+    if (query.startTime && query.endTime) {
+      opt.createTime = {
+        '$gte': query.start,
+        '$lte': query.end
+      }
     }
 
     const { page = 1, limit = 10 } = query
@@ -53,7 +65,7 @@ class OrderController extends Controller {
       skip: (page - 1) * limit
     }
 
-    const { list, total } = await service.order.find(query, option)
+    const { list, total } = await service.order.find(opt, option)
     list.forEach((i)=>{
       delete i.extract
       delete i.resultXml

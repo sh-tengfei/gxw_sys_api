@@ -15,6 +15,12 @@ class DeliveryNoteController extends Controller {
     if (query.noteId) {
       opt.noteId = query.noteId
     }
+    if (query.startTime && query.endTime) {
+      opt.createTime = {
+        '$gte': query.start,
+        '$lte': query.end
+      }
+    }
     const { list, total } = await service.deliveryNote.find(opt)
     ctx.body = { code: 200, msg: '获取成功', data: list, total }
   }
