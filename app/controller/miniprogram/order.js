@@ -59,10 +59,10 @@ class OrderController extends Controller {
       }
     }
 
-    if(query.productId) {
+    if(query.productName) {
       opt.products = {
         $elemMatch: { 
-          productId: query.productId
+          name: query.productName
         }
       }
     }
