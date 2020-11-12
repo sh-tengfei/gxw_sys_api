@@ -75,7 +75,7 @@ class OrderController extends Controller {
 
     const { list, total } = await service.order.find(opt, option)
     list.forEach((i)=>{
-      delete i.extract
+      // delete i.extract
       delete i.resultXml
     })
     ctx.body = { code: 200, msg: '获取成功', data: {
