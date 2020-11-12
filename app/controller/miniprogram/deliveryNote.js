@@ -17,11 +17,21 @@ class DeliveryNoteController extends Controller {
     }
     if (query.startTime && query.endTime) {
       opt.createTime = {
-        '$gte': query.start,
-        '$lte': query.end
+        '$gte': query.startTime,
+        '$lte': query.endTime
       }
     }
-    const { list, total } = await service.deliveryNote.find(opt)
+
+    if (query.deliveryId) {
+      opt.deliveryId = query.deliveryId
+    }
+
+    const { page = 1, limit = 10 } = query
+    const option = {
+      limit: query.limit || 10,
+      skip: (page - 1) * limit
+    }
+    const { list, total } = await service.deliveryNote.find(opt, option)
     ctx.body = { code: 200, msg: '获取成功', data: list, total }
   }
   async getDeliveryDetail() {

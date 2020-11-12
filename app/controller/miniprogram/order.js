@@ -67,6 +67,10 @@ class OrderController extends Controller {
       }
     }
 
+    if (query.orderId) {
+      opt.orderId = query.orderId
+    }
+
     const { page = 1, limit = 10 } = query
     const option = {
       limit: query.limit || 10,
