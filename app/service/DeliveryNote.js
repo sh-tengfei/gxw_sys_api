@@ -73,8 +73,8 @@ class DeliveryNoteService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newNote; const noteId = 'noteId'
-    data.noteId = await ctx.service.counters.findAndUpdate(noteId)
+    let newNote; const deliveryId = 'deliveryId'
+    data.deliveryId = await ctx.service.counters.findAndUpdate(deliveryId)
     try {
       newNote = await ctx.model.DeliveryNote.create(data)
       newNote.createTime = moment(newNote.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -100,16 +100,16 @@ class DeliveryNoteService extends Service {
     } else {
       const option = { $push: { orderIds: orderId }}
       note = await ctx.model.DeliveryNote.findOneAndUpdate({
-        noteId: curNote.noteId,
+        deliveryId: curNote.deliveryId,
       }, option, { new: true, _id: 0 }).lean()
     }
     return note
   }
-  async updateOne(noteId, data) {
+  async updateOne(deliveryId, data) {
     const { ctx } = this
     const { service, model } = ctx
     const newNote = await model.DeliveryNote.findOneAndUpdate({
-      noteId
+      deliveryId
     }, data, { new: true, _id: 0 }).lean()
     const sendRet = await service.order.sendGoods(newNote.orderIds)
     return newNote

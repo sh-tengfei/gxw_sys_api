@@ -12,8 +12,8 @@ class DeliveryNoteController extends Controller {
     if (query.state) {
       opt.state = query.state
     }
-    if (query.noteId) {
-      opt.noteId = query.noteId
+    if (query.deliveryId) {
+      opt.deliveryId = query.deliveryId
     }
     if (query.startTime && query.endTime) {
       opt.createTime = {
@@ -30,7 +30,7 @@ class DeliveryNoteController extends Controller {
     const opt = {
       extractId: user.userId,
       state: [1, 2],
-      noteId: params.id,
+      deliveryId: params.id,
     }
     const note = await service.deliveryNote.findOne(opt)
 

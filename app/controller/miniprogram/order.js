@@ -54,8 +54,8 @@ class OrderController extends Controller {
     
     if (query.startTime && query.endTime) {
       opt.createTime = {
-        '$gte': query.start,
-        '$lte': query.end
+        '$gte': query.startTime,
+        '$lte': query.endTime
       }
     }
 
@@ -80,7 +80,9 @@ class OrderController extends Controller {
     })
     ctx.body = { code: 200, msg: '获取成功', data: {
       list,
-      total
+      total,
+      page,
+      limit
     }}
   }
   async makeOrder() {

@@ -30,7 +30,7 @@ async function generateDownload({
   orders,
   area,
   createTime,
-  noteId,
+  deliveryId,
   totalAmount,
 }, url) {
   createTime = moment(createTime).add(1, 'days').format('YYYY-MM-DD')
@@ -170,7 +170,7 @@ async function generateDownload({
         type: 'linebreak'
       }, {
         type: 'text',
-        val: `    配送单号：${noteId}`,
+        val: `    配送单号：${deliveryId}`,
         opt: {
           font_face: 'Arial',
           font_size: 10,
@@ -291,7 +291,7 @@ class DeliveryNoteController extends Controller {
   async exportDeliveryNote() {
     const { ctx, app } = this
     const { service, params } = ctx
-    const note = await service.deliveryNote.findOne({ noteId: params.id })
+    const note = await service.deliveryNote.findOne({ deliveryId: params.id })
     if (!note) {
       ctx.body = { code: 200, msg: '配送单不存在' }
       return
