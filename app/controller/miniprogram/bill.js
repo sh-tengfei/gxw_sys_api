@@ -15,7 +15,7 @@ class BillController extends Controller {
     }
     const time = moment()
     if (Number(timeType) === 1) {
-      // opt.createTime = { $gte: time.startOf('day').valueOf(), $lt: time.endOf('day').valueOf() }
+      opt.createTime = { $gte: time.startOf('day').valueOf(), $lt: time.endOf('day').valueOf() }
     }
     if (Number(timeType) === 2) {
       opt.createTime = { $gte: time.startOf('week').valueOf(), $lt: time.endOf('week').valueOf() }
@@ -39,12 +39,22 @@ class BillController extends Controller {
       state: 2,
     })
 
+    let waitMoney = 0
+    let doneMoney = 0
+    waitList.forEach((i)=>{
+      waitMoney = new Decimal(waitMoney).add(i.amount)
+    })
+
+    doneList.forEach((i)=>{
+      doneMoney = new Decimal(doneMoney).add(i.amount)
+    })
+
     ctx.body = {
       code: 200,
       msg: '获取成功',
       data: {
-        wait: { waitList, waitTotal },
-        done: { doneList, doneTotal }
+        wait: { waitList, total: waitTotal, waitMoney },
+        done: { doneList, total: doneTotal, doneMoney }
       }
     }
   }
