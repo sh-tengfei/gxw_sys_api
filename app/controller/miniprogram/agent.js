@@ -144,7 +144,7 @@ class AgentController extends Controller {
       ctx.body = { msg: '提现失败，联系管理员' , code: 201, data: draw }
       return
     }
-    ctx.body = { msg: '提交成功，预计三个工作日审核到账' , code: 200, data: draw }
+    ctx.body = { msg: '提交成功，预计三个工作日到账' , code: 200, data: agent, draw }
   }
 }
 
