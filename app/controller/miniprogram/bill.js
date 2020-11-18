@@ -12,7 +12,9 @@ class BillController extends Controller {
 
     const opt = {
       extractId: userId,
+      state: [1, 2],
     }
+
     const time = moment()
     if (Number(timeType) === 1) {
       opt.createTime = { $gte: time.startOf('day').valueOf(), $lt: time.endOf('day').valueOf() }
@@ -30,31 +32,20 @@ class BillController extends Controller {
       opt.createTime = { $gte: start.startOf('day').valueOf(), $lt: end.endOf('day').valueOf() }
     }
 
-    const { list: waitList, total: waitTotal } = await service.bill.find({
-      ...opt,
-      state: 1,
-    })
-    const { list: doneList, total: doneTotal } = await service.bill.find({
-      ...opt,
-      state: 2,
-    })
+    const { page = 1, limit = 10 } = query
+    const option = {
+      limit: query.limit || 10,
+      skip: (page - 1) * limit
+    }
 
-    let waitMoney = 0
-    let doneMoney = 0
-    waitList.forEach((i)=>{
-      waitMoney = new Decimal(waitMoney).add(i.amount)
-    })
-
-    doneList.forEach((i)=>{
-      doneMoney = new Decimal(doneMoney).add(i.amount)
-    })
+    const { list, total } = await service.bill.find(opt, option)
 
     ctx.body = {
       code: 200,
       msg: '获取成功',
       data: {
-        wait: { waitList, total: waitTotal, waitMoney },
-        done: { doneList, total: doneTotal, doneMoney }
+        list,
+        total
       }
     }
   }

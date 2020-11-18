@@ -28,6 +28,13 @@ class SalesController extends Controller {
     if (Number(timeType) === 3) {
       opt.createTime = { $gte: time.startOf('month').valueOf(), $lt: time.endOf('month').valueOf() }
     }
+    // 自定义时间类型
+    if (Number(timeType) === 4) {
+      const start = moment(startTime)
+      const end = moment(endTime)
+      opt.createTime = { $gte: start.startOf('day').valueOf(), $lt: end.endOf('day').valueOf() }
+    }
+
     // delete opt.createTime
     const { list, total } = await service.order.find(opt)
     let salesAmount = 0 // 销售额

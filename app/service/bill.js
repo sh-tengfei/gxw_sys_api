@@ -8,9 +8,6 @@ class BillService extends Service {
     const { ctx } = this
     const { limit = 10, skip = 0 } = option
 
-    delete query.limit
-    delete query.skip
-
     const list = await ctx.model.Bill.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
