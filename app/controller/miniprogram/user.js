@@ -231,7 +231,7 @@ class LoginController extends Controller {
     }
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
-      ctx.logger.info({ msg: '成功用户！', agent })
+      ctx.logger.info({ msg: '登录用户！', agent })
       const token = this.createAgentToken(agent)
       ctx.body = {
         code: 200,
