@@ -241,7 +241,7 @@ class LoginController extends Controller {
     try {
       agent = await ctx.service.agent.create({
         openid: userInfo.openid,
-        unionid: userInfo.unionid || '-1', // 因为微信审核机器人获取不到 unionid 给一个默认字符串
+        unionid: userInfo.unionid,
         userInfo: null,
       })
       if (!agent || agent.errors) {
@@ -259,7 +259,6 @@ class LoginController extends Controller {
       }
       return
     } catch (e) {
-      console.log(e, agent, userInfo, 'e, agent, userInfo')
       ctx.logger.error({ msg: '保存错误，联系管理员', data: e })
       ctx.body = { msg: '保存错误，联系管理员', code: 201 }
     }
