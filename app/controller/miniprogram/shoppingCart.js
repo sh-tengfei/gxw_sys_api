@@ -10,6 +10,11 @@ class ShoppingCartController extends Controller {
     const { userId } = state.user
 
     const cart = await service.shoppingCart.findOne(userId)
+    if (!cart) {
+      ctx.body = { code: 200, msg: '购物车无商品', data: cart }
+      return
+    }
+    
     if (+query.isCartSettle === 1) {
       const selects = []
       const notSelects = []
@@ -21,11 +26,6 @@ class ShoppingCartController extends Controller {
         }
       })
       cart.products = selects
-    }
-
-    if (!cart) {
-      ctx.body = { code: 200, msg: '购物车无商品', data: cart }
-      return
     }
 
     if (cart.products.length === 0) {
