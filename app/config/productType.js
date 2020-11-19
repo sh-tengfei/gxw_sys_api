@@ -14,19 +14,19 @@ export const productType = [
     id: 3,
     iconSrc: '//static.gxianwang.cn/fe-static/mall/vrtqjat99lk0'
   },
-  {
-    label: '美妆',
-    id: 4,
-    iconSrc: '//static.gxianwang.cn/fe-static/mall/t8js01dacqk0'
-  },
-  {
-    label: '干果',
-    id: 5,
-    iconSrc: '//static.gxianwang.cn/fe-static/mall/pcjte8ootoo0'
-  },
-  {
-    label: '外衣服装',
-    id: 6,
-    iconSrc: '//static.gxianwang.cn/fe-static/mall/lvrlq7gcvlc0'
-  }
+  // {
+  //   label: '美妆',
+  //   id: 4,
+  //   iconSrc: '//static.gxianwang.cn/fe-static/mall/t8js01dacqk0'
+  // },
+  // {
+  //   label: '干果',
+  //   id: 5,
+  //   iconSrc: '//static.gxianwang.cn/fe-static/mall/pcjte8ootoo0'
+  // },
+  // {
+  //   label: '外衣服装',
+  //   id: 6,
+  //   iconSrc: '//static.gxianwang.cn/fe-static/mall/lvrlq7gcvlc0'
+  // }
 ]
