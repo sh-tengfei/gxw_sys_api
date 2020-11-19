@@ -245,6 +245,7 @@ class LoginController extends Controller {
         userInfo: null,
       })
       if (!agent || agent.errors) {
+        console.log(agent, userInfo, 'agent, userInfo')
         ctx.logger.error({ msg: '保存失败，联系管理员', agent, userInfo })
         ctx.body = { msg: '保存失败，联系管理员' }
         return
@@ -258,8 +259,9 @@ class LoginController extends Controller {
       }
       return
     } catch (e) {
-      ctx.logger.error({ msg: '保存失败，联系管理员', data: e })
-      ctx.body = { msg: '登陆失败，联系管理员' }
+      console.log(e, agent, userInfo, 'e, agent, userInfo')
+      ctx.logger.error({ msg: '保存错误，联系管理员', data: e })
+      ctx.body = { msg: '保存错误，联系管理员', code: 201 }
     }
   }
 
