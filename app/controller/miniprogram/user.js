@@ -226,8 +226,12 @@ class LoginController extends Controller {
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
 
+    if (!userInfo.unionid) {
+      userInfo.unionid = userInfo.openid
+    }
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
+      ctx.logger.info({ msg: '成功用户！', agent })
       const token = this.createAgentToken(agent)
       ctx.body = {
         code: 200,
@@ -239,13 +243,14 @@ class LoginController extends Controller {
     }
     // 不存在团长 创建
     try {
+      ctx.logger.info({ msg: '创建用户', userInfo })
       agent = await ctx.service.agent.create({
         openid: userInfo.openid,
-        unionid: userInfo.unionid,
+        unionid: userInfo.unionid, // openid === unionid是微信审核机器人
         userInfo: null,
+        nickName: userInfo.openid === userInfo.unionid ? '微信审核机器人' : ''
       })
       if (!agent || agent.errors) {
-        console.log(agent, userInfo, 'agent, userInfo')
         ctx.logger.error({ msg: '保存失败，联系管理员', agent, userInfo })
         ctx.body = { msg: '保存失败，联系管理员' }
         return

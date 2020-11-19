@@ -25,6 +25,10 @@ class ProductController extends Controller {
   async getProduct() {
     const { ctx, app } = this
     const { service, params } = ctx
+    if (!params.id) {
+      ctx.body = { code: 201, msg: '参数不正确！', data: params }
+      return
+    }
     const query = {
       productId: params.id,
     }

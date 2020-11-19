@@ -10,7 +10,7 @@ module.exports = app => {
   const Agent = new mongoose.Schema({
     extractId: { type: String, required: true }, // 提货点id 也就是团长ID
     state: { type: Number, default: 0 }, // 0未提交 1审核中 2已通过 3停用
-    openid: { type: String, required: true, unique: true },
+    openid: { type: String, required: true},
     unionid: { type: String },
     nickName: { type: String, default: '' },
     userInfo: {

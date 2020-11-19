@@ -37,11 +37,17 @@ class DeliveryNoteController extends Controller {
   async getDeliveryDetail() {
     const { ctx, app } = this
     const { service, state: { user }, params } = ctx
+    if (!params.id) {
+      ctx.body = { code: 201, msg: '参数不正确！', data: params }
+      return
+    }
+    
     const opt = {
       extractId: user.userId,
       state: [1, 2],
       deliveryId: params.id,
     }
+
     const note = await service.deliveryNote.findOne(opt)
 
     ctx.body = { code: 200, msg: '获取成功', data: note }
