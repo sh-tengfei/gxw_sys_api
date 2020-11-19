@@ -7,6 +7,10 @@ class DeliveryNoteService extends Service {
     const { ctx } = this
     const { service, model } = ctx
     const note = await model.DeliveryNote.findOne(query).lean()
+    if (!note) {
+      console.log(note, 'note')
+      return note
+    }
     note.extract = await service.agent.findOne({ extractId: note.extractId })
     note.area = await service.sellingCity.getCity({ cityCode: note.areaId })
     const { list } = await service.order.find({
