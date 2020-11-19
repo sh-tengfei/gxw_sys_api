@@ -33,21 +33,25 @@ class ProductController extends Controller {
       productId: params.id,
     }
     const pro = await service.product.findOne(query)
-
-    const { list } = await service.order.find({
-      products: {
-        $elemMatch: {
-          productId: params.id
+    // 如果商品存在 得到买该商品的用户
+    if (pro) {
+      const { list } = await service.order.find({
+        products: {
+          $elemMatch: {
+            productId: params.id
+          }
         }
-      }
-    })
+      })
+      let usedUser = list.filter(i=>i.user)
+      usedUser = usedUser.map(i=>i.user.picture)
+      usedUser = new Set(usedUser)
+      pro.used = [...usedUser]
+    } else {
+      ctx.body = { code: 201, msg: '商品不存在', data: pro }
+      return
+    }
 
-    let usedUser = list.filter(i=>i.user)
-    usedUser = usedUser.map(i=>i.user.picture)
-    usedUser = new Set(usedUser)
-    pro.used = [...usedUser]
-
-    ctx.body = { code: 200, msg: '', data: pro }
+    ctx.body = { code: 200, msg: '', data: pro,  }
   }
   async update() {
     const { ctx, app } = this
