@@ -241,7 +241,7 @@ class LoginController extends Controller {
     try {
       agent = await ctx.service.agent.create({
         openid: userInfo.openid,
-        unionid: userInfo.unionid,
+        unionid: userInfo.unionid || '-1', // 因为微信审核机器人获取不到 unionid 给一个默认字符串
         userInfo: null,
       })
       if (!agent || agent.errors) {
