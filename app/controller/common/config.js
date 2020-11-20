@@ -12,7 +12,7 @@ class ConfigController extends Controller {
       ctx.body = { code: 200, msg: '无配置内容' }
       return
     }
-    ctx.body = { code: 200, msg: '', data: { ...config } }
+    ctx.body = { code: 200, msg: '', data: config }
   }
   async upProductType() {
     const { ctx } = this
