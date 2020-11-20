@@ -2,7 +2,6 @@
 import { Controller } from 'egg'
 import moment from 'moment'
 import { Decimal } from 'decimal.js'
-import { productType } from '../../config/productType'
 
 class IndexController extends Controller {
   async index() {
@@ -62,16 +61,6 @@ class IndexController extends Controller {
         classifys: classifys,
         direct: direct.list,
         hotList
-      }
-    }
-  }
-  async getTypes() {
-    const { ctx } = this
-    ctx.body = {
-      msg: '获取成功！',
-      code: 200,
-      data: {
-        productType
       }
     }
   }

@@ -5,8 +5,6 @@ export default function({ router, controller, jwt }) {
   // 商城用户
   router.get('/admin/users', jwt, controller.user.getUsers)
 
-  router.get('/admin/productType', jwt, controller.common.getProductType)
-
   router.post('/admin/login', controller.login.login)
   router.post('/admin/logout', controller.login.logout)
   router.post('/admin/add', controller.login.addAdmin)
