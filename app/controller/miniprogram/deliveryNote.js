@@ -41,7 +41,7 @@ class DeliveryNoteController extends Controller {
       ctx.body = { code: 201, msg: '参数不正确！', data: params }
       return
     }
-    
+
     const opt = {
       extractId: user.userId,
       state: [1, 2],

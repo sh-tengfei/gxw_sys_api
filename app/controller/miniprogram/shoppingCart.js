@@ -14,7 +14,7 @@ class ShoppingCartController extends Controller {
       ctx.body = { code: 200, msg: '购物车无商品', data: cart }
       return
     }
-    
+
     if (+query.isCartSettle === 1) {
       const selects = []
       const notSelects = []

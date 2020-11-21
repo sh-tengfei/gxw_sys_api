@@ -36,9 +36,9 @@ class OrderController extends Controller {
     const { userId } = state.user
 
     const opt = {
-      state: -1, 
-      userId, 
-      extractType: query.extractType, 
+      state: -1,
+      userId,
+      extractType: query.extractType,
       state: query.state.split(',')
     }
     if (query.state) {
@@ -51,7 +51,7 @@ class OrderController extends Controller {
       delete opt.userId
       delete opt.extractType
     }
-    
+
     if (query.startTime && query.endTime) {
       opt.createTime = {
         '$gte': query.startTime,
@@ -59,9 +59,9 @@ class OrderController extends Controller {
       }
     }
 
-    if(query.productName) {
+    if (query.productName) {
       opt.products = {
-        $elemMatch: { 
+        $elemMatch: {
           name: query.productName
         }
       }

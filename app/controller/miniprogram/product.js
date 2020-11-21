@@ -51,7 +51,7 @@ class ProductController extends Controller {
       return
     }
 
-    ctx.body = { code: 200, msg: '', data: pro,  }
+    ctx.body = { code: 200, msg: '', data: pro, }
   }
   async update() {
     const { ctx, app } = this

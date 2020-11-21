@@ -12,16 +12,20 @@ class ConfigController extends Controller {
       ctx.body = { code: 200, msg: '无配置内容' }
       return
     }
-    ctx.body = { code: 200, msg: '', data: config['productType'], productType: config['productType'] }
+    if (!ctx.header['user-agent']) {
+      ctx.body = { code: 200, msg: '', data: { productType: config['productType'] }}
+      return
+    }
+    ctx.body = { code: 200, msg: '', data: config['productType'] }
   }
   async upProductType() {
     const { ctx } = this
-    const { service, request: { body } } = ctx
+    const { service, request: { body }} = ctx
     if (!util.isArray(body) || body.length === 0) {
       ctx.body = { code: 201, msg: '产品配置信息不正确', data: body }
       return
     }
-    const config = await service.config.update({key: 'productType', value: body})
+    const config = await service.config.update({ key: 'productType', value: body })
     ctx.body = { code: 200, msg: '', data: config }
   }
 }

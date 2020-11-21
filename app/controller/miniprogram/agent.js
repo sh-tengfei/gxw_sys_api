@@ -25,7 +25,6 @@ class AgentController extends Controller {
       return
     }
 
-
     agent = await service.agent.updateOne(state.user.userId, { ...body, state: 1 })
 
     if (agent !== null) {

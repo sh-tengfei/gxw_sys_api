@@ -19,7 +19,7 @@ class ConfigService extends Service {
       config[key] = value
     } else {
       try {
-        config = await ctx.model.Config.create({[key]:value })
+        config = await ctx.model.Config.create({ [key]: value })
       } catch (e) {
         return e
       }
