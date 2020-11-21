@@ -37,7 +37,6 @@ module.exports = app => {
     salesTerritory: { type: Object, default: null }, // 销售区域
     state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未下线  2上线  3删除
     salesNumber: { type: Number, default: 0 }, // 销售数量
-    isAgentSendOnlineMsg: { type: Number, default: false },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
