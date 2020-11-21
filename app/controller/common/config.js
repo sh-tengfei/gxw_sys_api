@@ -12,11 +12,13 @@ class ConfigController extends Controller {
       ctx.body = { code: 200, msg: '无配置内容' }
       return
     }
-    if (!ctx.header['user-agent']) {
-      ctx.body = { code: 200, msg: '', data: { productType: config['productType'] }}
+    const da = ctx.headers["user-agent"].toLowerCase()
+    const agentID = da.match(/(chrome|safari)/)
+    if (agentID) {
+      ctx.body = { code: 200, msg: '', data: config['productType'] }
       return
     }
-    ctx.body = { code: 200, msg: '', data: config['productType'] }
+    ctx.body = { code: 200, msg: '', data: { productType: config['productType'] }}
   }
   async upProductType() {
     const { ctx } = this
