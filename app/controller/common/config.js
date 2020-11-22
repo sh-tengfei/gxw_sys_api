@@ -12,13 +12,25 @@ class ConfigController extends Controller {
       ctx.body = { code: 200, msg: '无配置内容' }
       return
     }
-    const da = ctx.headers["user-agent"].toLowerCase()
-    const agentID = da.match(/(chrome|safari)/)
-    if (agentID) {
-      ctx.body = { code: 200, msg: '', data: config['productType'] }
+    ctx.body = { code: 200, msg: '', data: config['productType'] }
+  }
+  async getShareTitle() {
+    const { ctx } = this
+    const { service } = ctx
+    const config = await service.config.getConfig()
+
+    ctx.body = { code: 200, msg: '', data: config['shareTitle']}
+  }
+  async setShareTitle() {
+    const { ctx } = this
+    const { service, query, request: { body } } = ctx
+    if (Object.keys(body).length === 0) {
+      ctx.body = { code: 201, msg: '配置不正确' }
       return
     }
-    ctx.body = { code: 200, msg: '', data: { productType: config['productType'] }}
+
+    const newConfig = await service.config.update({ key: 'shareTitle', value: body })
+    ctx.body = { code: 200, msg: '', data: newConfig.shareTitle }
   }
   async upProductType() {
     const { ctx } = this

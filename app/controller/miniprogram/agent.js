@@ -44,7 +44,7 @@ class AgentController extends Controller {
     const { list, total } = await service.agent.find({ state: 2, areaId: city })
     const ret = []
     list.forEach((item) => {
-      const { location, userInfo, communitySite, extractId, applyPhone, applyName } = item
+      const { location, userInfo, communitySite, extractId, applyPhone, applyName, areaId } = item
       const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
       ret.push({
         distance: Math.floor(distance * 100) / 100 || 0,
@@ -55,6 +55,7 @@ class AgentController extends Controller {
         extractId,
         applyPhone,
         location,
+        areaId
       })
     })
     // 排序获取前五个

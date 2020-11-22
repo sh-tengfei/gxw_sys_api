@@ -15,7 +15,10 @@ module.exports = app => {
         iconSrc: { type: String, required: true },
       }
     ],
-    smallShareTips: { type: String },
+    shareTitle: {
+      mallTitle: { type: String, required: true },
+      agentTitle: { type: String, required: true },
+    },
     version: { type: Number, default: 1 },
   }, {
     versionKey: false,
