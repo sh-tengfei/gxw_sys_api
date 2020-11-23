@@ -40,8 +40,8 @@ class ShoppingCartService extends Service {
           ]
         }
         cart = await model.ShoppingCart.create(cart)
+        cart = await service.shoppingCart.findOne(data.userId)
       } catch (e) {
-        console.log(e)
         return {
           code: 201,
           msg: '添加失败！',
