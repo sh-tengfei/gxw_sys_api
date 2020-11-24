@@ -159,7 +159,11 @@ class ShoppingCartService extends Service {
     for (const item of cart.products) {
       const product = await ctx.service.product.findOne({ productId: item.productId })
       const { salesTerritory: territory } = product
-      if (territory &&territory.id === cityCode) {
+      if (territory){
+        if(territory.id === cityCode) {
+          products.push(item)
+        }
+      } else {
         products.push(item)
       }
     }
