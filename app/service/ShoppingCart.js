@@ -152,6 +152,20 @@ class ShoppingCartService extends Service {
     const ret = await this.updateOne(cart.userId, cart)
     return ret
   }
+  async filterCard(userId, cityCode) {
+    const { ctx } = this
+    const cart = await this.findOne(userId)
+    const products = []
+    for (const item of cart.products) {
+      const product = await ctx.service.product.findOne({ productId: item.productId })
+      const { salesTerritory: territory } = product
+      if (territory &&territory.id === cityCode) {
+        products.push(item)
+      }
+    }
+    cart.products = products
+    const ret = await this.updateOne(userId, cart)
+  }
   getProductId(cart, productId) {
     if (!cart || !cart.products) {
       return null

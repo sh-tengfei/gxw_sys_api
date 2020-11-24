@@ -117,10 +117,6 @@ class LoginController extends Controller {
       return
     }
 
-    const card = await service.shoppingCart.findOne(state.user.userId)
-
-    user.cardProNum = String(service.shoppingCart.getProductNum(card))
-
     ctx.body = { code: 200, msg: '获取成功', data: { user, weAppTemp }}
   }
   async getLocation() {
@@ -355,7 +351,10 @@ class LoginController extends Controller {
     const user = await service.user.updateOne(userId, {
       historyExtract: [...newHistory]
     })
-
+    
+    const agent = await service.agent.findOne({ extractId })
+    const card = await service.shoppingCart.filterCard(userId, agent.areaId)
+    
     if (user) {
       ctx.body = { msg: '修改成功', code: 200, data: user }
     } else {
