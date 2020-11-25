@@ -34,7 +34,7 @@ class OrderController extends Controller {
     const { ctx, app } = this
     const { service, query, state } = ctx
     const { userId } = state.user
-
+    query.state = decodeURIComponent(query.state)
     const opt = {
       state: -1,
       userId,
