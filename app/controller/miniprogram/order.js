@@ -39,10 +39,9 @@ class OrderController extends Controller {
       state: -1,
       userId,
       extractType: query.extractType,
-      state: query.state.split(',')
     }
     if (query.state) {
-      opt.state = query.state
+      opt.state = query.state.split(',')
     }
 
     // 团长端查收货地址用 extractId 参数待extractType为此类型查询
