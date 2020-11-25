@@ -44,7 +44,7 @@ class AgentController extends Controller {
     const { list, total } = await service.agent.find({ state: 2, areaId: city })
     const ret = []
     list.forEach((item) => {
-      const { location, userInfo, communitySite, extractId, applyPhone, applyName, areaId } = item
+      const { location, userInfo, communitySite, extractId, applyPhone, applyName, areaId, communityName } = item
       const distance = this.getDistance(location.longitude, location.latitude, longitude, latitude)
       ret.push({
         distance: Math.floor(distance * 100) / 100 || 0,
@@ -52,6 +52,7 @@ class AgentController extends Controller {
         avatarUrl: userInfo.avatarUrl,
         applyName,
         communitySite,
+        communityName,
         extractId,
         applyPhone,
         location,

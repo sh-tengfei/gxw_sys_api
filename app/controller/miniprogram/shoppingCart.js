@@ -193,6 +193,21 @@ class ShoppingCartController extends Controller {
 
     ctx.body = { code: 200, msg: '操作成功', data: cart }
   }
+  async getCartNum() {
+    const { ctx } = this
+    const { service, state, query } = ctx
+    const { userId } = state.user
+
+    const cart = await service.shoppingCart.findOne(userId)
+
+    if (!cart) {
+      ctx.body = { code: 200, msg: '购物车无商品', data: {} }
+      return
+    }
+
+    const cardProNum = service.shoppingCart.getProductNum(cart)
+    ctx.body = { code: 200, msg: '获取成功', data: { cardProNum: cardProNum > 0 ? String(cardProNum): null } }
+  }
 }
 
 module.exports = ShoppingCartController

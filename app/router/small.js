@@ -12,6 +12,7 @@ export default function({ router, controller: contr, jwt }) {
 
   // 购物车
   router.get('/small/cart', jwt, contr.shoppingCart.getCard)
+  router.get('/small/cartNum', jwt, contr.shoppingCart.getCartNum)
   router.post('/small/cart', jwt, contr.shoppingCart.increaseCard)
   router.post('/small/cart/reduce', jwt, contr.shoppingCart.reduceCard)
   router.post('/small/cart/status', jwt, contr.shoppingCart.statusCard)

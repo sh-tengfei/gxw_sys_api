@@ -11,7 +11,7 @@ class UserService extends Service {
       for (const extractId of user.historyExtract) {
         const extract = await service.agent.findOne({ extractId })
         if (extract && extract.state === 2) {
-          const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone, location, areaId } = extract
+          const { avatarUrl, nickName, applyName, communitySite, extractId, applyPhone, location, areaId, communityName } = extract
           extractRet.unshift({
             nickName,
             avatarUrl,
@@ -21,6 +21,7 @@ class UserService extends Service {
             applyPhone,
             location,
             areaId,
+            communityName,
           })
         }
       }
