@@ -8,7 +8,7 @@ module.exports = {
   postWxQrcode(url, data, localUrl) {
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(localUrl)
-      file.on('finish', function() {
+      file.on('finish', function(e) {
         resolve(true)
       })
       file.on('error', function() {

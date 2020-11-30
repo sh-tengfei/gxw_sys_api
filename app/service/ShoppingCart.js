@@ -6,7 +6,7 @@ class ShoppingCartService extends Service {
     const { ctx } = this
     const cart = await ctx.model.ShoppingCart.findOne({ userId }).lean()
 
-    if (cart) {
+    if (cart && cart.products) {
       for (const item of cart.products) {
         const product = await ctx.service.product.findOne({ productId: item.productId })
         item.product = product
