@@ -156,6 +156,9 @@ class ShoppingCartService extends Service {
     const { ctx } = this
     const cart = await this.findOne(userId)
     const products = []
+    if (!cart || !cart.products) {
+      return
+    }
     for (const item of cart.products) {
       const product = await ctx.service.product.findOne({ productId: item.productId })
       const { salesTerritory: territory } = product
