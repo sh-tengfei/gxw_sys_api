@@ -40,17 +40,17 @@ class ActivityController extends Controller {
   }
   async delActive() {
     const { ctx, app } = this
-    const { service, params } = ctx
-    if (!params.id) {
+    const { service, params: { id } } = ctx
+    if (!id) {
       ctx.body = { msg: '删除失败', code: 201 }
       return
     }
-    const slider = await ctx.service.slider.findOne({ activityId: params.id })
+    const slider = await ctx.service.slider.findOne({ activityId: id })
     if (slider && slider.state === 2) {
       ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
       return
     }
-    const active = await ctx.service.activity.findOneAndRemove({ sliderId: params.id })
+    const active = await ctx.service.activity.delete(id)
     ctx.body = { msg: '删除成功', code: 200, data: active }
   }
 }

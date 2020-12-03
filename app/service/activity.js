@@ -9,6 +9,11 @@ class ActivityService extends Service {
     delete query.limit
     delete query.skip
 
+    
+    if (query.name) {
+      query.name = new RegExp(query.name, 'i')
+    }
+
     const list = await ctx.model.Activity.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 1 })
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
