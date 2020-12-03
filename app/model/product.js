@@ -20,11 +20,12 @@ module.exports = app => {
     mallPrice: { type: SchemaTypes.Double, required: true }, // 商城价
     rebate: { type: SchemaTypes.Double, required: true }, // 代理回扣
     unitValue: { type: String, required: true }, // 产品单位
+    specs: { type: String, required: true }, // 规格
     shareTitle: { type: String, required: true }, // 分享标题
     cover: { type: String, required: true }, // 缩略图
     desc: { type: String, required: true, maxLength: 150, minLength: 10 }, // 简介
     address: { type: String, required: true }, // 商品产地
-    imageDetail: [ // 规格
+    imageDetail: [
       {
         url: { type: String, required: true }
       }

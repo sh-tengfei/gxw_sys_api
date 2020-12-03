@@ -14,6 +14,10 @@ class ProductService extends Service {
       delete query.state
     }
 
+    if (query.name) {
+      query.name = new RegExp(query.name, 'i')
+    }
+
     delete query.limit
     delete query.skip
 

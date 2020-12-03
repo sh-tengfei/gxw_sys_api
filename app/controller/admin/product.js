@@ -74,6 +74,7 @@ class ProductController extends Controller {
       address,
       salesTerritory,
       shareTitle,
+      specs,
     } = request.body
     if (!name) {
       ctx.body = { code: 201, msg: '商品名称不存在！' }
@@ -121,10 +122,11 @@ class ProductController extends Controller {
       address,
       salesTerritory,
       shareTitle,
+      specs,
     }
     const newPro = await service.product.create(opt)
     if (!newPro.productId) {
-      ctx.body = { code: 201, msg: '创建失败' }
+      ctx.body = { code: 201, msg: '创建失败' , data: newPro }
       return
     }
     ctx.body = { code: 200, msg: '创建成功', data: newPro }
