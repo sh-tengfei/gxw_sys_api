@@ -75,12 +75,17 @@ class ProductController extends Controller {
       salesTerritory,
       shareTitle,
       specs,
+      qualitys,
     } = request.body
     if (!name) {
       ctx.body = { code: 201, msg: '商品名称不存在！' }
       return
     }
 
+    if (!qualitys || qualitys.length === 0) {
+      ctx.body = { code: 201, msg: '商品特征不正确！' }
+      return
+    }
     const queryName = {
       name,
     }
@@ -123,6 +128,7 @@ class ProductController extends Controller {
       salesTerritory,
       shareTitle,
       specs,
+      qualitys,
     }
     const newPro = await service.product.create(opt)
     if (!newPro.productId) {

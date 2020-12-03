@@ -21,6 +21,12 @@ module.exports = app => {
     rebate: { type: SchemaTypes.Double, required: true }, // 代理回扣
     unitValue: { type: String, required: true }, // 产品单位
     specs: { type: String, required: true }, // 规格
+    qualitys: [
+      {
+        title: { type: String, required: true },
+        value: { type: String, required: true }
+      }
+    ],
     shareTitle: { type: String, required: true }, // 分享标题
     cover: { type: String, required: true }, // 缩略图
     desc: { type: String, required: true, maxLength: 150, minLength: 10 }, // 简介
