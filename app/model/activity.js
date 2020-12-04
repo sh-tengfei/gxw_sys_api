@@ -11,6 +11,7 @@ module.exports = app => {
         id: { type: Number },
         productId: { type: String },
         appId: { type: String },
+        appPath: { type: String },
         hash: { type: String }
       }
     ],

@@ -17,6 +17,7 @@ module.exports = app => {
     picture: { type: String, default: '' },
     buyTotal: { type: String, default: '0' },
     username: { type: String, default: '' },
+    useCity: { type: Object, default: null },
     historyExtract: [
       { type: String }
     ],

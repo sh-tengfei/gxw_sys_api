@@ -20,12 +20,26 @@ class ActivityController extends Controller {
   }
   async createActive() {
     const { ctx, app } = this
-    const { query, request: req, service } = ctx
-    const ret = await service.activity.findOneName({ name: req.body.name })
+    const { request: { body }, service } = ctx
+    const ret = await service.activity.findOneName({ name: body.name })
     if (ret) {
       return ctx.body = { msg: '活动名称已存在', code: 201, data: ret }
     }
-    const retBody = await service.activity.create(req.body)
+    if (body.isJump === 2 && !body.productId) {
+      ctx.body = { msg: '请选择商品', code: 201, data: body }
+      return
+    }
+    if (body.isJump === 3) {
+      if (!body.appId) {
+        ctx.body = { msg: '请输入跳转ID', code: 201, data: body }
+        return
+      }
+      if (!body.appPath) {
+        ctx.body = { msg: '请输入跳转path', code: 201, data: body }
+        return
+      }
+    }
+    const retBody = await service.activity.create(body)
     ctx.body = { msg: '创建成功', code: 200, data: retBody }
   }
   async putActive() {
@@ -40,7 +54,7 @@ class ActivityController extends Controller {
   }
   async delActive() {
     const { ctx, app } = this
-    const { service, params: { id } } = ctx
+    const { service, params: { id }} = ctx
     if (!id) {
       ctx.body = { msg: '删除失败', code: 201 }
       return
