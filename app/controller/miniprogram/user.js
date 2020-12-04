@@ -173,7 +173,15 @@ class LoginController extends Controller {
   async getAgentOfQrode() {
     const { ctx, app } = this
     const { request: { body }, helper } = ctx
-    const { mall_access_token: token } = app.config.cache
+    const { cache } = app.config
+    let { mall_access_token: token } = cache
+
+    if (!cache.mall_access_token) {
+      await app.runSchedule('access-token')
+      token = cache.mall_access_token
+      console.log(cache, 'mall_access_token')
+    }
+
     if (!token) {
       ctx.body = { msg: '缓存错误！', code: 201 }
       return
@@ -184,6 +192,7 @@ class LoginController extends Controller {
     }
     const localUrl = `./catch/${body.productId}.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
+
     const ret = await ctx.postWxQrcode(url, {
       page: body.path,
       scene: `${body.productId},${body.extractId}`,
@@ -194,7 +203,7 @@ class LoginController extends Controller {
     if (ret === true) {
       const fileUrl = await this.qiniu(localUrl, body.productId)
       // 删除文件
-      // fs.unlinkSync(localUrl)
+      fs.unlinkSync(localUrl)
       if (fileUrl) {
         ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
         return
