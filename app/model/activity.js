@@ -6,10 +6,11 @@ module.exports = app => {
   const Activity = new mongoose.Schema({
     posterList: [
       {
-        isJump: { type: Number, default: 0 }, // 0不跳转 1跳转
+        isJump: { type: Number, default: 0 }, // 1不跳转 2跳商品 3跳小程序
         url: { type: String, required: true },
         id: { type: Number },
         productId: { type: String },
+        appId: { type: String },
         hash: { type: String }
       }
     ],

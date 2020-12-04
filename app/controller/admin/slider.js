@@ -4,7 +4,7 @@ const Controller = require('egg').Controller
 
 class SliderController extends Controller {
   async getSlider() {
-    const { query: search } = this.ctx
+    const { query: search, service } = this.ctx
     const query = {
       name: search.name
     }
@@ -15,7 +15,8 @@ class SliderController extends Controller {
       skip: (page - 1) * limit
     }
     if (!query.name) delete query.name
-    const data = await this.ctx.service.slider.find(query)
+    const data = await service.slider.find(query, option)
+
     this.ctx.body = { code: 200, msg: '', data }
   }
   async createSlider() {

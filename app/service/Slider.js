@@ -2,12 +2,16 @@ import { Service } from 'egg'
 import moment from 'moment'
 
 class SliderService extends Service {
-  async find(query = {}, other = { _id: 0 }) {
+  async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this
-    const { limit = 10, skip = 0 } = query
+    const { limit = 10, skip = 0 } = option
 
     delete query.limit
     delete query.skip
+
+    if (query.name) {
+      query.name = new RegExp(query.name, 'i')
+    }
 
     const list = await ctx.model.Slider.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
     list.forEach(i=>{
