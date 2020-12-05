@@ -6,18 +6,20 @@ import { Decimal } from 'decimal.js'
 class IndexController extends Controller {
   async index() {
     const { ctx } = this
-    const { params, query } = ctx
+    const { query } = ctx
 
     // 本地产品
     const localQuery = {
       'sellerOfType.code': 100,
-      'limit': 100,
+      'state': 2,
     }
+
     // 产地直供
     const directQuery = {
       'sellerOfType.code': 101,
-      'limit': 10,
+      'state': 2,
     }
+
     const sliderQuery = {
       'state': 2,
       'limit': 6
@@ -31,26 +33,52 @@ class IndexController extends Controller {
 
     localQuery['salesTerritory.id'] = query.cityCode
 
-    const classifyOpt = {
-      classifyCity: query.cityCode,
+
+    const { directPage = 1, directLimit = 10 } = query
+    const directOption = {
+      limit: directLimit,
+      skip: (directPage - 1) * directLimit
     }
 
-    const localHot = await ctx.service.product.find(localQuery)
-    const direct = await ctx.service.product.find(directQuery)
-    const slider = await ctx.service.slider.find(sliderQuery)
+    const direct = await ctx.service.product.find(directQuery, directOption)
 
-    const { list: classifys, total } = await ctx.service.classify.find(classifyOpt)
+    const localHot = await ctx.service.product.find(localQuery, {
+      limit: 10,
+    })
+
     const hotList = localHot.list.sort((a, b) => {
       return b.salesNumber - a.salesNumber
     })
+
+    // 轮播图
+    const slider = await ctx.service.slider.find(sliderQuery)
 
     // 产地直供
     direct.list.sort((a, b) => {
       return b.weight - a.weight
     })
+
     // 轮播图权重排序
     slider.list.sort((a, b) => {
       return b.weight - a.weight
+    })
+
+    const classifyOpt = {
+      classifyCity: query.cityCode,
+    }
+    // 栏目查询
+    const { list: classifys, total } = await ctx.service.classify.find(classifyOpt)
+    classifys.push({
+      classifyCity: null,
+      classifyId: "1",
+      classifyIndex: 10,
+      classifyName: "产地直供",
+      classifyProducts: direct.list,
+    })
+
+    // 轮播图权重排序
+    classifys.sort((a, b) => {
+      return b.classifyIndex - a.classifyIndex
     })
 
     ctx.body = {
@@ -58,8 +86,7 @@ class IndexController extends Controller {
       code: 200,
       data: {
         slider: slider.list,
-        classifys: classifys,
-        direct: direct.list,
+        classifys,
         hotList
       }
     }
