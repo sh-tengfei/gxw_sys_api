@@ -8,6 +8,7 @@ module.exports = app => {
 
   const product = new mongoose.Schema({
     productId: { type: String, required: true, unique: true },
+    productIndex: { type: Number, required: true },
     name: { type: String, required: true },
     slide: [{
       url: { type: String, required: true }, // 图片的相对路径
@@ -27,6 +28,7 @@ module.exports = app => {
         value: { type: String, required: true }
       }
     ],
+    feature: { type: String, required: true },
     shareTitle: { type: String, required: true }, // 分享标题
     cover: { type: String, required: true }, // 缩略图
     desc: { type: String, required: true, maxLength: 150, minLength: 10 }, // 简介

@@ -44,7 +44,15 @@ class ActivityController extends Controller {
   }
   async putActive() {
     const { ctx, app } = this
-    const { query, request, service, params } = ctx
+    const { query, request: { body }, service, params } = ctx
+    if (body.state === 1) {
+      const slider = await ctx.service.slider.findOne({ activityId: id })
+      if (slider && slider.state === 2) {
+        ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
+        return
+      }
+    }
+    
     const ret = await service.activity.updateOne(params.id, request.body)
     if (!ret) {
       ctx.body = { msg: '修改失败', code: 201, data: ret }
@@ -59,7 +67,7 @@ class ActivityController extends Controller {
       ctx.body = { msg: '删除失败', code: 201 }
       return
     }
-    const slider = await ctx.service.slider.findOne({ activityId: id })
+
     if (slider && slider.state === 2) {
       ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
       return

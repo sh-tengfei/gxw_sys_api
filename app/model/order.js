@@ -33,7 +33,7 @@ module.exports = app => {
     addressId: { type: String, default: null }, // 收货地址Id
     expressNo: { type: Array }, // 产地的物流号单产地订单发货后有值
     isDelete: { type: Boolean, default: false },
-    // 1.待支付 2.备货中 3.待收货 4.已关闭 5.已完成 6.退款中 7.已退款   2.其实是待发货
+    // 1.待支付 2.备货中 3.待收货 4.手动已关闭 5.已完成 6.退款中 7.已退款 8.支付超时关闭  2.其实是待发货
     state: { type: Number, default: 1, required: true },
     payEndTime: { type: Date, default: -1, required: true }, // 支付结束时间 15下订单分钟
     payTime: { type: Date, default: -1, required: true }, // 支付时间

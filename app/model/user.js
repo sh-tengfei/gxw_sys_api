@@ -10,6 +10,7 @@ module.exports = app => {
   const user = new mongoose.Schema({
     userId: { type: String, required: true, unique: true },
     level: { type: Number, default: 1 },
+    userIndex: { type: Number, required: true },
     levelText: { type: String, default: '普通会员' },
     phone: { type: String, default: '' },
     unionid: { type: String, required: true, unique: true },

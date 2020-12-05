@@ -14,6 +14,7 @@ module.exports = {
       file.on('error', function() {
         resolve(false)
       })
+      console.log(url, data, localUrl)
       request({
         method: 'POST',
         url,

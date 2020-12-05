@@ -41,7 +41,7 @@ class OrderPayTimeout extends Subscription {
         if (other.result_code === 'FAIL' && other.err_code === 'ORDERNOTEXIST') {
           // 订单没到腾讯支付直接关闭
           logger.info(other.err_code_des)
-          const orderRet = await service.order.updateOne(item.orderId, { state: 4 })
+          const orderRet = await service.order.updateOne(item.orderId, { state: 8 })
           logger.info(orderRet.orderId, '未起调支付，订单关闭')
         } else if (trade_state === 'SUCCESS') {
           // 订单已经支付回调未收到
@@ -53,7 +53,7 @@ class OrderPayTimeout extends Subscription {
         } else if (trade_state === 'NOTPAY') {
           // 订单关闭
           logger.info(trade_state_desc)
-          const orderRet = await service.order.updateOne(item.orderId, { state: 4 })
+          const orderRet = await service.order.updateOne(item.orderId, { state: 8 })
           logger.info(orderRet.orderId, '支付时间超时，订单关闭')
           // 发送消息
         }

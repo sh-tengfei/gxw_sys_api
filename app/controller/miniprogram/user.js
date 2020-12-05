@@ -197,7 +197,6 @@ class LoginController extends Controller {
       page: body.path,
       scene: `${body.productId},${body.extractId}`,
       width: 160,
-      // is_hyaline: true,
     }, localUrl)
 
     if (ret === true) {

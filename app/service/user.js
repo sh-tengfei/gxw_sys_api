@@ -91,6 +91,7 @@ class UserService extends Service {
     const { ctx } = this
     let newUser; const userId = 'userId'
     data.userId = await ctx.service.counters.findAndUpdate(userId)
+    data.userIndex = data.userId
     try {
       newUser = await ctx.model.User.create(data)
     } catch (e) {

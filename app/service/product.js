@@ -52,6 +52,8 @@ class ProductService extends Service {
 
     delete data.productId
     data.productId = `SP${(Math.random() * 1000).toFixed(0)}${productId}`
+    data.productIndex = productId
+    
     try {
       newProduct = await ctx.model.Product.create(data)
       newProduct = newProduct.toObject()
