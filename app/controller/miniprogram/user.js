@@ -217,7 +217,7 @@ class LoginController extends Controller {
   // 团长端登录
   async getGroupLogin() {
     const { ctx, app } = this
-    const { code } = ctx.query
+    const { code, ...other } = ctx.query
 
     if (!code) {
       ctx.logger.warn({ msg: '参数错误联系管理员', code: 201 })
@@ -249,10 +249,11 @@ class LoginController extends Controller {
     try {
       ctx.logger.info({ msg: '创建用户', userInfo })
       agent = await ctx.service.agent.create({
+        userInfo: other,
         openid: userInfo.openid,
         unionid: userInfo.unionid, // openid === unionid是微信审核机器人
-        userInfo: null,
-        nickName: userInfo.openid === userInfo.unionid ? '微信审核机器人' : ''
+        avatarUrl: other.avatarUrl,
+        nickName: userInfo.openid === userInfo.unionid ? '微信审核机器人' : other.nickName,
       })
       if (!agent || agent.errors) {
         ctx.logger.error({ msg: '保存失败，联系管理员', agent, userInfo })
@@ -307,14 +308,7 @@ class LoginController extends Controller {
       return
     }
 
-    const newAgent = {
-      applyPhone,
-      userInfo: {
-        ...req.body
-      }
-    }
-
-    const agent = await service.agent.updateOne(userId, newAgent)
+    const agent = await service.agent.updateOne(userId, { applyPhone })
 
     if (!agent) {
       ctx.body = { msg: '更新失败', data: agent, code: 201 }

@@ -29,6 +29,7 @@ module.exports = app => {
     referrer: { type: String, default: '' }, // 推荐人
     applyPhone: { type: String, default: '' }, // 团长手机号
     applyName: { type: String, default: '' },
+    applyUrgentPhone: { type: String, default: '' }, // 紧急联系方式
     location: {
       latitude: { type: Number, default: 0 },
       longitude: { type: Number, default: 0 }
