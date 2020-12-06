@@ -60,6 +60,19 @@ class SliderController extends Controller {
 
     ctx.body = { code: 200, msg: '修改成功', data: newSlider }
   }
+  async delSlider() {
+    const { ctx, app } = this
+    const { params } = ctx
+    const slider = await ctx.service.slider.findOne({ sliderId: params.id })
+    if (!slider) {
+      ctx.body = { code: 201, msg: '参数不正确', data: slider }
+      return
+    }
+
+    const ret = await ctx.service.slider.delete(params.id)
+
+    ctx.body = { code: 200, msg: '修改成功', data: ret }
+  }
 }
 
 module.exports = SliderController

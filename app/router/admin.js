@@ -34,6 +34,7 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/slider', jwt, controller.slider.getSlider)
   router.post('/admin/slider', jwt, controller.slider.createSlider)
   router.put('/admin/slider/:id', jwt, controller.slider.putSlider)
+  router.delete('/admin/slider/:id', jwt, controller.slider.delSlider)
 
   router.get('/admin/active', jwt, controller.activity.getActives)
   router.post('/admin/active', jwt, controller.activity.createActive)
