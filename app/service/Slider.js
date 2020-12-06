@@ -14,10 +14,18 @@ class SliderService extends Service {
     }
 
     const list = await ctx.model.Slider.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
-    list.forEach(i=>{
+    
+    for (const i of list) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
-    })
+      if (i.jumpType === 3) {
+        i.activity = await ctx.service.activity.findOne(i.activityId)
+      }
+      if (i.jumpType === 2) {
+        i.product = await ctx.service.product.findOne({ productId: i.productId })
+      }
+    }
+
     const total = await ctx.model.Slider.find(query).countDocuments()
     return {
       list,
