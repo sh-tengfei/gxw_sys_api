@@ -6,7 +6,7 @@ import { Decimal } from 'decimal.js'
 class IndexController extends Controller {
   async index() {
     const { ctx } = this
-    const { query } = ctx
+    const { service, query } = ctx
 
     // 本地产品
     const localQuery = {
@@ -40,9 +40,9 @@ class IndexController extends Controller {
       skip: (directPage - 1) * directLimit
     }
 
-    const direct = await ctx.service.product.find(directQuery, directOption)
+    const direct = await service.product.find(directQuery, directOption)
 
-    const localHot = await ctx.service.product.find(localQuery, {
+    const localHot = await service.product.find(localQuery, {
       limit: 10,
     })
 
@@ -51,7 +51,7 @@ class IndexController extends Controller {
     })
 
     // 轮播图
-    const slider = await ctx.service.slider.find(sliderQuery)
+    const slider = await service.slider.find(sliderQuery)
 
     // 产地直供
     direct.list.sort((a, b) => {
@@ -64,19 +64,12 @@ class IndexController extends Controller {
     })
 
     const classifyOpt = {
-      classifyCity: query.cityCode,
+      classifyCity: [query.cityCode, 0],
     }
     // 栏目查询
-    const { list: classifys, total } = await ctx.service.classify.find(classifyOpt)
-    classifys.push({
-      classifyCity: null,
-      classifyId: "1",
-      classifyIndex: 10,
-      classifyName: "产地直供",
-      classifyProducts: direct.list,
-    })
+    const { list: classifys } = await service.classify.find(classifyOpt)
 
-    // 轮播图权重排序
+    // 栏目权重排序
     classifys.sort((a, b) => {
       return b.classifyIndex - a.classifyIndex
     })

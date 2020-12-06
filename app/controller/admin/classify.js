@@ -5,17 +5,21 @@ import { Controller } from 'egg'
 class ClassifyController extends Controller {
   async newClassify() {
     const { app, ctx } = this
-    const { request: req } = ctx
-    const body = {
-      classifyCity: req.body.city,
-      classifyIndex: req.body.index,
-      classifyName: req.body.name,
-      classifyProducts: req.body.products,
-      classifyIcon: req.body.classifyIcon,
+    const { request: { body }, service} = ctx
+    const data = {
+      classifyCity: body.city,
+      classifyIndex: body.index,
+      classifyName: body.name,
+      classifyProducts: body.products,
     }
 
-    const newBody = await ctx.service.classify.create(body)
-    ctx.body = { code: 200, data: newBody, msg: '' }
+    if (body.classifyId) {
+      const updated = await service.classify.updateOne(body.classifyId, data)
+      return ctx.body = { code: 200, data: updated, msg: '修改成功' }
+    }
+
+    const newBody = await service.classify.create(data)
+    ctx.body = { code: 200, data: newBody, msg: '保存成功' }
   }
   async getClassifys() {
     const { app, ctx } = this

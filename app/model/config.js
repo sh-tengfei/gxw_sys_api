@@ -6,7 +6,6 @@ module.exports = app => {
 
   require('mongoose-double')(mongoose)
 
-  const SchemaTypes = mongoose.Schema.Types
   const Config = new mongoose.Schema({
     productType: [
       {
@@ -18,6 +17,7 @@ module.exports = app => {
     shareTitle: {
       mallTitle: { type: String, required: true },
       agentTitle: { type: String, required: true },
+      indexShareImage: { type: String },
     },
     version: { type: Number, default: 1 },
   }, {

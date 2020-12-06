@@ -5,10 +5,11 @@ module.exports = app => {
   const Classify = new mongoose.Schema({
     classifyId: { type: String, required: true },
     classifyName: { type: String, required: true },
-    classifyProducts: { type: Array, required: true },
-    classifyCity: { type: String, required: true },
+    classifyProducts: [
+      { type: String, required: true }
+    ],
+    classifyCity: { type: String, required: true }, // classifyCity 为0是产地直供
     classifyIndex: { type: Number, required: true },
-    classifyIcon: { type: String, required: true }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
