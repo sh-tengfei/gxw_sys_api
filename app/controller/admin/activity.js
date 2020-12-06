@@ -67,7 +67,7 @@ class ActivityController extends Controller {
       ctx.body = { msg: '删除失败', code: 201 }
       return
     }
-
+    const slider = await ctx.service.slider.findOne({ activityId: id })
     if (slider && slider.state === 2) {
       ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
       return

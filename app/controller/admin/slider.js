@@ -62,7 +62,7 @@ class SliderController extends Controller {
   }
   async delSlider() {
     const { ctx, app } = this
-    const { params } = ctx
+    const { params, logger } = ctx
     const slider = await ctx.service.slider.findOne({ sliderId: params.id })
     if (!slider) {
       ctx.body = { code: 201, msg: '参数不正确', data: slider }
@@ -70,8 +70,8 @@ class SliderController extends Controller {
     }
 
     const ret = await ctx.service.slider.delete(params.id)
-
-    ctx.body = { code: 200, msg: '修改成功', data: ret }
+    logger.error({ code: 200, msg: '删除成功', data: ret })
+    ctx.body = { code: 200, msg: '删除成功' }
   }
 }
 
