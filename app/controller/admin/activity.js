@@ -46,7 +46,7 @@ class ActivityController extends Controller {
     const { ctx, app } = this
     const { query, request: { body }, service, params } = ctx
     if (body.state === 1) {
-      const slider = await ctx.service.slider.findOne({ activityId: id })
+      const slider = await ctx.service.slider.findOne({ activityId: params.id })
       if (slider && slider.state === 2) {
         ctx.body = { msg: '活动在轮播图使用中', code: 201, data: slider }
         return
