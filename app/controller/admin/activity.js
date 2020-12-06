@@ -53,7 +53,7 @@ class ActivityController extends Controller {
       }
     }
     
-    const ret = await service.activity.updateOne(params.id, request.body)
+    const ret = await service.activity.updateOne(params.id, body)
     if (!ret) {
       ctx.body = { msg: '修改失败', code: 201, data: ret }
       return
