@@ -19,6 +19,11 @@ class ProductController extends Controller {
       opt.productType = query.productType
     }
 
+    if (+query.productType === 101) {
+      delete opt.productType
+      query['sellerOfType.code'] = query.productType
+    }
+
     const { list, total } = await service.product.find(opt)
     ctx.body = { code: 200, msg: '', data: { list, total }}
   }
