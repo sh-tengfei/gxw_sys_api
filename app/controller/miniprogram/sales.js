@@ -7,7 +7,7 @@ class SalesController extends Controller {
   async getSales() {
     const { ctx, app } = this
     const { service, state: { user }, query } = ctx
-    const { timeType } = query // 1是天 2是周 3是月
+    const { timeType, startTime, endTime } = query // 1是天 2是周 3是月
     const { userId } = user
     if (!timeType) {
       ctx.body = { code: 201, msg: '参数不正确！' }
