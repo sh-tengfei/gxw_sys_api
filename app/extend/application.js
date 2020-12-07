@@ -79,7 +79,8 @@ module.exports = {
     }
     const { [tokenType + '_access_token']: token } = app.config.cache
     if (!token) {
-      return Promise.reject()
+      await app.runSchedule('access-token')
+      token = cache[tokenType + '_access_token']
     }
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },

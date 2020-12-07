@@ -11,12 +11,17 @@ class TempMsgService extends Service {
       data,
       page,
       tokenType,
+    }).catch((e)=>{
+      ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
     })
-
-    if (res.data.errcode) {
-      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+    if (res && res.data) {
+      if (!res.data.errcode) {
+        ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+      } else {
+        ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+      }
     } else {
-      ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
+      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res })
     }
     return res.data
   }
