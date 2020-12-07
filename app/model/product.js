@@ -44,7 +44,7 @@ module.exports = app => {
     },
     productType: { type: Number, required: true }, // 商品类型
     salesTerritory: { type: Object, default: null }, // 销售区域
-    state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未下线  2上线  3删除
+    state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未上线  2已上线  3已删除
     salesNumber: { type: Number, default: 0 }, // 销售数量
   }, {
     versionKey: false,

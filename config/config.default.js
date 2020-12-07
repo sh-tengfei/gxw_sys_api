@@ -14,6 +14,16 @@ module.exports = appInfo => {
     jwt: {
       secret: 'guoxianwang',
     },
+    onerror: {
+      all(err, ctx) {
+        if (err.status === 401) {
+          ctx.body = JSON.stringify({ code: 401, msg: '用户未登录或则已过期！' })
+          ctx.status = 401
+          return
+        }
+        console.log(err, 'errerr')
+      }
+    }
   }
 
   config.alinode = {
