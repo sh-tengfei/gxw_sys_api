@@ -30,7 +30,7 @@ class AgentController extends Controller {
     if (agent !== null) {
       ctx.body = { msg: '注册成功', code: 200, data: agent }
       await service.tempMsg.sendmail({
-        mailbox: 'sh_tengfei@163.com', 
+        mailbox: 'sh_tengda@163.com', 
         subject: '团长注册审核',
         html: JSON.stringify(agent)
       })
