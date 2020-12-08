@@ -44,7 +44,8 @@ class ClassifyService extends Service {
     const { ctx } = this
 
     let newClassify; const classifyId = 'classifyId'
-    data.classifyId = await ctx.service.counters.findAndUpdate(classifyId)
+    let { id } = await ctx.service.counters.findAndUpdate(classifyId)
+    data.classifyId = id
 
     try {
       newClassify = await ctx.model.Classify.create(data)

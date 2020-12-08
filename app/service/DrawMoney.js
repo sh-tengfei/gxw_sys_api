@@ -43,7 +43,8 @@ class DrawMoneyService extends Service {
     const { service, model } = ctx
 
     let newDrawMoney; let drawMoneyId = 'drawMoneyId'
-    drawMoneyId = await service.counters.findAndUpdate('drawMoneyId')
+    let { id } = await service.counters.findAndUpdate('drawMoneyId')
+    drawMoneyId = id
 
     delete data.drawMoneyId
     data.drawMoneyId = `${moment().year()}${moment().month()}${drawMoneyId}`

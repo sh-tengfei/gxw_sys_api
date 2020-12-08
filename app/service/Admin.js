@@ -21,7 +21,8 @@ class AdminService extends Service {
   async create(data) {
     const { ctx } = this
     let newAdmin; const adminId = 'adminId'
-    data.adminId = await ctx.service.counters.findAndUpdate(adminId)
+    let { id } = await ctx.service.counters.findAndUpdate(adminId)
+    data.adminId = id
     try {
       newAdmin = await ctx.model.Admin.create(data)
       newAdmin.createTime = moment(newAdmin.createTime).format('YYYY-MM-DD HH:mm:ss')

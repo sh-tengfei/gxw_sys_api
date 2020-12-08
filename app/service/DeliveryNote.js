@@ -77,8 +77,9 @@ class DeliveryNoteService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newNote; const deliveryId = 'deliveryId'
-    data.deliveryId = await ctx.service.counters.findAndUpdate(deliveryId)
+    let newNote; let deliveryId = 'deliveryId'
+    let { id } = await ctx.service.counters.findAndUpdate(deliveryId)
+    data.deliveryId = id
     try {
       newNote = await ctx.model.DeliveryNote.create(data)
       newNote.createTime = moment(newNote.createTime).format('YYYY-MM-DD HH:mm:ss')

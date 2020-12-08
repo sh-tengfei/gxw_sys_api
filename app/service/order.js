@@ -112,7 +112,7 @@ class OrderService extends Service {
     if (error) {
       return { code: 201, msg: error.msg, error }
     }
-    const orderId = await service.counters.findAndUpdate('orderId')
+    let { id: orderId } = await service.counters.findAndUpdate('orderId')
     let newOrder = {
       total,
       products: productList,

@@ -39,8 +39,9 @@ class SliderService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newSlider; const sliderId = 'sliderId'
-    data.sliderId = await ctx.service.counters.findAndUpdate(sliderId)
+    let newSlider; let sliderId = 'sliderId'
+    let { id } = await ctx.service.counters.findAndUpdate(sliderId)
+    data.sliderId = id
     try {
       newSlider = await ctx.model.Slider.create(data)
     } catch (e) {

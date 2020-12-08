@@ -48,11 +48,12 @@ class ProductService extends Service {
     const { ctx } = this
     let newProduct; let productId = 'productId'
 
-    productId = await ctx.service.counters.findAndUpdate(productId)
+    let { id, index } = await ctx.service.counters.findAndUpdate(productId)
+    productId = id
 
     delete data.productId
     data.productId = `SP${(Math.random() * 1000).toFixed(0)}${productId}`
-    data.productIndex = productId
+    data.productIndex = index
     
     try {
       newProduct = await ctx.model.Product.create(data)

@@ -24,8 +24,9 @@ class StockService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newStock; const stockId = 'stockId'
-    data.stockId = await ctx.service.counters.findAndUpdate(stockId)
+    let newStock; let stockId = 'stockId'
+    let { id } = await ctx.service.counters.findAndUpdate(stockId)
+    data.stockId = id
     try {
       newStock = await ctx.model.Stock.create(data)
     } catch (e) {

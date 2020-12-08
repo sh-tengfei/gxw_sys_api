@@ -33,8 +33,8 @@ class BillService extends Service {
     const { service, model } = ctx
 
     let newBill; let billId = 'billId'
-    billId = await service.counters.findAndUpdate('billId')
-
+    let { id } = await service.counters.findAndUpdate('billId')
+    billId = id
     delete data.billId
     data.billId = `${moment().year()}${moment().month()}${billId}`
     try {

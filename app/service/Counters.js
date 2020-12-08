@@ -17,7 +17,8 @@ class CountersService extends Service {
     const counter = await ctx.model.Counters.findOne({})
     if (type !== undefined && counter[type]) {
       await ctx.model.Counters.updateOne({ _id: counter._id },{ [type]: (+counter[type]) + 1 })
-      return moment().format('YYYYMMDD').replace('-', '') + counter[type]
+      let index = counter[type]
+      return { index, id: moment().format('YYYYMMDD').replace('-', '') + index }
     }
     return null
   }

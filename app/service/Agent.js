@@ -52,8 +52,9 @@ class AgentService extends Service {
   async create(data) {
     const { ctx } = this
     let newAgent; const extractId = 'extractId'
-    data.extractId = await ctx.service.counters.findAndUpdate(extractId)
-    data.extractIndex = data.extractId
+    let { id, index } = await ctx.service.counters.findAndUpdate(extractId)
+    data.extractId = id
+    data.extractIndex = index
     try {
       newAgent = await ctx.model.Agent.create(data)
       newAgent = newAgent.toObject()

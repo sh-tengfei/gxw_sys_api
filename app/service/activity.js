@@ -40,8 +40,8 @@ class ActivityService extends Service {
     const { ctx } = this
 
     let newActive; const activityId = 'activityId'
-    data.activityId = await ctx.service.counters.findAndUpdate(activityId)
-
+    let { id } = await ctx.service.counters.findAndUpdate(activityId)
+    data.activityId = id
     try {
       newActive = await ctx.model.Activity.create(data)
     } catch (e) {

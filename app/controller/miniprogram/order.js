@@ -153,17 +153,18 @@ class OrderController extends Controller {
         userId,
         products: notSelects,
       })
-      ctx.logger.error({ msg: '购物车清空完成', userId })
+      ctx.logger.info({ msg: '购物车清空完成', userId })
     }
 
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async payOrder() {
     const { ctx, app } = this
-    const { service, request: req, state } = ctx
+    const { service, request: req, state, logger } = ctx
     const { payType, orderId, acceptName, acceptPhone } = req.body
 
     if (['wx', 'zfb'].indexOf(payType) === -1) {
+      logger.info({ msg: '订单创建失败，支付方式不正确', error: payType, code: 201 })
       return { code: 201, msg: '订单创建失败，支付方式不正确', error: payType }
     }
 
