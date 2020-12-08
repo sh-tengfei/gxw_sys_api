@@ -26,7 +26,8 @@ class TempMsgService extends Service {
         this.sendmail({ 
           mailbox: 'sh_tengda@163.com', 
           subject: '模板消息发送失败', 
-          html: JSON.stringify(res.data)
+          html: JSON.stringify(res.data),
+          text: JSON.stringify(res.data)
         })
       }
     } else {
@@ -41,6 +42,8 @@ class TempMsgService extends Service {
         message: '数据不正确'
       }
     }
+    const { app, ctx } = this
+    const { logger } = ctx
     const transporter = nodemailer.createTransport({
       service: '163',
       auth: {
@@ -57,9 +60,9 @@ class TempMsgService extends Service {
     }
     transporter.sendMail(mailOpt, (error, info)=>{
       if (!error) {
-        ctx.logger.error({ message: '邮件发送成功，请注意查收！', code: 200 })
+        logger.error({ message: '邮件发送成功，请注意查收！', code: 200 })
       } else {
-        ctx.logger.error({ message: '邮件发送失败，请稍后重试！', error, code: 201 })
+        logger.error({ message: '邮件发送失败，请稍后重试！', error, code: 201 })
       }
     })
   }
