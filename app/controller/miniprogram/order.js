@@ -471,7 +471,8 @@ class OrderController extends Controller {
       // 第零个修改老订单
       if (+index === 0) {
         // 更新订单需要手动创建ID
-        const orderId = await service.counters.findAndUpdate('orderId') // 子订单Id
+        const { id } = await service.counters.findAndUpdate('orderId') // 子订单Id
+        orderId = id
         order.orderId = `WXD${(Math.random() * 10000).toFixed(0)}${orderId}`
         retOrder = await service.order.updateOne(order.parentId, order)
         orders.push(retOrder.orderId)

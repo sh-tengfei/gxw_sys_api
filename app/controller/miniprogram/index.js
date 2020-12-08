@@ -46,6 +46,7 @@ class IndexController extends Controller {
       limit: 10,
     })
 
+    // 销售排序
     const hotList = localHot.list.sort((a, b) => {
       return b.salesNumber - a.salesNumber
     })
