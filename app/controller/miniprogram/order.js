@@ -458,6 +458,7 @@ class OrderController extends Controller {
       const orderType = product.sellerType === 101 ? 2 : 1
       const order = await service.order.updateOne(other.orderId, {
         orderType,
+        parentId: other.orderId,
         state: 2,
       })
       orders.push(order.orderId)
@@ -484,6 +485,36 @@ class OrderController extends Controller {
       }
     }
     return { code: 200, msg: '拆单成功', orders }
+  }
+  async getChildOrder(products, order) {
+    const { ctx, app } = this
+    const { service } = ctx
+
+    let total = 0
+    let reward = 0 // 当前订单总金额
+    let orderType = 0
+    let code = null
+
+    for (const product of products) {
+      code = product.sellerType
+      total = Number(new Decimal(total).add(product.total))
+      reward = Number(new Decimal(reward).add(product.reward))
+    }
+    // 产地直供 code为101
+    if (code === 101) {
+      orderType = 2
+    } else {
+      orderType = 1
+    }
+    const newOrder = {
+      ...order,
+      parentId: order.orderId,
+      products: products,
+      orderType,
+      reward,
+      total,
+    }
+    return newOrder
   }
   async createBill(orders, time_end, option, body) {
     const { ctx } = this
@@ -524,36 +555,6 @@ class OrderController extends Controller {
       }
     }
     return { code: 200 }
-  }
-  async getChildOrder(products, order) {
-    const { ctx, app } = this
-    const { service } = ctx
-
-    let total = 0
-    let reward = 0 // 当前订单总金额
-    let orderType = 0
-    let code = null
-
-    for (const product of products) {
-      code = product.sellerType
-      total = Number(new Decimal(total).add(product.total))
-      reward = Number(new Decimal(reward).add(product.reward))
-    }
-    // 产地直供 code为101
-    if (code === 101) {
-      orderType = 2
-    } else {
-      orderType = 1
-    }
-    const newOrder = {
-      ...order,
-      parentId: order.orderId,
-      products: products,
-      orderType,
-      reward,
-      total,
-    }
-    return newOrder
   }
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
