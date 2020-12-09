@@ -482,7 +482,7 @@ class OrderController extends Controller {
         // 新建订单不用计算金额 统一计算
         delete newOrder.reward
         delete newOrder.total
-        retOrder = await service.order.create(newOrder)
+        retOrder = await service.order.create(newOrder, false)
         retOrder = await service.order.updateOne(retOrder.orderId, { state: 2 })
         orders.push(retOrder.data.orderId)
       }
@@ -534,9 +534,11 @@ class OrderController extends Controller {
       })
 
       const newOrder = await service.order.findOne({ orderId })
+      console.log(newOrder, 'delivery')
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
         const delivery = await this.makeDeliveryNote(newOrder)
+        console.log(delivery, 'delivery')
         if (!delivery) {
           logger.error({ msg: '配送单生成错误！', orderId })
           return { code: 201, orderId }

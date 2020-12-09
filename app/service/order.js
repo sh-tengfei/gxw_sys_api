@@ -71,7 +71,7 @@ class OrderService extends Service {
     parentId = '0',
     orderType = 0,
     payEndTime,
-    isExtractReceive, city }) {
+    isExtractReceive, city }, reduceStock = true) {
     const { service, model } = this.ctx
 
     let total = 0
@@ -131,15 +131,17 @@ class OrderService extends Service {
       // 主订单创建 支付完成后再拆单
       newOrder = await model.Order.create(newOrder)
       // 订单创建完成 减库存
-      for (const product of newOrder.products) {
-        // 更新增加已售数
-        await service.product.updateOne(product.productId, {
-          $inc: { salesNumber: product.buyNum }
-        })
-        // 更新减少库存数
-        await service.stocks.updateOneOfProductId(product.productId, {
-          $inc: { stockNumber: -product.buyNum }
-        })
+      if (reduceStock) {
+        for (const product of newOrder.products) {
+          // 更新增加已售数
+          await service.product.updateOne(product.productId, {
+            $inc: { salesNumber: product.buyNum }
+          })
+          // 更新减少库存数
+          await service.stocks.updateOneOfProductId(product.productId, {
+            $inc: { stockNumber: -product.buyNum }
+          })
+        }
       }
     } catch (e) {
       this.ctx.logger.warn({ msg: '订单创建错误', error: e })
