@@ -538,7 +538,6 @@ class OrderController extends Controller {
   async createBill(orders, time_end, option, body) {
     const { ctx } = this
     const { service, logger } = ctx
-    console.log(orders, 'delivery1')
     for (const orderId of orders) {
       // 更新订单状态支付信息
       await service.order.updateOne(orderId, {
@@ -548,12 +547,10 @@ class OrderController extends Controller {
         wxXml: body,
       })
 
-      const newOrder = await service.order.findOne({ orderId })
-      console.log(newOrder, 'delivery2')
+      const newOrder = await service.order.findOne({ orderId }))
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
         const delivery = await this.makeDeliveryNote(newOrder)
-        console.log(delivery, 'delivery3')
         if (!delivery) {
           logger.error({ msg: '配送单生成错误！', orderId })
           return { code: 201, orderId }
