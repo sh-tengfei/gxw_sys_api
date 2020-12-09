@@ -483,7 +483,7 @@ class OrderController extends Controller {
         delete newOrder.reward
         delete newOrder.total
         retOrder = await service.order.create(newOrder, false)
-        retOrder = await service.order.updateOne(retOrder.orderId, { state: 2 })
+        retOrder = await service.order.updateOne({orderId: retOrder.orderId}, { state: 2 })
         orders.push(retOrder.data.orderId)
       }
     }
