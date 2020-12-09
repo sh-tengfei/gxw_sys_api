@@ -486,7 +486,7 @@ class OrderController extends Controller {
         if (code !== 200) {
           return { code: 200, msg: '拆单成功', orders }
         }
-        retOrder = await service.order.updateOne({orderId: data.orderId}, { state: 2 })
+        retOrder = await service.order.updateOne(data.orderId, { state: 2 })
         orders.push(retOrder.data.orderId)
       }
     }

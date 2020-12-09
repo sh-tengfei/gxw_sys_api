@@ -72,7 +72,7 @@ class OrderService extends Service {
     orderType = 0,
     payEndTime,
     isExtractReceive, city }, reduceStock = true) {
-    const { service, model } = this.ctx
+    const { service, model, logger } = this.ctx
 
     let total = 0
     let reward = 0
@@ -144,7 +144,7 @@ class OrderService extends Service {
         }
       }
     } catch (e) {
-      this.ctx.logger.warn({ msg: '订单创建错误', error: e })
+      logger.warn({ msg: '订单创建错误', error: e })
       return { code: 201, msg: '订单创建失败!', error: e }
     }
     return { code: 200, msg: '订单创建成功！', data: newOrder }
