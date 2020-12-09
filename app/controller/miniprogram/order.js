@@ -482,8 +482,11 @@ class OrderController extends Controller {
         // 新建订单不用计算金额 统一计算
         delete newOrder.reward
         delete newOrder.total
-        retOrder = await service.order.create(newOrder, false)
-        retOrder = await service.order.updateOne({orderId: retOrder.orderId}, { state: 2 })
+        let { data, code } = await service.order.create(newOrder, false)
+        if (code !== 200) {
+          return { code: 200, msg: '拆单成功', orders }
+        }
+        retOrder = await service.order.updateOne({orderId: data.orderId}, { state: 2 })
         orders.push(retOrder.data.orderId)
       }
     }
