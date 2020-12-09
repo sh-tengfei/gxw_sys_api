@@ -547,7 +547,7 @@ class OrderController extends Controller {
         wxXml: body,
       })
 
-      const newOrder = await service.order.findOne({ orderId }))
+      const newOrder = await service.order.findOne({ orderId })
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
         const delivery = await this.makeDeliveryNote(newOrder)
