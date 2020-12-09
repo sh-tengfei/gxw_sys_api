@@ -349,8 +349,14 @@ class OrderController extends Controller {
       logger.info({ msg: '支付成功通知消息。', data: return_code })
     }
     const order = await service.order.findOne({ orderId: out_trade_no })
+    console.log(out_trade_no, order, 'wxPayNotify')
     if (!order) {
       logger.error({ msg: '订单不存在！' })
+      // 对错都要回复腾讯消息
+      ctx.body = '<xml>\n' +
+      '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
+      '<return_msg><![CDATA[OK]]></return_msg>\n' +
+      '</xml>'
       return
     }
     // 更新用户购买金额 存在小数点问题
@@ -363,6 +369,11 @@ class OrderController extends Controller {
       logger.info({ msg: '用户消费金额修改成功', userId: retUser.userId })
     } else {
       logger.info({ msg: '用户信息错误', userId: retUser.userId })
+      // 对错都要回复腾讯消息
+      ctx.body = '<xml>\n' +
+      '<return_code><![CDATA[SUCCESS]]></return_code>\n' +
+      '<return_msg><![CDATA[OK]]></return_msg>\n' +
+      '</xml>'
       return
     }
 
@@ -487,7 +498,7 @@ class OrderController extends Controller {
           return { code: 200, msg: '拆单成功', orders }
         }
         retOrder = await service.order.updateOne(data.orderId, { state: 2 })
-        orders.push(retOrder.data.orderId)
+        orders.push(retOrder.orderId)
       }
     }
     return { code: 200, msg: '拆单成功', orders }
@@ -527,6 +538,7 @@ class OrderController extends Controller {
   async createBill(orders, time_end, option, body) {
     const { ctx } = this
     const { service, logger } = ctx
+    console.log(orders, 'delivery1')
     for (const orderId of orders) {
       // 更新订单状态支付信息
       await service.order.updateOne(orderId, {
@@ -537,11 +549,11 @@ class OrderController extends Controller {
       })
 
       const newOrder = await service.order.findOne({ orderId })
-      console.log(newOrder, 'delivery')
+      console.log(newOrder, 'delivery2')
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
         const delivery = await this.makeDeliveryNote(newOrder)
-        console.log(delivery, 'delivery')
+        console.log(delivery, 'delivery3')
         if (!delivery) {
           logger.error({ msg: '配送单生成错误！', orderId })
           return { code: 201, orderId }
