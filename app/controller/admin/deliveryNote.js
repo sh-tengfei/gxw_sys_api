@@ -291,15 +291,15 @@ class DeliveryNoteController extends Controller {
   async exportDeliveryNote() {
     const { ctx, app } = this
     const { service, params } = ctx
-    const note = await service.deliveryNote.findOne({ deliveryId: params.id })
-    if (!note) {
+    const delivery = await service.deliveryNote.findOne({ deliveryId: params.id })
+    if (!delivery) {
       ctx.body = { code: 200, msg: '配送单不存在' }
       return
     }
 
     const fileName = `团长-${note.extract.applyName}-配送单.docx`
     const url = path.resolve('./delivery-note', fileName)
-    const docx = await generateDownload(note, url)
+    const docx = await generateDownload(delivery, url)
     ctx.attachment(url)
     ctx.set('Content-Type', 'application/octet-stream')
     ctx.body = fs.createReadStream(url)
