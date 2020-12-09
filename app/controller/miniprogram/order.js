@@ -450,7 +450,7 @@ class OrderController extends Controller {
     const deliveryRet = await service.deliveryNote.joinDeliveryNote({ ...order })
     return deliveryRet
   }
-  async splitChildOrder({ products, ...other }) {
+  async splitChildOrder({ products,...other }) {
     const { ctx, app } = this
     const { service } = ctx
     const orders = []
@@ -558,7 +558,6 @@ class OrderController extends Controller {
       } else {
         // 产地直发发送消息
       }
-
       // 生成收益
       const bill = await service.bill.create({
         orderId: newOrder.orderId,

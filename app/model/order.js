@@ -19,7 +19,7 @@ module.exports = app => {
         buyNum: { type: Number, required: true },
         mallPrice: { type: SchemaTypes.Double, required: true },
         cover: { type: String, required: true },
-        unitValue: { type: String, required: true },
+        specs: { type: String, required: true },
         sellerType: { type: Number, required: true },
         total: { type: SchemaTypes.Double, required: true },
         reward: { type: SchemaTypes.Double, required: true }

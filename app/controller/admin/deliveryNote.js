@@ -11,9 +11,6 @@ function getTabelCell(title) {
     opts: {
       b: true,
       sz: '20',
-      spacingBefore: 120,
-      spacingAfter: 120,
-      spacingLine: 240,
       spacingLineRule: 'atLeast',
       shd: {
         fill: 'f5f5f5',
@@ -56,7 +53,7 @@ async function generateDownload({
       getTabelCell('会员名称'),
       getTabelCell('会员手机'),
       getTabelCell('商品名称'),
-      getTabelCell('计价单位'),
+      getTabelCell('规格'),
       getTabelCell('购买数量'),
       getTabelCell('下单金额'),
       getTabelCell('下单时间'),
@@ -66,19 +63,19 @@ async function generateDownload({
   orders.forEach(({ user, orderId, products, total, createTime }, n) => {
     const names = []
     const buys = []
-    const unitValue = []
+    const specs = []
     products.forEach((w, q) => {
       names.push(w.name)
       buys.push(w.buyNum)
-      unitValue.push(w.unitValue)
+      specs.push(w.specs)
     })
     table.push([
       n + 1,
       orderId,
       user.username,
-      user.mobile + '',
+      user.phone + '',
       names,
-      unitValue,
+      specs,
       buys,
       total,
       createTime
@@ -86,20 +83,15 @@ async function generateDownload({
   })
 
   const tableStyle = {
-    tableColWidth: 4261,
-    tableSize: 20,
+    tableColWidth: 930,
     tableColor: 'ada',
     tableAlign: 'left',
     tableFontFamily: 'Comic Sans MS',
-    spacingBefor: 120, // default is 100
-    spacingAfter: 120, // default is 100
-    spacingLine: 240, // default is 240
     spacingLineRule: 'atLeast', // default is atLeast
-    indent: 100, // table indent, default is 0
     fixedLayout: true, // default is false
     borders: true, // default is false. if true, default border size is 4
-    borderSize: 2, // To use this option, the 'borders' must set as true, default is 4
-    columns: [{ width: 4261 }, { width: 1 }, { width: 42 }], // Table logical columns
+    borderSize: 1, // To use this option, the 'borders' must set as true, default is 4
+    // columns: [{ width: 100 }, { width: 200 }, { width: 100 }], // Table logical columns
   }
   // 团长配送信息
   const data = [
@@ -297,7 +289,7 @@ class DeliveryNoteController extends Controller {
       return
     }
 
-    const fileName = `团长-${note.extract.applyName}-配送单.docx`
+    const fileName = `${delivery.extract.applyName}-${delivery.extractId}.docx`
     const url = path.resolve('./delivery-note', fileName)
     const docx = await generateDownload(delivery, url)
     ctx.attachment(url)
