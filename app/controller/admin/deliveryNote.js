@@ -11,11 +11,11 @@ function getTabelCell(title) {
     opts: {
       b: true,
       sz: '20',
-      spacingLineRule: 'atLeast',
+      // spacingLineRule: 'atLeast',
       shd: {
-        fill: 'f5f5f5',
+        fill: 'FFF',
         themeFill: 'text1',
-        'themeFillTint': '80'
+        'themeFillTint': '60'
       },
       fontFamily: 'Avenir Book'
     }
@@ -31,7 +31,12 @@ async function generateDownload({
   totalAmount,
 }, url) {
   createTime = moment(createTime).add(1, 'days').format('YYYY-MM-DD')
-  const docx = officegen('docx')
+  const docx = officegen({
+    type: 'docx',
+    pageMargins: {
+      top: 800, right: 800, bottom: 800, left: 800
+    }
+  })
 
   docx.on('finalize', function(written) {
     console.log('配送单文档生成成功')
@@ -43,7 +48,7 @@ async function generateDownload({
   const pObj = docx.createP({ align: 'center' })
   pObj.addText('果仙网-团长配送单', {
     font_face: 'Arial',
-    font_size: 22,
+    font_size: 16,
     color: '#333',
   })
   const table = [
@@ -56,7 +61,6 @@ async function generateDownload({
       getTabelCell('规格'),
       getTabelCell('购买数量'),
       getTabelCell('下单金额'),
-      getTabelCell('下单时间'),
     ]
   ]
 
@@ -77,21 +81,20 @@ async function generateDownload({
       names,
       specs,
       buys,
-      total,
-      createTime
+      total
     ])
   })
 
   const tableStyle = {
-    tableColWidth: 930,
+    tableColWidth: 0,
     tableColor: 'ada',
-    tableAlign: 'left',
+    tableAlign: 'center',
     tableFontFamily: 'Comic Sans MS',
     spacingLineRule: 'atLeast', // default is atLeast
-    fixedLayout: true, // default is false
+    // fixedLayout: true, // default is false
     borders: true, // default is false. if true, default border size is 4
     borderSize: 1, // To use this option, the 'borders' must set as true, default is 4
-    // columns: [{ width: 100 }, { width: 200 }, { width: 100 }], // Table logical columns
+    // columns: [{ width: 10 }, { width: 200 }, { width: 100 }], // Table logical columns
   }
   // 团长配送信息
   const data = [
@@ -214,17 +217,12 @@ async function generateDownload({
           align: 'left'
         }
       }
-    ], {
-      type: 'table',
-      val: table,
-      opt: tableStyle
-    }, {
-      type: 'pagebreak'
-    }
+    ]
   ]
 
   docx.createByJson(data)
 
+  docx.createTable(table, tableStyle);
   docx.putPageBreak()
 
   return new Promise((resolve, reject) => {
