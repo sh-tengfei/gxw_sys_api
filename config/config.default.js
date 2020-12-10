@@ -21,7 +21,11 @@ module.exports = appInfo => {
           ctx.status = 401
           return
         }
-        console.log(err, 'errerr')
+        ctx.service.tempMsg.sendmail({
+          mailbox: 'sh_tengda@163.com',
+          subject: '全局报错',
+          html: JSON.stringify(err)
+        })
       }
     }
   }

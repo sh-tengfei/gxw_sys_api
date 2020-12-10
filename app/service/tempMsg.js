@@ -3,7 +3,8 @@ import os from 'os'
 import nodemailer from 'nodemailer'
 const formMail = {
   user: 'guoxianwang1@163.com',
-  pass: '199283Yq'
+  pass: 'CBRHEQXSJSSEAGMX',
+  mail: 'guoxianwang1@163.com',
 }
 
 class TempMsgService extends Service {
@@ -35,8 +36,8 @@ class TempMsgService extends Service {
     }
     return res.data
   }
-  sendmail({ mailbox, subject, text, html }) {
-    if (!mailbox || !subject || !text || !html) {
+  sendmail({ mailbox, subject, html }) {
+    if (!mailbox || !subject || !html) {
       return {
         code: 0,
         message: '数据不正确'
@@ -52,10 +53,9 @@ class TempMsgService extends Service {
       }
     })
     const mailOpt = {
-      from: formMail.mailBox, // sender address
-      to: mailbox, // list of receivers
-      subject: subject, // Subject line
-      text: text, // plaintext body
+      from: formMail.mail,
+      to: mailbox,
+      subject: subject,
       html: html,
     }
     transporter.sendMail(mailOpt, (error, info)=>{
