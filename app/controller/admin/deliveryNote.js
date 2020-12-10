@@ -61,7 +61,7 @@ async function generateDownload({
 
   const pObj = docx.createP({ align: 'center' })
 
-  pObj.addText(`${extract.applyName}团长送货清单`, {
+  pObj.addText(`${extract.communityName}团长送货清单`, {
     font_face: 'Arial',
     font_size: 14,
     color: '#333',
