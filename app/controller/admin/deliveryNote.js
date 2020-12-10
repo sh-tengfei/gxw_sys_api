@@ -152,7 +152,7 @@ async function generateDownload({
   const jsonData = [
     [
       getText(`送货日期：${moment(extract.createTime).format('YYYY-MM-DD')}`), 
-      getText(`                                   团长姓名 / 手机：${extract.applyName} / ${extract.applyPhone}`), 
+      getText(`                                   团长姓名 / 手机：${extract.communityName} / ${extract.applyPhone}`), 
       { type: 'linebreak' }, 
       getText(`团长电话：${extract.applyPhone}`),
       { type: 'linebreak' },
