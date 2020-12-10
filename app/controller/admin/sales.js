@@ -18,8 +18,8 @@ class SalesController extends Controller {
     }
 
     opt.createTime = {
-      '$gte': moment(query.startTime),
-      '$lte': moment(query.endTime)
+      '$gte': moment(query.startTime).startOf('day'),
+      '$lte': moment(query.endTime).endOf('day'),
     }
 
     const { list, total } = await service.order.find(opt, option)

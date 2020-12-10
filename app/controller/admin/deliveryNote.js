@@ -5,19 +5,30 @@ import officegen from 'officegen'
 import fs from 'fs'
 import path from 'path'
 
-function getTabelCell(title) {
+function getTabelCell(title, width) {
   return {
     val: title,
     opts: {
+      cellColWidth: width || null,
+      color: "333333",
+      back: '000088',
       b: true,
-      sz: '20',
-      // spacingLineRule: 'atLeast',
-      shd: {
-        fill: 'FFF',
-        themeFill: 'text1',
-        'themeFillTint': '60'
-      },
+      sz: 20,
       fontFamily: 'Avenir Book'
+    }
+  }
+}
+
+function getText(val, option = {}) {
+  return {
+    type: 'text',
+    val: val,
+    opt: {
+      font_face: option.font_face || 'Arial',
+      font_size: option.font_size || 10,
+      color: option.color || '#333',
+      align: option.align ||'center',
+      vAlign: option.align || 'center'
     }
   }
 }
@@ -30,58 +41,69 @@ async function generateDownload({
   deliveryId,
   totalAmount,
 }, url) {
-  createTime = moment(createTime).add(1, 'days').format('YYYY-MM-DD')
   const docx = officegen({
     type: 'docx',
     pageMargins: {
-      top: 800, right: 800, bottom: 800, left: 800
+      left: 400, 
+      right: 400, 
+      top: 300, 
+      bottom: 300,
     }
   })
 
   docx.on('finalize', function(written) {
-    console.log('配送单文档生成成功')
+    console.info('配送单文档生成成功')
   })
 
   docx.on('error', function(err) {
-    console.log('配送单文档生成错误')
+    console.error('配送单文档生成错误')
   })
+
   const pObj = docx.createP({ align: 'center' })
-  pObj.addText('果仙网-团长配送单', {
+
+  pObj.addText(`${extract.applyName}团长送货清单`, {
     font_face: 'Arial',
-    font_size: 16,
+    font_size: 14,
     color: '#333',
   })
+
   const table = [
     [
-      getTabelCell('序号'),
-      getTabelCell('订单号'),
-      getTabelCell('会员名称'),
-      getTabelCell('会员手机'),
-      getTabelCell('商品名称'),
-      getTabelCell('规格'),
-      getTabelCell('购买数量'),
-      getTabelCell('下单金额'),
+      getTabelCell('序号', 700),
+      getTabelCell('订单号', 3000),
+      getTabelCell('用户昵称', 1100),
+      getTabelCell('商品名称', 1500),
+      getTabelCell('商品规格', 1100),
+      getTabelCell('下单数量', 1200),
+      getTabelCell('下单金额', 1100),
+      getTabelCell('下单日期', 1700),
     ]
   ]
 
+  const productIds = {}
   orders.forEach(({ user, orderId, products, total, createTime }, n) => {
     const names = []
     const buys = []
     const specs = []
     products.forEach((w, q) => {
+      if (!productIds[w.productId]) {
+        productIds[w.productId] = []
+      }
+      productIds[w.productId].push(w)
       names.push(w.name)
       buys.push(w.buyNum)
       specs.push(w.specs)
     })
+    createTime = moment(createTime).format('YYYY-MM-DD')
     table.push([
       n + 1,
       orderId,
       user.username,
-      user.phone + '',
       names,
       specs,
       buys,
-      total
+      '￥'+ total,
+      createTime
     ])
   })
 
@@ -90,141 +112,73 @@ async function generateDownload({
     tableColor: 'ada',
     tableAlign: 'center',
     tableFontFamily: 'Comic Sans MS',
-    spacingLineRule: 'atLeast', // default is atLeast
-    // fixedLayout: true, // default is false
-    borders: true, // default is false. if true, default border size is 4
-    borderSize: 1, // To use this option, the 'borders' must set as true, default is 4
-    // columns: [{ width: 10 }, { width: 200 }, { width: 100 }], // Table logical columns
+    spacingLineRule: 'atLeast',
+    borders: true,
+    borderSize: 1,
+    fontSize: 10,
+    font_size: 10,
   }
-  // 团长配送信息
-  const data = [
+
+  let proTabel = [
     [
+      getTabelCell('序号', 700),
+      getTabelCell('商品名称'),
+      getTabelCell('商品ID'),
+      getTabelCell('下单总数'),
+      getTabelCell('商品规格'),
+    ]
+  ]
+  let proTableStyle = Object.assign({}, tableStyle)
+  let index = 0
+  for (const key in productIds) {
+    const arr = productIds[key]
+    let product = arr[0]
+    let total = arr.reduce((total, p)=>{
+      return total = total + p.buyNum
+    }, 0)
+    proTabel.push([
+      index + 1,
+      product.name,
+      product.productId,
+      total,
+      product.specs
+    ])
+    index++
+  }
+
+  proTableStyle.tableColWidth = 3000
+
+  // 团长配送信息
+  const jsonData = [
+    [
+      getText(`送货日期：${moment(extract.createTime).format('YYYY-MM-DD')}`), 
+      getText(`                                   团长姓名 / 手机：${extract.applyName} / ${extract.applyPhone}`), 
+      { type: 'linebreak' }, 
+      getText(`团长电话：${extract.applyPhone}`),
+      { type: 'linebreak' },
+      getText(`团长地址：${extract.communitySite}`),
       {
-        type: 'text',
-        val: `团长信息：`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 12,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    姓名：${extract.applyName}，`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    手机：${extract.applyPhone}，`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'text',
-        val: `    微信昵称：${extract.nickName}，`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `配送信息：`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    配送城市：${area.fullname}`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#000',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    配送单号：${deliveryId}`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#000',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    配送日期：${createTime}`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#000',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    配送金额：${totalAmount}元`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#000',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    社区名称：${extract.communityName}`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#333',
-          align: 'left'
-        }
-      }, {
-        type: 'linebreak'
-      }, {
-        type: 'text',
-        val: `    社区地址：${extract.communitySite}`,
-        opt: {
-          font_face: 'Arial',
-          font_size: 10,
-          color: '#000',
-          align: 'left'
-        }
+        type: 'table',
+        val: table,
+        opt: tableStyle
+      }
+    ], [
+      { type: 'linebreak' }, 
+      { type: 'linebreak' }, 
+      getText(`团长商品清单`, { 
+        font_size: 13
+      }),
+      {
+        type: 'table',
+        val: proTabel,
+        opt: proTableStyle
       }
     ]
   ]
 
-  docx.createByJson(data)
+  docx.createByJson(jsonData)
 
-  docx.createTable(table, tableStyle);
   docx.putPageBreak()
-
   return new Promise((resolve, reject) => {
     const out = fs.createWriteStream(url)
 
