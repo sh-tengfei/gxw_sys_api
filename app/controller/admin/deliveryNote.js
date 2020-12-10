@@ -61,7 +61,7 @@ async function generateDownload({
 
   const pObj = docx.createP({ align: 'center' })
 
-  pObj.addText(`${extract.communityName}团长送货清单`, {
+  pObj.addText(`${extract.communityName}@团长送货清单`, {
     font_face: 'Arial',
     font_size: 14,
     color: '#333',
@@ -70,8 +70,9 @@ async function generateDownload({
   const table = [
     [
       getTabelCell('序号', 700),
-      getTabelCell('订单号', 3000),
+      getTabelCell('订单号', 2000),
       getTabelCell('用户昵称', 1100),
+      getTabelCell('手机号码', 1100),
       getTabelCell('商品名称', 1500),
       getTabelCell('商品规格', 1100),
       getTabelCell('下单数量', 1200),
@@ -95,14 +96,16 @@ async function generateDownload({
       specs.push(w.specs)
     })
     createTime = moment(createTime).format('YYYY-MM-DD')
+    let phone = `${user.phone.substring(0, 4)}****${user.phone.substring(7, 11)}`
     table.push([
       n + 1,
       orderId,
       user.username,
+      phone,
       names,
       specs,
       buys,
-      '￥'+ total,
+      total,
       createTime
     ])
   })
@@ -152,7 +155,7 @@ async function generateDownload({
   const jsonData = [
     [
       getText(`送货日期：${moment(extract.createTime).format('YYYY-MM-DD')}`), 
-      getText(`                                   团长姓名 / 手机：${extract.communityName} / ${extract.applyPhone}`), 
+      getText(`                                   配送人 / 手机：吕凤波 / 13739668118`), 
       { type: 'linebreak' }, 
       getText(`团长电话：${extract.applyPhone}`),
       { type: 'linebreak' },
@@ -165,7 +168,7 @@ async function generateDownload({
     ], [
       { type: 'linebreak' }, 
       { type: 'linebreak' }, 
-      getText(`团长商品清单`, { 
+      getText(`团长订单商品清单`, { 
         font_size: 13
       }),
       {
