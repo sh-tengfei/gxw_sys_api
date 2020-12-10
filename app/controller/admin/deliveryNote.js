@@ -159,8 +159,8 @@ async function generateDownload({
       getText(`团长地址：${extract.communitySite}`),
       {
         type: 'table',
-        val: table,
-        opt: tableStyle
+        val: proTabel,
+        opt: proTableStyle
       }
     ], [
       { type: 'linebreak' }, 
@@ -170,9 +170,9 @@ async function generateDownload({
       }),
       {
         type: 'table',
-        val: proTabel,
-        opt: proTableStyle
-      }
+        val: table,
+        opt: tableStyle
+      },
     ]
   ]
 
