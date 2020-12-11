@@ -4,7 +4,7 @@ module.exports = app => {
   const Purchase = new mongoose.Schema({
     dateTime: { type: Date },
     purchaseId: { type: String, required: true },
-    cicyCode: { type: String, required: true },
+    cityCode: { type: String, required: true },
     totalAmount: { type: String, required: true },
     orders: [
       { type: String, required: true }

@@ -26,11 +26,11 @@ class PurchaseOrder extends Subscription {
       if (orders.list.length) {
         const data = this.computeTotalList(orders, item)
         const purchase = await service.purchase.create(data)
-        console.log('商品采购单生成完成')
+        console.log('商品采购单生成完成', JSON.stringify(purchase))
       }
     }
   }
-  computeTotalList({ list }, { id: cicyCode }) {
+  computeTotalList({ list }, { id: cityCode }) {
     let orders = []
     let totalAmount = 0
     let dateTime =  moment().format('YYYY-MM-DD')
@@ -64,7 +64,7 @@ class PurchaseOrder extends Subscription {
       totalAmount,
       dateTime,
       products: Object.values(types),
-      cicyCode
+      cityCode
     }
   }
 }
