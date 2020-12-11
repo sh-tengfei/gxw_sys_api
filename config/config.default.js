@@ -101,12 +101,12 @@ module.exports = appInfo => {
       stockId: '1000',
       activityId: '1000',
       sliderId: '1000',
-      areaId: '1000',
-      noteId: '1000',
+      deliveryId: '1000',
       classifyId: '1000',
       billId: '1000',
       addressId: '1000',
-      drawMoneyId: '1000'
+      drawMoneyId: '1000',
+      purchaseId: '1000',
     },
     orderCompleteTimeout: 4, // 订单完成超时时间天
     commissionComplete: 4, // 收益结算时间天
