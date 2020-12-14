@@ -61,7 +61,7 @@ async function generateDownload({
 
   const pObj = docx.createP({ align: 'center' })
 
-  pObj.addText(`${createTime}日统计采购单`, {
+  pObj.addText(`${moment(createTime).format('YYYY-MM-DD')}日统计采购单`, {
     font_face: 'Arial',
     font_size: 14,
     color: '#333',
@@ -73,11 +73,12 @@ async function generateDownload({
       getTabelCell('商品名称', 2000),
       getTabelCell('商品ID', 2000),
       getTabelCell('商品规格', 1100),
-      getTabelCell('商品买数', 1100),
+      getTabelCell('商品购买数', 1100),
       getTabelCell('商品金额', 1500),
       getTabelCell('采购日期', 1200),
     ]
   ]
+  createTime = moment(createTime).format('YYYY-MM-DD')
   products.forEach(({ name, productId, specs, totalNum, totalAmount, cover }, n) => {
     table.push([
       n + 1,
@@ -105,11 +106,10 @@ async function generateDownload({
   // 团长配送信息
   const jsonData = [
     [
-      getText(`采购日期：${moment(createTime).format('YYYY-MM-DD')}`), 
+      getText(`采购日期：${createTime}`), 
       getText(`                                  采购总金额：${totalAmount}`), 
       { type: 'linebreak' }, 
       getText(`采购类型：${purchaseType === 1 ? '本地采购' : '产地采购' }`),
-      { type: 'linebreak' },
       {
         type: 'table',
         val: table,
