@@ -10,8 +10,14 @@ class PurchaseService extends Service {
     delete query.skip
 
     const list = await ctx.model.Purchase.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
-
     const total = await ctx.model.Purchase.find(query).countDocuments()
+    
+    list.forEach(i=>{
+      i.dateTime = moment(i.dateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+    })
+
     return {
       list,
       total

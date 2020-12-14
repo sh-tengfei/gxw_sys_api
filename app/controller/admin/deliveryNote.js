@@ -245,7 +245,7 @@ class DeliveryNoteController extends Controller {
     }
 
     const fileName = `${delivery.extract.applyName}-${delivery.extractId}.docx`
-    const url = path.resolve('./delivery-note', fileName)
+    const url = path.resolve('./catch', fileName)
     const docx = await generateDownload(delivery, url)
     ctx.attachment(url)
     ctx.set('Content-Type', 'application/octet-stream')
