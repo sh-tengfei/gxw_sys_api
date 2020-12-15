@@ -86,7 +86,7 @@ async function generateDownload({
       productId,
       specs,
       totalNum,
-      totalAmount,
+      '￥' + totalAmount,
       createTime
     ])
   })
@@ -107,7 +107,7 @@ async function generateDownload({
   const jsonData = [
     [
       getText(`采购日期：${createTime}`), 
-      getText(`                                  采购总金额：${totalAmount}`), 
+      getText(`                                  采购总金额：${'￥' + totalAmount}`), 
       { type: 'linebreak' }, 
       getText(`采购类型：${purchaseType === 1 ? '本地采购' : '产地采购' }`),
       {

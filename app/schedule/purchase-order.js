@@ -5,7 +5,6 @@ const Decimal = require('decimal.js').Decimal
 class PurchaseOrder extends Subscription {
   static get schedule() {
     return {
-      // interval: '1m', // 1 分钟间隔
       cron: '0 31 22 * * *', // 每天晚上10点执行任务
       type: 'all',
       // immediate: true,
