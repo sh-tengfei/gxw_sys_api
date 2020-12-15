@@ -58,6 +58,37 @@ class ProductController extends Controller {
 
     ctx.body = { code: 200, msg: '', data: pro, }
   }
+  async getProductByIndex() {
+    const { ctx, app } = this
+    const { service, params } = ctx
+    if (!params.index) {
+      ctx.body = { code: 201, msg: '参数不正确！', data: params }
+      return
+    }
+    const query = {
+      productIndex: params.index,
+    }
+    const pro = await service.product.findOne(query)
+    // 如果商品存在 得到买该商品的用户
+    if (pro) {
+      const { list } = await service.order.find({
+        products: {
+          $elemMatch: {
+            productId: params.id
+          }
+        }
+      })
+      let usedUser = list.filter(i=>i.user)
+      usedUser = usedUser.map(i=>i.user.picture)
+      usedUser = new Set(usedUser)
+      pro.used = [...usedUser]
+    } else {
+      ctx.body = { code: 201, msg: '商品不存在', data: pro }
+      return
+    }
+
+    ctx.body = { code: 200, msg: '获取成功！', data: pro, }
+  }
   async update() {
     const { ctx, app } = this
     const { query, request, service, params } = ctx

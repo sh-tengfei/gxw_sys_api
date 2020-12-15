@@ -103,6 +103,17 @@ class AgentController extends Controller {
     ctx.body = { msg: '获取成功' , code: 200, data: agent }
   }
 
+  async getSearbysByIndex() {
+    const { ctx } = this
+    const { service, params } = ctx
+    if (!params.index) {
+      ctx.body = { msg: '参数错误！', code: 201 }
+      return
+    }
+    const agent = await service.agent.findOne({ extractIndex: params.index })
+    ctx.body = { msg: '获取成功' , code: 200, data: agent }
+  }
+
   async postWithdraw() {
     const { ctx } = this
     const { service, request: req, state } = ctx

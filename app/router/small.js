@@ -29,6 +29,8 @@ export default function({ router, controller: contr, jwt }) {
 
   router.get('/small/products', contr.product.getProducts)
   router.get('/small/product/:id', jwt, contr.product.getProduct)
+  router.get('/small/product/index/:index', jwt, contr.product.getProductByIndex)
+  
   router.get('/small/order', jwt, contr.order.getOrders)
   router.post('/small/order', jwt, contr.order.makeOrder)
   router.get('/small/order/:id', jwt, contr.order.getOrder)
@@ -47,6 +49,7 @@ export default function({ router, controller: contr, jwt }) {
   // 提货点不验证用户
   router.get('/small/searbys', contr.agent.getNearbyAgents)
   router.get('/small/searbys/:id', contr.agent.getSearbys)
+  router.get('/small/searbys/index/:index', contr.agent.getSearbysByIndex)
 
   // 提现
   router.post('/small/withdraw', jwt, contr.agent.postWithdraw)
