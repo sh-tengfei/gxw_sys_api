@@ -28,8 +28,6 @@ class OrderCompleteTimeout extends Subscription {
       if (curTime.isAfter(targetTime)) {
         const order = await ctx.service.order.updateOne(orderId, { state: 5 })
         ctx.logger.info(orderId, '确认收货超时，自动确认')
-      } else {
-        console.log(orderId, '确认收货未超时')
       }
     }
   }

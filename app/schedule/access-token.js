@@ -16,8 +16,8 @@ module.exports = {
     const groupRes = await ctx.curl(groupUrl, {
       dataType: 'json',
     })
-    console.log(mallRes.data, 'mallRes')
-    console.log(groupRes.data, 'groupRes')
+    // console.log(mallRes.data, 'mallRes')
+    // console.log(groupRes.data, 'groupRes')
     cache.mall_access_token = mallRes.data
     cache.group_access_token = groupRes.data
   },

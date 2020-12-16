@@ -56,8 +56,6 @@ class OrderPayTimeout extends Subscription {
           logger.info(orderRet.orderId, '支付时间超时，订单关闭')
           // 发送消息
         }
-      } else {
-        logger.info(item.orderId, '支付时间未超时')
       }
     }
   }

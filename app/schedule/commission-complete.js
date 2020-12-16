@@ -47,8 +47,6 @@ class CommissionComplete extends Subscription {
         } else {
           ctx.logger.info(bill.billId, '收益记录更新失败')
         }
-      } else {
-        console.log(billId, '收益未到期不结算')
       }
     }
   }
