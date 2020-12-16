@@ -335,7 +335,7 @@ class OrderController extends Controller {
       ctx.body = { code: 200, msg: '更新成功', data: order }
       return
     }
-    ctx.body = { code: 201, msg: '订单不存在！'}
+    // ctx.body = { code: 201, msg: '订单不存在！'}
   }
   async wxPayNotify() {
     const { ctx, app } = this
@@ -349,7 +349,7 @@ class OrderController extends Controller {
       logger.info({ msg: '支付成功通知消息。', data: return_code })
     }
     const order = await service.order.findOne({ orderId: out_trade_no })
-    console.log(out_trade_no, order, 'wxPayNotify')
+
     if (!order) {
       logger.error({ msg: '订单不存在！' })
       // 对错都要回复腾讯消息
@@ -504,9 +504,6 @@ class OrderController extends Controller {
     return { code: 200, msg: '拆单成功', orders }
   }
   async getChildOrder(products, order) {
-    const { ctx, app } = this
-    const { service } = ctx
-
     let total = 0
     let reward = 0 // 当前订单总金额
     let orderType = 0
@@ -531,6 +528,11 @@ class OrderController extends Controller {
       reward,
       total,
       state: 2,
+    }
+
+    if (orderType === 1) {
+      newOrder.isExtractReceive = true
+      newOrder.addressId = null
     }
     delete order.orderId
     return newOrder
