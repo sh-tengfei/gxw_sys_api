@@ -97,7 +97,7 @@ class AgentController extends Controller {
     // 查询团长
     const agent = await service.agent.findOne({ extractId: drawMoney.extractId })
     if (agent.state !== 2) {
-      ctx.body = { code: 201, msg: '用户状态非法', data: agent }
+      ctx.body = { code: 201, msg: '用户状态非法', data: agent.extractId }
       return
     }
 

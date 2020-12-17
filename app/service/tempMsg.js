@@ -19,20 +19,15 @@ class TempMsgService extends Service {
     }).catch((e)=>{
       ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
     })
-    if (res && res.data) {
-      if (!res.data.errcode) {
-        ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
-      } else {
-        ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
-        this.sendmail({ 
-          mailbox: 'sh_tengda@163.com', 
-          subject: '模板消息发送失败', 
-          html: JSON.stringify(res.data),
-          text: JSON.stringify(res.data)
-        })
-      }
+    if (res.data && !res.data.errcode) {
+      ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
-      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res })
+      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
+      this.sendmail({ 
+        mailbox: '13739668118@163.com, sh_tengda@163.com', 
+        subject: '模板消息发送失败', 
+        html: JSON.stringify(res.data, null, 4)
+      })
     }
     return res.data
   }

@@ -49,10 +49,20 @@ class LoginController extends Controller {
     logger.info('用户注册: %j', request.body)
     // 不存在 创建
     try {
+      // 
+      if (userInfo.openid === userInfo.unionid) { // 微信审核机器人
+        let userd = await service.user.findOne({ userId: '202012171110' })
+        ctx.body = {
+          code: 200,
+          msg: '登陆成功！',
+          data: { token: this.createUserToken(userd), user, weAppTemp },
+          session_key: userInfo.session_key
+        }
+        return
+      }
       user = await service.user.create({
         openid: userInfo.openid,
-        unionid: userInfo.unionid,
-        userInfo: null
+        unionid: userInfo.unionid
       })
       if (!user) {
         logger.error({ msg: '保存失败，联系管理员', data: user })
@@ -235,7 +245,7 @@ class LoginController extends Controller {
     }
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
-      ctx.logger.info({ msg: '登录用户！', agent })
+      ctx.logger.info({ msg: '登录用户！', data: agent.extractId })
       const token = this.createAgentToken(agent)
       ctx.body = {
         code: 200,
@@ -247,16 +257,30 @@ class LoginController extends Controller {
     }
     // 不存在团长 创建
     try {
+       // openid === unionid是微信审核机器人
+      if (userInfo.openid === userInfo.unionid) {
+        ctx.logger.info({ msg: '读取固定用户', userInfo })
+        let agent = await ctx.service.agent.findOne({ extractId: '202012111001' })
+        let token = this.createAgentToken(agent)
+        ctx.body = {
+          code: 200,
+          msg: '登陆成功！',
+          data: { token, agent, weAppTemp, contact },
+          session_key: userInfo.session_key
+        }
+        return
+      }
+      
       ctx.logger.info({ msg: '创建用户', userInfo })
       agent = await ctx.service.agent.create({
         userInfo: other,
         openid: userInfo.openid,
-        unionid: userInfo.unionid, // openid === unionid是微信审核机器人
+        unionid: userInfo.unionid,
         avatarUrl: other.avatarUrl,
-        nickName: userInfo.openid === userInfo.unionid ? '微信审核机器人' : other.nickName,
+        nickName: other.nickName,
       })
       if (!agent || agent.errors) {
-        ctx.logger.error({ msg: '保存失败，联系管理员', agent, userInfo })
+        ctx.logger.error({ msg: '保存失败，联系管理员', data: agent.extractId, userInfo })
         ctx.body = { msg: '保存失败，联系管理员' }
         return
       }
