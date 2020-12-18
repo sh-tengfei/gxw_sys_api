@@ -4,15 +4,22 @@ import moment from 'moment'
 class ShoppingCartService extends Service {
   async findOne(userId, other = { _id: 0 }) {
     const { ctx } = this
-    const cart = await ctx.model.ShoppingCart.findOne({ userId }).lean()
+    const { model } = ctx
+
+    let cart = await model.ShoppingCart.findOne({ userId }).lean()
 
     if (cart && cart.products) {
       for (const item of cart.products) {
-        const product = await ctx.service.product.findOne({ productId: item.productId })
+        const product = await service.product.findOne({ productId: item.productId })
         item.product = product
         item.stockNumber = product.stockNumber
+        if (item.stockNumber === 0 || item.stockNumber === null) {
+          item.status = false
+        }
       }
     }
+
+    cart = await this.updateOne(userId, cart)
 
     return cart
   }
