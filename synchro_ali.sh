@@ -1,0 +1,1 @@
+scp root@39.99.200.65:/data/backup/mongodb/20201218.zip /data/backup/mongodb/20201218.zip
