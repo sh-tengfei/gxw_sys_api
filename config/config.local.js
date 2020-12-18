@@ -5,7 +5,7 @@
 var defaultConfig = require('./config.default')
 
 defaultConfig.mongoose = {
-  url: 'mongodb://www.gxianwang.com:9001/gxianwangDev',
+  url: 'mongodb://127.0.0.1:9001/gxianwangDev',
   options: {
     user: 'dev1',
     pass: '!Qing001401',

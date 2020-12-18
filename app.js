@@ -1,7 +1,7 @@
 // app.js
 'use strict'
 require('babel-core/register')
-let crypto = require('crypto')
+// let crypto = require('crypto')
 
 class AppBootHook {
   constructor(app) {
