@@ -82,6 +82,7 @@ module.exports = {
       await app.runSchedule('access-token')
       token = cache[tokenType + '_access_token']
     }
+    console.log(token, data, 'tempMsg')
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },
 }
