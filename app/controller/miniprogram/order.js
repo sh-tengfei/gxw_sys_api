@@ -550,7 +550,7 @@ class OrderController extends Controller {
     const _orders = []
     for (const orderId of orders) {
       // 更新订单状态支付信息
-      newOrder = await service.order.updateOne(orderId, {
+      const newOrder = await service.order.updateOne(orderId, {
         payTime: time_end,
         state: 2,
         wxResult: option,
