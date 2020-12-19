@@ -27,12 +27,18 @@ class AgentController extends Controller {
 
     agent = await service.agent.updateOne(state.user.userId, { ...body, state: 1 })
 
+    let html = `<h4>姓名：${agent.applyName}</h4>
+                <h4>手机：${agent.applyPhone}<h4>
+                <img src="${agent.avatarUrl}" />
+                <h5>微信昵称：${agent.nickName}<h5>
+                <h6>提货点名称：${agent.communityName}<h6>
+                <h6>提货地址：${agent.communitySite}<h6>
+               `
     if (agent !== null) {
       await service.tempMsg.sendmail({
         mailbox: 'sh_tengda@163.com', 
         subject: '团长注册审核',
-        html: JSON.stringify(agent),
-        text: JSON.stringify(agent)
+        html: html,
       })
       ctx.body = { msg: '注册成功', code: 200, data: agent }
       return

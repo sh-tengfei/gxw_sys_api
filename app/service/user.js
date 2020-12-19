@@ -103,9 +103,9 @@ class UserService extends Service {
   async updateOne(userId, data, other = { new: true, _id: 0 }) {
     const { model, service } = this.ctx
     const newUser = await model.User.findOneAndUpdate({ userId }, data, other).lean()
-    newUser.createTime = moment(newUser.createTime).format('YYYY-MM-DD HH:mm:ss')
-    newUser.updateTime = moment(newUser.updateTime).format('YYYY-MM-DD HH:mm:ss')
     if (newUser) {
+      newUser.createTime = moment(newUser.createTime).format('YYYY-MM-DD HH:mm:ss')
+      newUser.updateTime = moment(newUser.updateTime).format('YYYY-MM-DD HH:mm:ss')
       const extractRet = []
       for (const extractId of newUser.historyExtract) {
         const extract = await service.agent.findOne({ extractId })

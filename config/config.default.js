@@ -21,6 +21,7 @@ module.exports = appInfo => {
           ctx.status = 401
           return
         }
+
         ctx.service.tempMsg.sendmail({
           mailbox: 'sh_tengda@163.com',
           subject: '全局报错',
@@ -46,8 +47,8 @@ module.exports = appInfo => {
   config.mongoose = {
     url: 'mongodb://127.0.0.1:9001/gxianwangDev',
     options: {
-      user: 'dev1',
-      pass: '!Qing001401',
+      // user: 'dev1',
+      // pass: '!Qing001401',
       config: { autoIndex: false },
       useNewUrlParser: true,
       useUnifiedTopology: true,

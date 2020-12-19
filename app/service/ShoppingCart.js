@@ -1,13 +1,12 @@
 import { Service } from 'egg'
-import moment from 'moment'
+// import moment from 'moment'
 
 class ShoppingCartService extends Service {
   async findOne(userId, other = { _id: 0 }) {
     const { ctx } = this
     const { model } = ctx
-
+    
     let cart = await model.ShoppingCart.findOne({ userId }).lean()
-
     if (cart && cart.products) {
       for (const item of cart.products) {
         const product = await service.product.findOne({ productId: item.productId })
@@ -17,10 +16,8 @@ class ShoppingCartService extends Service {
           item.status = false
         }
       }
+      cart = await this.updateOne(userId, cart)
     }
-
-    cart = await this.updateOne(userId, cart)
-
     return cart
   }
   async increase(data) {

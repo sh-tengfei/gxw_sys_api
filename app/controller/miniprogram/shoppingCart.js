@@ -195,13 +195,13 @@ class ShoppingCartController extends Controller {
   }
   async getCartNum() {
     const { ctx } = this
-    const { service, state, query } = ctx
+    const { service, state } = ctx
     const { userId } = state.user
 
     const cart = await service.shoppingCart.findOne(userId)
 
     if (!cart) {
-      ctx.body = { code: 200, msg: '购物车无商品', data: {} }
+      ctx.body = { code: 200, msg: '购物车无商品', data: null }
       return
     }
 

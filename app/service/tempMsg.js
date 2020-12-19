@@ -51,7 +51,7 @@ class TempMsgService extends Service {
       from: formMail.mail,
       to: mailbox,
       subject: subject,
-      html: html,
+      html: `<pre>${html}</pre>`,
     }
     transporter.sendMail(mailOpt, (error, info)=>{
       if (!error) {

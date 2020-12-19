@@ -46,27 +46,27 @@ class LoginController extends Controller {
       }
       return
     }
-    logger.info('用户注册: %j', request.body)
+    
     try {
       // 微信审核机器人
-      if (userInfo.openid === userInfo.unionid) {
-        let userd = await service.user.findOne({ userId: '202012171110' })
-        ctx.body = {
-          code: 200,
-          msg: '登陆成功！',
-          data: { token: this.createUserToken(userd), user, weAppTemp },
-          session_key: userInfo.session_key
-        }
-        return
-      }
+      // if (userInfo.openid === userInfo.unionid) {
+      //   let userd = await service.user.findOne({ userId: '202012171110' })
+      //   ctx.body = {
+      //     code: 200,
+      //     msg: '登陆成功！',
+      //     data: { token: this.createUserToken(userd), user, weAppTemp },
+      //     session_key: userInfo.session_key
+      //   }
+      //   return
+      // }
 
       // 不存在 创建
+      
       user = await service.user.create({
-        openid: userInfo.openid,
-        unionid: userInfo.unionid,
-        username: userInfo.openid === userInfo.unionid ? "微信审核机器人": null
+        ...userInfo
       })
-      if (!user) {
+
+      if (!user || user.errors) {
         logger.error({ msg: '保存失败，联系管理员', data: user })
         ctx.body = {
           msg: '保存失败，联系管理员',
@@ -74,6 +74,7 @@ class LoginController extends Controller {
         }
         return
       }
+
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
