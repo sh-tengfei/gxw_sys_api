@@ -4,7 +4,7 @@ import { Service } from 'egg'
 class ShoppingCartService extends Service {
   async findOne(userId, other = { _id: 0 }) {
     const { ctx } = this
-    const { model } = ctx
+    const { model, service } = ctx
     
     let cart = await model.ShoppingCart.findOne({ userId }).lean()
     if (cart && cart.products) {
