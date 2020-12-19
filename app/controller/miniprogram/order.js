@@ -394,17 +394,24 @@ class OrderController extends Controller {
       logger.info({ msg: '收益创建成功' })
     }
 
+    let page , product = order.products[0]
+    if (billRet.orders.length === 1) {
+      page = `/pages/orderDetail/detail?orderId=${order.orderId}`
+    } else {
+      page = `/pages/delivery/list?state=3`
+    }
+    
     await service.tempMsg.sendWxMsg({
       openid: retUser.openid,
       template_id: weAppTemp.paySuccess,
       data: {
-        'thing1': { 'value': order.products[0].name },
+        'thing1': { 'value': product.name },
         'amount2': { 'value': `￥${order.total}` },
         'character_string3': { 'value': order.orderId },
         'time4': { 'value': moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
         'thing6': { 'value': '品质生活，优选果仙！' },
       },
-      page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
+      page: page,
     })
 
     // 对错都要回复腾讯消息
@@ -540,16 +547,17 @@ class OrderController extends Controller {
   async createBill(orders, time_end, option, body) {
     const { ctx } = this
     const { service, logger } = ctx
+    const _orders = []
     for (const orderId of orders) {
       // 更新订单状态支付信息
-      await service.order.updateOne(orderId, {
+      newOrder = await service.order.updateOne(orderId, {
         payTime: time_end,
         state: 2,
         wxResult: option,
         wxXml: body,
       })
 
-      const newOrder = await service.order.findOne({ orderId })
+      _orders.push(newOrder)
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
         const delivery = await this.makeDeliveryNote(newOrder)
@@ -574,7 +582,7 @@ class OrderController extends Controller {
         return { code: 201 }
       }
     }
-    return { code: 200 }
+    return { code: 200, orders: _orders }
   }
   isPauseService() {
     const start = moment().hours(23).minutes(0).seconds(0).millisecond(0)
