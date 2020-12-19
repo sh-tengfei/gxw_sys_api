@@ -550,13 +550,14 @@ class OrderController extends Controller {
     const _orders = []
     for (const orderId of orders) {
       // 更新订单状态支付信息
-      const newOrder = await service.order.updateOne(orderId, {
+      await service.order.updateOne(orderId, {
         payTime: time_end,
         state: 2,
         wxResult: option,
         wxXml: body,
       })
 
+      const newOrder = await service.order.findOne({ orderId })
       _orders.push(newOrder)
       // 本地发货可以生成配送单 1 本地发货 2产地发货
       if (newOrder.orderType === 1) {
