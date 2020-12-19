@@ -43,6 +43,7 @@ class UserService extends Service {
       if (agent) {
         user.isAgent = true
         user.extractId = agent.extractId
+        user.extractIndex = agent.extractIndex
       }
     }
 
