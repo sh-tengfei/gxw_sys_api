@@ -27,12 +27,12 @@ class AgentController extends Controller {
 
     agent = await service.agent.updateOne(state.user.userId, { ...body, state: 1 })
 
-    let html = `<h4>姓名：${agent.applyName}</h4>
-                <h4>手机：${agent.applyPhone}<h4>
-                <img src="${agent.avatarUrl}" />
-                <h5>微信昵称：${agent.nickName}<h5>
-                <h6>提货点名称：${agent.communityName}<h6>
-                <h6>提货地址：${agent.communitySite}<h6>
+    let html = `<p style="margin: 0px;">姓名：${agent.applyName}</p>
+                <p style="margin: 0px;">手机：${agent.applyPhone}<p>
+                <img src="${agent.avatarUrl}" style="width: 100px;" />
+                <p style="margin: 0px;">微信昵称：${agent.nickName}<p>
+                <p style="margin: 0px;">提货点名称：${agent.communityName}<p>
+                <p style="margin: 0px;">提货地址：${agent.communitySite}<p>
                `
     if (agent !== null) {
       await service.tempMsg.sendmail({

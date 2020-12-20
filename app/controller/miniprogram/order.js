@@ -597,7 +597,8 @@ class OrderController extends Controller {
 
     for (const item of list) {
       if (item.user) {
-        users.push(item.user)
+        // 取第零个产品
+        users.push({ user: item.user, product: item.products[0] })
       }
     }
 

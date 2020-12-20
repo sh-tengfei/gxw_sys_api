@@ -77,12 +77,13 @@ module.exports = {
     if (!tokenType) {
       tokenType = 'mall'
     }
-    const { [tokenType + '_access_token']: token } = app.config.cache
+    let { cache } = app.config
+    const { [tokenType + '_access_token']: token } = cache
     if (!token) {
       await app.runSchedule('access-token')
       token = cache[tokenType + '_access_token']
     }
-    console.log(token, data, 'tempMsg')
+
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
   },
 }

@@ -17,8 +17,10 @@ class TempMsgService extends Service {
       page,
       tokenType,
     }).catch((e)=>{
+      console.log(e, 'consoleconsole')
       ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
     })
+    console.log(data, 'res')
     if (res.data && !res.data.errcode) {
       ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
