@@ -11,6 +11,12 @@ class TempMsgService extends Service {
   async sendWxMsg({ openid, template_id, data, page, tokenType }) {
     const { app, ctx } = this
     data.thing1.value = data.thing1.value.replace(/\s/gi, '')
+    if (data.thing2) {
+      data.thing2.value = data.thing2.value.replace(/\s/gi, '')
+    }
+    if (data.thing3) {
+      data.thing3.value = data.thing3.value.replace(/\s/gi, '')
+    }
     const res = await app.sendTempMsg(this, {
       touser: openid,
       template_id,
