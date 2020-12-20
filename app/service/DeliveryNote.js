@@ -100,6 +100,7 @@ class DeliveryNoteService extends Service {
       note = await this.create({
         extractId,
         areaId: extract.areaId,
+        deliveryTime: moment().add(1, 'd').format('YYYY-MM-DD'),
         orderIds: [orderId],
       })
     } else {

@@ -10,6 +10,7 @@ const formMail = {
 class TempMsgService extends Service {
   async sendWxMsg({ openid, template_id, data, page, tokenType }) {
     const { app, ctx } = this
+    data.thing1.value = data.thing1.value.replace(/\s/gi, '')
     const res = await app.sendTempMsg(this, {
       touser: openid,
       template_id,
@@ -20,7 +21,7 @@ class TempMsgService extends Service {
       console.log(e, 'consoleconsole')
       ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
     })
-    console.log(data, 'res')
+    console.log(data, 'datadatadata')
     if (res.data && !res.data.errcode) {
       ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
