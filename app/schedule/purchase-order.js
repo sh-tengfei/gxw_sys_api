@@ -7,7 +7,7 @@ class PurchaseOrder extends Subscription {
     return {
       cron: '0 31 22 * * *', // 每天晚上10点执行任务
       type: 'all',
-      // immediate: true,
+      immediate: true,
     }
   }
   async subscribe() {

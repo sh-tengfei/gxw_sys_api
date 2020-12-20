@@ -409,7 +409,7 @@ class OrderController extends Controller {
         'amount2': { 'value': `￥${order.total}` },
         'character_string3': { 'value': order.orderId },
         'time4': { 'value': moment(order.createTime).format('YYYY-MM-DD HH:mm:ss') },
-        'thing6': { 'value': '品质生活，优选果仙！' },
+        'thing6': { 'value': '品质生活，优选果仙网！' },
       },
       page: page,
     })

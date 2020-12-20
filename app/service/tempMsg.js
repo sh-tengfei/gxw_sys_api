@@ -18,10 +18,9 @@ class TempMsgService extends Service {
       page,
       tokenType,
     }).catch((e)=>{
-      console.log(e, 'consoleconsole')
       ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
     })
-    console.log(data, 'datadatadata')
+
     if (res.data && !res.data.errcode) {
       ctx.logger.error({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
@@ -29,7 +28,7 @@ class TempMsgService extends Service {
       this.sendmail({ 
         mailbox: '13739668118@163.com, sh_tengda@163.com', 
         subject: '模板消息发送失败', 
-        html: JSON.stringify(res.data, null, 4)
+        html: JSON.stringify(data, null, 4)
       })
     }
     return res.data
