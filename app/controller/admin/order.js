@@ -63,8 +63,8 @@ class OrderController extends Controller {
   async sendGoodsOrder() {
     const { ctx, app } = this
     const { service, params, request: req } = ctx
-    const { expressNo } = req.body
-    if (!expressNo) {
+    const { companyName, number, productIds } = req.body
+    if (!companyName || !number || !productIds) {
       ctx.body = { code: 201, msg: '参数错误' }
       return
     }
@@ -75,7 +75,13 @@ class OrderController extends Controller {
       return
     }
     order = await service.order.updateOne(params.id, {
-      $push: { expressNo: expressNo }
+      $push: { expressNo: 
+        [{
+          companyName,
+          number,
+          productIds,
+        }]
+      }
     })
     // 更新订单状态 //第二个更新物流不改状态 理论上不需要二次更新
     if (order.state === 2) {
