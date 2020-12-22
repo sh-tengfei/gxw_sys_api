@@ -20,6 +20,7 @@ export default function({ router, controller, jwt }) {
   router.put('/admin/reject/:id', controller.agent.rejectDrawMoney)
 
   router.get('/admin/order', jwt, controller.order.orderList)
+  router.delete('/admin/order/logistics/:id', jwt, controller.order.delLogistics)
 
   router.post('/admin/product', jwt, controller.product.createProduct)
   router.get('/admin/product', jwt, controller.product.getProducts)

@@ -93,6 +93,20 @@ class OrderController extends Controller {
       ctx.body = { code: 201, msg: '发货失败', data: ret }
     }
   }
+  async delLogistics() {
+    const { ctx, app } = this
+    const { service, params, request: { body } } = ctx
+    if (!params.id || Object.keys(body).length === 0) {
+      return ctx.body = { code: 200, msg: '参数错误！' }
+    }
+    let { expressNo } = await service.order.findOne({ orderId: params.id })
+    
+    let retList = expressNo.filter(i=>i.number !== body.numberId)
+    await service.order.updateOne(params.id, {
+      expressNo: retList
+    })
+    ctx.body = { code: 200, msg: '删除成功' }
+  }
 }
 
 module.exports = OrderController
