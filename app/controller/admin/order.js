@@ -87,11 +87,13 @@ class OrderController extends Controller {
     if (order.state === 2) {
       ret = await service.order.sendGoods([params.id])
     }
-    if (ret&& ret.length) {
+    
+    if (order) {
       ctx.body = { code: 200, msg: '发货成功', data: order }
-    } else {
-      ctx.body = { code: 201, msg: '发货失败', data: ret }
+      return
     }
+    
+    ctx.body = { code: 201, msg: '发货失败', data: ret }
   }
   async delLogistics() {
     const { ctx, app } = this
