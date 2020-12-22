@@ -63,8 +63,8 @@ class OrderController extends Controller {
   async sendGoodsOrder() {
     const { ctx, app } = this
     const { service, params, request: req } = ctx
-    const { companyName, number, productIds } = req.body
-    if (!companyName || !number || !productIds) {
+    const { companyName, number, products } = req.body
+    if (!companyName || !number || !products) {
       ctx.body = { code: 201, msg: '参数错误' }
       return
     }
@@ -79,7 +79,7 @@ class OrderController extends Controller {
         [{
           companyName,
           number,
-          productIds,
+          products,
         }]
       }
     })
@@ -87,7 +87,7 @@ class OrderController extends Controller {
     if (order.state === 2) {
       ret = await service.order.sendGoods([params.id])
     }
-    if (ret.length) {
+    if (ret&& ret.length) {
       ctx.body = { code: 200, msg: '发货成功', data: order }
     } else {
       ctx.body = { code: 201, msg: '发货失败', data: ret }

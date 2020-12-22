@@ -36,17 +36,6 @@ class OrderService extends Service {
       if (i.city) {
         i.cityAddress = await service.sellingCity.getCity({ cityCode: i.city })
       }
-      // 物流商品解析
-      let { expressNo, products } = i, productName = []
-      expressNo.forEach((e)=>{
-        products.forEach((p) => {
-          let ret = e.productIds.includes(p.productId)
-          if (ret) {
-            productName.push(p.name)
-          }
-        })
-      })
-      i.productName = productName
     }
 
     const total = await model.Order.find(query).countDocuments()
