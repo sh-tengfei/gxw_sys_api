@@ -9,7 +9,6 @@ if [ ! -d "$basepath" ]; then
   mkdir -p "$basepath"
 fi
 
-cd /data/backup/mongodb
-zip -r "$(date +%Y%m%d).zip" $now_mongodb
+zip -r "/data/backup/mongodb/$(date +%Y%m%d).zip" "./"
 
 find /data/backup/mongodb/ -mtime +30 -name "db*" -exec rm -rf {} \;
