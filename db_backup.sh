@@ -10,6 +10,6 @@ if [ ! -d "$basepath" ]; then
 fi
 
 cd /data/backup/mongodb
-zip -r "$(date +%Y%m%d).zip" "./"
+zip -D "$basepath/$(date +%Y%m%d).zip" "$now_mongodb/gxianwangDev"
 
 find /data/backup/mongodb/ -mtime +30 -name "db*" -exec rm -rf {} \;
