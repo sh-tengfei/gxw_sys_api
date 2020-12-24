@@ -13,6 +13,6 @@ allpath="$basepath/$(date +%Y%m%d).zip"
 
 rm -rf allpath
 
-zip -D allpath "$now_mongodb/gxianwangDev/*"
+zip -D -r allpath "$now_mongodb/gxianwangDev/*.gz"
 
 find /data/backup/mongodb/ -mtime +30 -name "db*" -exec rm -rf {} \;
