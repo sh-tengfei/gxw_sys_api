@@ -5,9 +5,9 @@
 var defaultConfig = require('./config.default')
 
 defaultConfig.mongoose = {
-  url: 'mongodb://127.0.0.1:9001/gxianwangProd',
+  url: 'mongodb://127.0.0.1:9001/guoxian',
   options: {
-    user: 'prod1',
+    user: 'guoxian',
     pass: '!Qing001401',
     config: { autoIndex: false },
     useNewUrlParser: true,
