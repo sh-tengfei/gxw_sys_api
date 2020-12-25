@@ -20,7 +20,7 @@ class AdminService extends Service {
   }
   async create(data) {
     const { ctx } = this
-    let newAdmin; const adminId = 'adminId'
+    let newAdmin; let adminId = 'adminId'
     let { id } = await ctx.service.counters.findAndUpdate(adminId)
     data.adminId = id
     try {
@@ -47,7 +47,7 @@ class AdminService extends Service {
     let env = this.app.config.env
     let onlinePwd = '!guoxianwang123'
     if (env !== 'prod') {
-      onlineId = '123456'
+      onlinePwd = '123456'
     }
     const users = await this.find()
     if (users.length === 0) {
