@@ -43,7 +43,7 @@
   },
   "scripts": {
     "dev": "egg-bin dev --env=local",
-    "dev:start": "egg-scripts start --daemon --env=dev --title=egg-gxw",
+    "dev:start": "egg-scripts start --daemon --env=local --title=egg-gxw",
     "dev:stop": "egg-scripts stop --title=egg-gxw",
 
     "test": "egg-bin dev --env=test",
