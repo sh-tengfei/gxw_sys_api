@@ -44,15 +44,20 @@ class AdminService extends Service {
   }
 
   async initialUser() {
+    let env = this.app.config.env
+    let onlinePwd = '!guoxianwang123'
+    if (env !== 'prod') {
+      onlineId = '123456'
+    }
     const users = await this.find()
     if (users.length === 0) {
       await this.create({
         username: 'root',
-        password: md5Pwd('123456')
+        password: md5Pwd(onlinePwd)
       })
       await this.create({
         username: 'admin',
-        password: md5Pwd('123456')
+        password: md5Pwd(onlinePwd)
       })
     }
   }
