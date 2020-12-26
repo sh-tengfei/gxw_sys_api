@@ -12,12 +12,14 @@ module.exports = {
         resolve(true)
       })
       file.on('error', function() {
-        resolve(false)
+        reject()
       })
       request({
         method: 'POST',
         url,
         body: JSON.stringify(data)
+      }).on('error', function(err) {
+        reject(err)
       }).pipe(file)
     })
   },

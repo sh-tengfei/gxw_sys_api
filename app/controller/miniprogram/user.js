@@ -210,20 +210,18 @@ class LoginController extends Controller {
       page: body.path,
       scene: `${body.productId},${body.extractId}`,
       width: 160,
-    }, localUrl)
+    }, localUrl).catch((e)=>{
+      ctx.body = { msg: '二维码获取失败！', code: 201, data: e }
+    })
 
-    if (ret === true) {
-      const fileUrl = await this.qiniu(localUrl, body.productId)
-      // 删除文件
-      fs.unlinkSync(localUrl)
-      if (fileUrl) {
-        ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
-        return
-      } else {
-        ctx.body = { msg: '上传失败！', code: 201 }
-      }
+    const fileUrl = await this.qiniu(localUrl, body.productId)
+    // 删除文件
+    fs.unlinkSync(localUrl)
+    if (fileUrl) {
+      ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
+      return
     } else {
-      ctx.body = { msg: '获取失败！', code: 201 }
+      ctx.body = { msg: '上传失败！', code: 201 }
     }
   }
 
