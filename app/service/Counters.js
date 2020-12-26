@@ -13,12 +13,17 @@ class CountersService extends Service {
     return counter
   }
   async findAndUpdate(type) {
-    const { ctx } = this
+    const { ctx, app } = this
     const counter = await ctx.model.Counters.findOne({})
     if (type !== undefined && counter[type]) {
       await ctx.model.Counters.updateOne({ _id: counter._id },{ [type]: (+counter[type]) + 1 })
       let index = counter[type]
-      return { index, id: moment().format('YYYYMMDD').replace('-', '') + index }
+      let env = this.app.config.env
+      let onlineId = 'GXWP'
+      if (env !== 'prod') {
+        onlineId = 'DEV'
+      }
+      return { index, id: onlineId + (moment().format('YYYYMMDD').replace('-', '')) + index }
     }
     return null
   }
