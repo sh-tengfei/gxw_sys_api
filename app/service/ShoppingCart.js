@@ -30,6 +30,12 @@ class ShoppingCartService extends Service {
         msg: '商品无库存！',
       }
     }
+    if (product.state === 3) {
+      return {
+        code: 201,
+        msg: '商品已下架！',
+      }
+    }
     // 不存在购物车数据
     if (cart === null) {
       try {
@@ -115,6 +121,12 @@ class ShoppingCartService extends Service {
     let cart = await this.findOne(data.userId)
     const inProduct = this.getProductId(cart, data.productId)
     const product = await ctx.service.product.findOne({ productId: data.productId })
+    if (product.state === 3) {
+      return {
+        code: 201,
+        msg: '商品已下架！',
+      }
+    }
     if (!product.stockNumber) {
       return {
         code: 201,

@@ -6,15 +6,16 @@ class ProductController extends Controller {
     const { ctx, app } = this
     const { service, query } = ctx
     const opt = {
-      'salesTerritory.id': query.city
+      'salesTerritory.id': query.city,
     }
     if (!query.city) {
       ctx.body = { code: 201, msg: '参数错误', data: query }
       return
     }
     if (query.name) {
-      opt.name = { $regex: query.name }
+      opt.name = query.name
     }
+
     if (query.productType) {
       opt.productType = query.productType
     }

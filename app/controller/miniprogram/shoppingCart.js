@@ -50,18 +50,30 @@ class ShoppingCartController extends Controller {
   }
   async increaseCard() {
     const { ctx, app } = this
-    const { service, state, request: req } = ctx
+    const { service, state, request: { body } } = ctx
     const { userId } = state.user
 
-    if (!req.body.productId) {
-      ctx.body = { code: 201, msg: '参数不正确', data: req.body }
+    if (!body.productId) {
+      ctx.body = { code: 201, msg: '参数不正确', data: body }
+      return
+    }
+
+    const pro = await service.product.findOne({ productId: body.productId })
+    if (pro.state !== 2) {
+      ctx.body = { code: 201, msg: '商品已下架！', data: body }
+      return
+    }
+
+    const stock = await service.stocks.findOne({ productId: body.productId })
+    if (stock === null || stock.stockNumber === 0) {
+      ctx.body = { code: 201, msg: '商品没有库存！' }
       return
     }
 
     const { code, msg, cart } = await service.shoppingCart.increase({
       userId,
-      productId: req.body.productId,
-      buyNum: req.body.buyNum,
+      productId: body.productId,
+      buyNum: body.buyNum,
     })
 
     if (code !== 200) {

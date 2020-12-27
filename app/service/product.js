@@ -17,11 +17,19 @@ class ProductService extends Service {
     if (query.name) {
       query.name = new RegExp(query.name, 'i')
     }
+    const $or = Object.assign({}, query)
+    delete $or['salesTerritory.id']
+    $or.productType = 101
 
     delete query.limit
     delete query.skip
 
-    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
+    const opt = {
+      $or: [query, $or]
+    }
+ 
+    const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
+
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')

@@ -14,11 +14,11 @@ class IndexController extends Controller {
       'state': 2,
     }
 
-    // 产地直供
-    const directQuery = {
-      'sellerOfType.code': 101,
-      'state': 2,
-    }
+    // // 产地直供
+    // const directQuery = {
+    //   'sellerOfType.code': 101,
+    //   'state': 2,
+    // }
 
     const sliderQuery = {
       'state': 2,
@@ -34,13 +34,13 @@ class IndexController extends Controller {
     localQuery['salesTerritory.id'] = query.cityCode
 
 
-    const { directPage = 1, directLimit = 10 } = query
-    const directOption = {
-      limit: directLimit,
-      skip: (directPage - 1) * directLimit
-    }
+    // const { directPage = 1, directLimit = 10 } = query
+    // const directOption = {
+    //   limit: directLimit,
+    //   skip: (directPage - 1) * directLimit
+    // }
 
-    const direct = await service.product.find(directQuery, directOption)
+    // const direct = await service.product.find(directQuery, directOption)
 
     const localHot = await service.product.find(localQuery, {
       limit: 10,
@@ -55,9 +55,9 @@ class IndexController extends Controller {
     const slider = await service.slider.find(sliderQuery)
 
     // 产地直供
-    direct.list.sort((a, b) => {
-      return b.weight - a.weight
-    })
+    // direct.list.sort((a, b) => {
+    //   return b.weight - a.weight
+    // })
 
     // 轮播图权重排序
     slider.list.sort((a, b) => {

@@ -113,11 +113,19 @@ class OrderController extends Controller {
     const { areaId } = await service.agent.findOne({ extractId: extractId })
 
     let isogeny = true
+    let isDelete = false
     for (const { productId } of products) {
-      const { salesTerritory, sellerOfType } = await service.product.findOne({ productId })
+      const { salesTerritory, sellerOfType, state } = await service.product.findOne({ productId })
       if (sellerOfType.code !== 101 && salesTerritory.id !== areaId) {
         isogeny = false
       }
+      if (state !== 2) {
+        isDelete = true
+      }
+    }
+    if (isDelete) {
+      ctx.body = { code: 201, msg: '存在下架商品，请删除下架商品！' }
+      return
     }
     if (!isogeny) {
       ctx.body = { code: 201, msg: '下单失败，提货点商品非同一城市！' }

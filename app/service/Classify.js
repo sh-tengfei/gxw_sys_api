@@ -14,7 +14,7 @@ class ClassifyService extends Service {
     for (const i of list) {
       const retList = []
       for (const productId of i.classifyProducts) {
-        const ret = await ctx.service.product.findOne({ productId })
+        const ret = await ctx.service.product.findOne({ productId, state: 2 })
         ret && retList.push(ret)
       }
 
