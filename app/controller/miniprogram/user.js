@@ -49,7 +49,12 @@ class LoginController extends Controller {
     
     try {
       // 微信审核机器人
-      // if (userInfo.openid === userInfo.unionid) {
+      if (!userInfo.unionid) {
+        console.log('/n 微信审核机器人 /n')
+      }
+      if (userInfo.openid === userInfo.unionid) {
+        console.log('/n 微信审核机器人1 /n')
+      }
       //   let userd = await service.user.findOne({ userId: '202012171110' })
       //   ctx.body = {
       //     code: 200,
@@ -241,9 +246,9 @@ class LoginController extends Controller {
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
 
-    if (!userInfo.unionid) {
-      userInfo.unionid = userInfo.openid
-    }
+    // if (!userInfo.unionid) {
+    //   userInfo.unionid = userInfo.openid
+    // }
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
       ctx.logger.info({ msg: '登录用户！', data: agent.extractId })
