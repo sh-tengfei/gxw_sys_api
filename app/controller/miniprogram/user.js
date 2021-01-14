@@ -50,7 +50,7 @@ class LoginController extends Controller {
     try {
       // 微信审核机器人
       if (!userInfo.unionid) {
-        console.log('/n 微信审核机器人 /n')
+        console.log('/n 微信审核机器人 /n', userInfo)
       }
       if (userInfo.openid === userInfo.unionid) {
         console.log('/n 微信审核机器人1 /n')
