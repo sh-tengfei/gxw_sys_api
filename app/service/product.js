@@ -24,10 +24,14 @@ class ProductService extends Service {
     delete query.limit
     delete query.skip
 
-    const opt = {
-      $or: [query, $or]
+    let opt = {}
+
+    if (query.range === 'all') {
+      opt['$or'] = [query, $or]
+    } else {
+      opt = query
     }
- 
+
     const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
