@@ -10,7 +10,9 @@ const formMail = {
 class TempMsgService extends Service {
   async sendWxMsg({ openid, template_id, data, page, tokenType }) {
     const { app, ctx } = this
-    data.thing1.value = data.thing1.value.replace(/\s/gi, '')
+    if (data.thing1) {
+      data.thing1.value = data.thing1.value.replace(/\s/gi, '')
+    }
     if (data.thing2) {
       data.thing2.value = data.thing2.value.replace(/\s/gi, '')
     }
