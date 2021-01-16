@@ -21,6 +21,7 @@ class AgentController extends Controller {
     if (query.city) {
       opt.areaId = query.city
     }
+
     const { list, total } = await ctx.service.agent.find(opt, option)
     ctx.body = { code: 200, msg: '', data: { list, total }}
   }

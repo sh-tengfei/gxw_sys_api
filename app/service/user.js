@@ -40,7 +40,7 @@ class UserService extends Service {
 
     if (user && user.unionid) {
       const agent = await service.agent.findOne({ unionid: user.unionid })
-      if (agent) {
+      if (agent && agent.state === 2) {
         user.isAgent = true
         user.extractId = agent.extractId
         user.extractIndex = agent.extractIndex

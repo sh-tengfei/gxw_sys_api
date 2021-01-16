@@ -20,7 +20,7 @@ class AdminController extends Controller {
     const { service, model } = ctx
     const { total: orderTotal } = await service.order.find({ state: -1 })
     const { total: productTotal } = await service.product.find({ state: -1 })
-    const { total: userTotal } = await service.user.find({ state: -1 })
+    const { total: userTotal } = await service.user.find({})
     const quota = await model.Order.aggregate([
       {
         $group: {
@@ -31,12 +31,13 @@ class AdminController extends Controller {
         }
       }
     ])
+
     const quotaAmount = quota.shift()
     ctx.body = { code: 200, msg: '', data: {
       user: userTotal,
       product: productTotal,
       order: orderTotal,
-      quota: quotaAmount && quotaAmount.amount || 0,
+      quota: Number((quotaAmount && quotaAmount.amount || 0).toFixed(2)),
     }}
   }
   async getQnToken() {
