@@ -8,7 +8,7 @@ module.exports = app => {
     productName: { type: String, unique: true },
     stockNumber: { type: Number, required: true },
     salesTerritory: { type: Object, required: true },
-    stockId: { type: Number, required: true, unique: true },
+    stockId: { type: String, required: true, unique: true },
     stockHistory: [
       { type: Number }
     ]
