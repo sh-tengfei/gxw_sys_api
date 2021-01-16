@@ -12,7 +12,7 @@ class ClassifyService extends Service {
     const list = await ctx.model.Classify.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     for (const i of list) {
-      const retList = []
+      let retList = []
       for (const productId of i.classifyProducts) {
         const ret = await ctx.service.product.findOne({ productId, state: 2 })
         ret && retList.push(ret)
