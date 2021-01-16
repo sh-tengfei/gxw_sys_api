@@ -17,6 +17,9 @@ class ClassifyService extends Service {
         const ret = await ctx.service.product.findOne({ productId, state: 2 })
         ret && retList.push(ret)
       }
+      retList = retList.sort((a, b) => {
+        return b.weight - a.weight
+      })
 
       i.classifyProducts = retList
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')

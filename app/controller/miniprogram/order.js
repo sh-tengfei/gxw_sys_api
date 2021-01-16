@@ -84,7 +84,7 @@ class OrderController extends Controller {
     ctx.body = { code: 200, msg: '获取成功', data: {
       list,
       total,
-      page,
+      page: +page,
       limit
     }}
   }
