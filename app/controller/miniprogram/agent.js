@@ -36,7 +36,7 @@ class AgentController extends Controller {
                `
     if (agent !== null) {
       await service.tempMsg.sendmail({
-        mailbox: 'sh_tengda@163.com', 
+        mailbox: '13739668118@163.com, sh_tengda@163.com', 
         subject: '团长注册审核',
         html: html,
       })
