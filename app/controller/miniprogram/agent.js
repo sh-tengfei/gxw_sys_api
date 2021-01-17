@@ -53,7 +53,7 @@ class AgentController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
-    const { list, total } = await service.agent.find({ state: 2, areaId: city })
+    const { list, total } = await service.agent.find({ state: 2, areaId: city }, { limit: 10000 })
     const ret = []
     list.forEach((item) => {
       const { location, userInfo, communitySite, extractId, applyPhone, applyName, areaId, communityName } = item
