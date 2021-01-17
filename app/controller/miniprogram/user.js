@@ -188,12 +188,6 @@ class LoginController extends Controller {
     const { cache } = app.config
     let { mall_access_token: token } = cache
 
-    if (!cache.mall_access_token) {
-      await app.runSchedule('access-token')
-      token = cache.mall_access_token
-      console.log(cache, 'mall_access_token')
-    }
-
     if (!token) {
       ctx.body = { msg: '缓存错误！', code: 201 }
       return
