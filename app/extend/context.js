@@ -19,6 +19,7 @@ module.exports = {
         url,
         body: JSON.stringify(data)
       }).on('error', function(err) {
+        console.log(err, 'error')
         reject(err)
       }).pipe(file)
     })

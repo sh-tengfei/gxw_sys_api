@@ -50,23 +50,17 @@ class LoginController extends Controller {
     try {
       // 微信审核机器人
       if (!userInfo.unionid) {
-        console.log('/n 微信审核机器人 /n', userInfo)
+        let userd = await service.user.findOne({ userIndex: 1001 })
+        ctx.body = {
+          code: 200,
+          msg: '登陆成功！',
+          data: { token: this.createUserToken(userd), user: userd, weAppTemp },
+          session_key: userInfo.session_key
+        }
+        return
       }
-      if (userInfo.openid === userInfo.unionid) {
-        console.log('/n 微信审核机器人1 /n')
-      }
-      //   let userd = await service.user.findOne({ userId: '202012171110' })
-      //   ctx.body = {
-      //     code: 200,
-      //     msg: '登陆成功！',
-      //     data: { token: this.createUserToken(userd), user, weAppTemp },
-      //     session_key: userInfo.session_key
-      //   }
-      //   return
-      // }
 
       // 不存在 创建
-      
       user = await service.user.create({
         ...userInfo
       })
