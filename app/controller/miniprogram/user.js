@@ -201,7 +201,7 @@ class LoginController extends Controller {
 
     const ret = await ctx.postWxQrcode(url, {
       page: body.path,
-      scene: `${body.productId},${body.extractId}`,
+      scene: `${body.productId},${body.extractId || ''}`,
       width: 160,
     }, localUrl).catch((e)=>{
       ctx.body = { msg: '二维码获取失败！', code: 201, data: e }
