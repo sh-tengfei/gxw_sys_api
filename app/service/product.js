@@ -28,6 +28,7 @@ class ProductService extends Service {
 
     if (query.range === 'all') {
       delete $or.city
+      delete $or.range
       opt['$or'] = [query, $or]
     } else {
       opt = query
