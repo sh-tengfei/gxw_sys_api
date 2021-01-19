@@ -33,6 +33,8 @@ class ProductService extends Service {
       opt = query
     }
 
+    delete query.range
+
     const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
