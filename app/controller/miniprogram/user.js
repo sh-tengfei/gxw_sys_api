@@ -190,6 +190,7 @@ class LoginController extends Controller {
     let { mall_access_token: token } = cache
 
     if (!token) {
+      console.log(token, '不存在')
       ctx.body = { msg: '缓存错误！', code: 201 }
       return
     }

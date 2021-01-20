@@ -8,6 +8,7 @@ module.exports = {
   postWxQrcode(url, data, localUrl) {
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(localUrl)
+      console.log(url, data, localUrl, '二维码')
       file.on('finish', function(e) {
         resolve(true)
       })
