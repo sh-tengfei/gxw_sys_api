@@ -89,8 +89,9 @@ class LoginController extends Controller {
   }
   // 创建User token { userId }
   createUserToken({ userId }) {
+    const isProd = this.app.config.env === 'prod'
     const token = this.app.jwt.sign({ userId }, this.app.config.jwt.secret, {
-      expiresIn: '1d',
+      expiresIn: isProd ? '7d': '1d',
     }) // 生成token
     return token
   }
@@ -306,10 +307,11 @@ class LoginController extends Controller {
   }
   // 创建Agent token { extractId }
   createAgentToken({ extractId }) {
+    const isProd = this.app.config.env === 'prod'
     const token = this.app.jwt.sign({
       userId: extractId
     }, this.app.config.jwt.secret, {
-      expiresIn: '1d',
+      expiresIn: isProd ? '7d' : '1d',
     }) // 生成token
     return token
   }
