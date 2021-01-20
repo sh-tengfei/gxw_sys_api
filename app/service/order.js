@@ -119,7 +119,7 @@ class OrderService extends Service {
       extractId,
       addressId,
       orderType,
-      orderId: `WXD${(Math.random() * 10000).toFixed(0)}${orderId}`,
+      orderId: `${orderId}${(Math.random() * 1000).toFixed(0)}`,
       parentId,
       userId,
       reward,
