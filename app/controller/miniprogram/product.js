@@ -28,7 +28,13 @@ class ProductController extends Controller {
       opt.range = query.range
     }
 
-    const { list, total } = await service.product.find(opt)
+    const { page = 1, limit = 10 } = query
+    const option = {
+      limit: limit || 10,
+      skip: (page - 1) * limit
+    }
+
+    const { list, total } = await service.product.find(opt, option)
     ctx.body = { code: 200, msg: '', data: { list, total }}
   }
   async getProduct() {
