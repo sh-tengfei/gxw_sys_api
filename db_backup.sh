@@ -2,7 +2,7 @@
 
 now_mongodb="/data/backup/now_mongodb"
 
-mongodump --port 9001 -u "devAdmin" -p "!Qing001401" --gzip --authenticationDatabase "gxianwangDev" --db "gxianwangDev" -o $now_mongodb
+mongodump --port 9001 -u "backup" -p "!Qing001401" --gzip --authenticationDatabase "admin" --db "guoxianDevelop" -o $now_mongodb
 
 basepath="/data/backup/mongodb"
 if [ ! -d "$basepath" ]; then
@@ -11,6 +11,6 @@ fi
 
 cd /data/backup/now_mongodb
 
-zip -r "$basepath/$(date +%Y%m%d).zip" gxianwangDev
+zip -r "$basepath/$(date +%Y%m%d).zip" guoxianDevelop
 
 find /data/backup/mongodb/ -mtime +30 -name "db*" -exec rm -rf {} \;
