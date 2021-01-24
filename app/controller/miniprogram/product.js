@@ -20,7 +20,7 @@ class ProductController extends Controller {
       opt.productType = query.productType
     }
 
-    if (+query.productType === 100 || +query.productType === 101) {
+    if (+query.productType === 101) {
       delete opt['salesTerritory.id']
     }
 
