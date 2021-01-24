@@ -20,9 +20,8 @@ class ProductController extends Controller {
       opt.productType = query.productType
     }
 
-    if (+query.productType === 101) {
-      delete opt.productType
-      query['sellerOfType.code'] = query.productType
+    if (+query.productType === 100 || +query.productType === 101) {
+      delete opt['salesTerritory.id']
     }
 
     if (query.range) {
