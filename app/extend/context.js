@@ -20,7 +20,7 @@ module.exports = {
         url,
         body: JSON.stringify(data)
       }).on('error', function(err) {
-        console.log(err, 'error')
+        console.log(err, '错误')
         reject(err)
       }).pipe(file)
     })
