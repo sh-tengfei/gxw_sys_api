@@ -12,6 +12,7 @@ module.exports = app => {
         label: { type: String, required: true },
         id: { type: Number, required: true },
         iconSrc: { type: String, required: true },
+        desc: { type: String, default: '' },
       }
     ],
     shareTitle: {
