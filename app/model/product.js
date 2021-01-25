@@ -31,7 +31,7 @@ module.exports = app => {
     feature: { type: String, required: true },
     shareTitle: { type: String, required: true }, // 分享标题
     cover: { type: String, required: true }, // 缩略图
-    desc: { type: String, required: true, maxLength: 150, minLength: 10 }, // 简介
+    desc: { type: String, required: true, maxLength: 150 }, // 简介
     address: { type: String, required: true }, // 商品产地
     imageDetail: [
       {
