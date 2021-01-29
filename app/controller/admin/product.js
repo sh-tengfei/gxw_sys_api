@@ -43,7 +43,7 @@ class ProductController extends Controller {
         }
       }
     })
-    ctx.body = { code: 200, msg: '', data: newList, total: newList.length }
+    ctx.body = { code: 200, msg: '', data: newList, total }
   }
 
   async getProduct() {
