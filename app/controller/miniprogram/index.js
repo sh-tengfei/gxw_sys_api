@@ -69,6 +69,7 @@ class IndexController extends Controller {
     const { ctx } = this
     const { service, query } = ctx
     const { cityCode, limit = 10, page = 1 } = query
+
     // 存在地址代码
     if (!cityCode) {
       ctx.body = { code: 201, msg: '参数错误', data: query }
@@ -77,6 +78,7 @@ class IndexController extends Controller {
 
     // 本地产品
     const localQuery = {
+      'sellerOfType.code': 100,
       'state': 2,
       'salesTerritory.id': query.cityCode
     }
@@ -85,7 +87,7 @@ class IndexController extends Controller {
       limit: limit,
       skip: (page - 1) * limit
     }
-    console.log(localQuery, option)
+
     const { list, total } = await service.product.find(localQuery, option)
     ctx.body = { code: 200, msg: '获取成功！', data: list, total }
   }
