@@ -1,6 +1,19 @@
 #!/bin/bash
 
 echo $1
+echo $2
+# 参数$1是解压的带日期文件夹 $2应该是要恢复的数据库名称
+# 恢复数据库要情况
+
+mongodb='mongo 127.0.0.1:9001'
+$mongodb <<EOF
+use admin
+db.auth('root', '!Qing001401')
+use $2
+db.dropDatabase()
+exit;
+EOF
+
 
 path=~/data/mongodb
 
