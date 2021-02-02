@@ -34,6 +34,10 @@ class ProductService extends Service {
       opt = query
     }
 
+    if (query['sellerOfType.code'] && query['sellerOfType.code'] !== 101) {
+      opt = query
+    }
+    
     delete query.range
 
     const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
