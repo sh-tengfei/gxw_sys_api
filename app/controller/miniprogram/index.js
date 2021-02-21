@@ -65,6 +65,32 @@ class IndexController extends Controller {
       }
     }
   }
+  async getHotList() {
+    const { ctx } = this
+    const { service, query } = ctx
+    const { cityCode, limit = 10, page = 1 } = query
+
+    // 存在地址代码
+    if (!cityCode) {
+      ctx.body = { code: 201, msg: '参数错误', data: query }
+      return
+    }
+
+    // 本地产品
+    const localQuery = {
+      'sellerOfType.code': 100,
+      'state': 2,
+      'salesTerritory.id': query.cityCode
+    }
+
+    const option = {
+      limit: limit,
+      skip: (page - 1) * limit
+    }
+
+    const { list, total } = await service.product.find(localQuery, option)
+    ctx.body = { code: 200, msg: '获取成功！', data: list, total }
+  }
   // 果仙网团长端接口
   async getIndexSales() {
     const { ctx, app } = this
