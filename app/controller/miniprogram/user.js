@@ -48,18 +48,6 @@ class LoginController extends Controller {
     }
     
     try {
-      // 微信审核机器人
-      if (!userInfo.unionid) {
-        let userd = await service.user.findOne({ userIndex: 1001 })
-        ctx.body = {
-          code: 200,
-          msg: '登陆成功！',
-          data: { token: this.createUserToken(userd), user: userd, weAppTemp },
-          session_key: userInfo.session_key
-        }
-        return
-      }
-
       // 不存在 创建
       user = await service.user.create({
         ...userInfo
@@ -236,9 +224,6 @@ class LoginController extends Controller {
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
 
-    // if (!userInfo.unionid) {
-    //   userInfo.unionid = userInfo.openid
-    // }
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
       ctx.logger.info({ msg: '登录用户！', data: agent.extractId })
@@ -253,21 +238,7 @@ class LoginController extends Controller {
     }
     // 不存在团长 创建
     try {
-       // openid === unionid是微信审核机器人
-      if (userInfo.openid === userInfo.unionid) {
-        ctx.logger.info({ msg: '读取固定用户', userInfo })
-        let agent = await ctx.service.agent.findOne({ extractId: '202012111001' })
-        let token = this.createAgentToken(agent)
-        ctx.body = {
-          code: 200,
-          msg: '登陆成功！',
-          data: { token, agent, weAppTemp, contact },
-          session_key: userInfo.session_key
-        }
-        return
-      }
-      
-      ctx.logger.info({ msg: '创建用户', userInfo })
+      ctx.logger.info({ msg: '创建团长 用户', userInfo })
       agent = await ctx.service.agent.create({
         userInfo: other,
         openid: userInfo.openid,

@@ -21,7 +21,9 @@ config.mongoose = {
     useFindAndModify: false,
   }
 }
-
+config.wxPayment = {
+  wxurl: 'https://test.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
+}
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
