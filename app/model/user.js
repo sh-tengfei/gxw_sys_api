@@ -13,7 +13,7 @@ module.exports = app => {
     userIndex: { type: Number, required: true },
     levelText: { type: String, default: '普通会员' },
     phone: { type: String, default: '' },
-    unionid: { type: String, required: true, unique: true },
+    unionid: { type: String, unique: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },
     buyTotal: { type: String, default: '0' },
