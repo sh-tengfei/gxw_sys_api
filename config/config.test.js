@@ -2,9 +2,15 @@
 
 'use strict'
 
-var defaultConfig = require('./config.default')
+const config = {}
+config.cluster = {
+  listen: {
+    port: 8101,
+    hostname: '127.0.0.1',
+  }
+}
 
-defaultConfig.mongoose = {
+config.mongoose = {
   url: 'mongodb://127.0.0.1:9001/guoxianTest',
   options: {
     user: 'guoxian_test',
@@ -24,7 +30,7 @@ module.exports = appInfo => {
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  exports = defaultConfig
+  exports = config
 
-  return defaultConfig
+  return config
 }
