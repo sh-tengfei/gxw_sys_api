@@ -18,6 +18,7 @@ module.exports = appInfo => {
     onerror: {
       all(err, ctx) {
         if (err.status === 401) {
+          console.log(err)
           ctx.body = JSON.stringify({ code: 401, msg: '用户未登录或则已过期！' })
           ctx.status = 401
           return
@@ -40,13 +41,13 @@ module.exports = appInfo => {
 
   config.cluster = {
     listen: {
-      port: 8102,
+      port: 8100,
       hostname: '127.0.0.1',
     }
   }
 
   config.mongoose = {
-    url: 'mongodb://127.0.0.1:9001/guoxian', // mongodb://127.0.0.1:9001/guoxianDevelop
+    url: 'mongodb://127.0.0.1:9001/guoxianDevelop', //
     options: {
       user: 'guoxian_dev',
       pass: '!Qing001401',
