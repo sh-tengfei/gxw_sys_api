@@ -22,10 +22,11 @@ class AdminController extends Controller {
       ctx.body = { code: 201, msg: '密码不正确' }
     } else {
       const isProd = app.config.env === 'prod'
-      console.log(isProd)
+      console.log(isProd, 'isProd')
       token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
         expiresIn: '1d',
       })
+      console.log(token, 'token')
     }
 
     ctx.body = { code: 200, msg: '登陆成功', data: { token }}
