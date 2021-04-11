@@ -46,7 +46,7 @@ class LoginController extends Controller {
       }
       return
     }
-    
+
     try {
       // 不存在 创建
       user = await service.user.create({
@@ -79,7 +79,7 @@ class LoginController extends Controller {
   createUserToken({ userId }) {
     const isProd = this.app.config.env === 'prod'
     const token = this.app.jwt.sign({ userId }, this.app.config.jwt.secret, {
-      expiresIn: isProd ? '7d': '1d',
+      expiresIn: isProd ? '7d' : '1d',
     }) // 生成token
     return token
   }
@@ -345,10 +345,10 @@ class LoginController extends Controller {
     const user = await service.user.updateOne(userId, {
       historyExtract: [...newHistory]
     })
-    
+
     const agent = await service.agent.findOne({ extractId })
     const card = await service.shoppingCart.filterCard(userId, agent.areaId)
-    
+
     if (user) {
       ctx.body = { msg: '修改成功', code: 200, data: user }
     } else {
