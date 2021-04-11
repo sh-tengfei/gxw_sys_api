@@ -46,7 +46,7 @@ module.exports = appInfo => {
   }
 
   config.mongoose = {
-    url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
+    url: 'mongodb://127.0.0.1:9001/guoxian', // mongodb://127.0.0.1:9001/guoxianDevelop
     options: {
       user: 'guoxian_dev',
       pass: '!Qing001401',
