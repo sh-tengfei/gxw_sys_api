@@ -9,7 +9,7 @@ if [ ! -d "$basepath" ]; then
   mkdir -p "$basepath"
 fi
 
-cd /data/backup/now_mongodb
+cd /data/backup/now_dev_mongodb
 
 zip -r "$basepath/$(date +%Y%m%d).zip" guoxianDevelop
 
