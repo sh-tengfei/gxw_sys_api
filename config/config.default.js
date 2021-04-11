@@ -18,7 +18,6 @@ module.exports = appInfo => {
     onerror: {
       all(err, ctx) {
         if (err.status === 401) {
-          console.log(err)
           ctx.body = { code: 401, msg: '用户未登录或则已过期！' }
           ctx.status = 401
           return

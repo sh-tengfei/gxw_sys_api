@@ -19,22 +19,14 @@ class AdminController extends Controller {
 
     let token = null
     if (md5Pwd(password) !== admin.password) {
-      console.log(md5Pwd(password), admin.password, 'admin')
       ctx.body = { code: 201, msg: '密码不正确' }
-      return
     } else {
-      try {
-        const isProd = app.config.env === 'prod'
-        console.log(isProd, 'isProd')
-        token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
-          expiresIn: '1d',
-        })
-      } catch (error) {
-        console.log(error, 'error')
-      }
+      const isProd = app.config.env === 'prod'
+      token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
+        expiresIn: '1d',
+      })
+      ctx.body = { code: 200, msg: '登陆成功', data: { token }}
     }
-
-    ctx.body = { code: 200, msg: '登陆成功', data: { token }}
   }
 
   async logout() {
