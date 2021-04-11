@@ -12,7 +12,7 @@ class AdminController extends Controller {
     const { ctx, app } = this
     const { username, password } = ctx.request.body
     const admin = await ctx.service.admin.findOne({ username })
-    console.log(admin)
+    console.log(admin, 'admin')
     if (admin === null) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return
@@ -20,6 +20,7 @@ class AdminController extends Controller {
 
     let token = null
     if (md5Pwd(password) !== admin.password) {
+      console.log(password, 'admin')
       ctx.body = { code: 201, msg: '密码不正确' }
     } else {
       const isProd = app.config.env === 'prod'
