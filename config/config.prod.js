@@ -6,7 +6,7 @@ var defaultConfig = require('./config.default')
 
 defaultConfig.cluster = {
   listen: {
-    port: 8102,
+    port: 8100,
     hostname: '127.0.0.1',
   }
 }
