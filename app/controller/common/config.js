@@ -19,16 +19,21 @@ class ConfigController extends Controller {
     const { service } = ctx
     const config = await service.config.getConfig()
 
-    ctx.body = { code: 200, msg: '', data: config['shareTitle']}
+    ctx.body = { code: 200, msg: '', data: config['shareTitle'] }
   }
   async setShareTitle() {
     const { ctx } = this
-    const { service, query, request: { body } } = ctx
+    const { service, query, request: { body }} = ctx
     if (Object.keys(body).length === 0) {
       ctx.body = { code: 201, msg: '配置不正确' }
       return
     }
-
+    if (!body.mallTitle) {
+      body.mallTitle = ''
+    }
+    if (!body.agentTitle) {
+      body.agentTitle = ''
+    }
     const newConfig = await service.config.update({ key: 'shareTitle', value: body })
     ctx.body = { code: 200, msg: '', data: newConfig.shareTitle }
   }
