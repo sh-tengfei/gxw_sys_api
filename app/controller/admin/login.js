@@ -12,6 +12,7 @@ class AdminController extends Controller {
     const { ctx, app } = this
     const { username, password } = ctx.request.body
     const admin = await ctx.service.admin.findOne({ username })
+    console.log(admin)
     if (admin === null) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return
