@@ -4,14 +4,14 @@
 
 var defaultConfig = require('./config.default')
 
-config.cluster = {
+defaultConfig.cluster = {
   listen: {
     port: 8102,
     hostname: '127.0.0.1',
   }
 }
 
-config.session = {
+defaultConfig.session = {
   key: 'gxw', // 设置 Session cookies 里面的 key
   maxAge: 24 * 3600 * 1000 * 7, // 1 天
   httpOnly: true,
