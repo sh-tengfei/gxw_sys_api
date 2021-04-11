@@ -4,6 +4,10 @@
 
 var defaultConfig = require('./config.default')
 
+defaultConfig.jwt = {
+  secret: 'guoxianwang',
+}
+
 defaultConfig.cluster = {
   listen: {
     port: 8102,

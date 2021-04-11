@@ -19,7 +19,7 @@ class AdminController extends Controller {
     }
 
     let token = null
-    onsole.log(password)
+    console.log(password)
     if (md5Pwd(password) !== admin.password) {
       ctx.body = { code: 201, msg: '密码不正确' }
     } else {
