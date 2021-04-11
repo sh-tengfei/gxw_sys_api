@@ -12,7 +12,6 @@ class AdminController extends Controller {
     const { ctx, app } = this
     const { username, password } = ctx.request.body
     const admin = await ctx.service.admin.findOne({ username })
-    console.log(admin, 'admin')
     if (admin === null) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return
@@ -20,15 +19,19 @@ class AdminController extends Controller {
 
     let token = null
     if (md5Pwd(password) !== admin.password) {
-      console.log(password, 'admin')
+      console.log(md5Pwd(password), admin.password, 'admin')
       ctx.body = { code: 201, msg: '密码不正确' }
+      return
     } else {
-      const isProd = app.config.env === 'prod'
-      console.log(isProd, 'isProd')
-      token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
-        expiresIn: '1d',
-      })
-      console.log(token, 'token')
+      try {
+        const isProd = app.config.env === 'prod'
+        console.log(isProd, 'isProd')
+        token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
+          expiresIn: '1d',
+        })
+      } catch (error) {
+        console.log(error, 'error')
+      }
     }
 
     ctx.body = { code: 200, msg: '登陆成功', data: { token }}
