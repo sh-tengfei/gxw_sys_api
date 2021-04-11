@@ -28,12 +28,6 @@ class ConfigController extends Controller {
       ctx.body = { code: 201, msg: '配置不正确' }
       return
     }
-    if (!body.mallTitle) {
-      body.mallTitle = ''
-    }
-    if (!body.agentTitle) {
-      body.agentTitle = ''
-    }
     const newConfig = await service.config.update({ key: 'shareTitle', value: body })
     ctx.body = { code: 200, msg: '', data: newConfig.shareTitle }
   }

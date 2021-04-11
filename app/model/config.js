@@ -16,8 +16,8 @@ module.exports = app => {
       }
     ],
     shareTitle: {
-      mallTitle: { type: String, required: true },
-      agentTitle: { type: String, required: true },
+      mallTitle: { type: String },
+      agentTitle: { type: String },
       mallIndexShareImage: { type: String },
       groupIndexShareImage: { type: String },
     },
