@@ -47,6 +47,8 @@ class ProductController extends Controller {
     const query = {
       productId: params.id,
     }
+
+    try{
     const pro = await service.product.findOne(query)
     // 如果商品存在 得到买该商品的用户
     if (pro) {
@@ -63,6 +65,10 @@ class ProductController extends Controller {
       pro.used = [...usedUser]
     } else {
       ctx.body = { code: 201, msg: '商品不存在', data: pro }
+      return
+    }
+    }catch(e) {
+      ctx.body = { code: 200, msg: '', data: null }
       return
     }
 

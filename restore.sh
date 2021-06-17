@@ -14,15 +14,15 @@ if [ ! "$2" ]; then
   exit;
 fi
 
-mongodb='mongo 127.0.0.1:9001'
-$mongodb <<EOF
+# mongodb='mongo 127.0.0.1:9001'
+# $mongodb <<EOF
 
-use admin
-db.auth('root', '!Qing001401')
-use $2
-db.dropDatabase()
-exit;
-EOF
+# use admin
+# db.auth('root', '!Qing001401')
+# use $2
+# db.dropDatabase()
+# exit;
+# EOF
 
 
 path=~/data/mongodb
@@ -35,6 +35,7 @@ cd "$path"
 unzip "$path/$1" <<EOF
 A
 exit;
+
 EOF
 
 mongorestore --host 127.0.0.1 --port 9001 -d "$2" -u restore --gzip --authenticationDatabase "admin" "$path/guoxianDevelop" <<EOF 
