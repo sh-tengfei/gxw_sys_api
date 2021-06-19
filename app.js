@@ -22,6 +22,21 @@ class AppBootHook {
     await service.counters.startCheck()
     await service.admin.initialUser()
     this.app.setRankingList(service)
+    this.app.on('error', error => {
+      if (error.status === 401) {
+        return
+      }
+      service.tempMsg.sendmail({
+        mailbox: 'sh_tengda@163.com',
+        subject: '全局报错',
+        html: JSON.stringify({
+          inner: error.inner,
+          status: error.status,
+          code: error.code,
+          name: error.name,
+        })
+      })
+    })
   }
 }
 
