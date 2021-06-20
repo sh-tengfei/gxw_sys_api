@@ -71,7 +71,7 @@ class OrderService extends Service {
     parentId = '0',
     orderType = 0,
     payEndTime,
-    isExtractReceive, city }, reduceStock = true) {
+    isExtractReceive, city, remark }, reduceStock = true) {
     const { service, model, logger } = this.ctx
 
     let total = 0
@@ -126,6 +126,7 @@ class OrderService extends Service {
       payEndTime: payEndTime || moment().add(30, 'minutes'),
       isExtractReceive,
       city,
+      remark,
     }
     try {
       // 主订单创建 支付完成后再拆单

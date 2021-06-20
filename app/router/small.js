@@ -22,11 +22,10 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/userInfo', jwt, contr.user.getUserInfo)
   router.put('/small/userInfo/:id', contr.user.updateInfo)
   router.get('/small/location', contr.user.getLocation)
+  router.put('/small/defaultExtract', jwt, contr.user.setDefaultExtract)
 
   // 开通的城市
   router.get('/small/citys', contr.user.getCitys)
-  // 添加默认团长地址
-  router.post('/small/userSearbys', contr.user.addSetAgent)
 
   router.get('/small/products', contr.product.getProducts)
   router.get('/small/product/:id', contr.product.getProduct)

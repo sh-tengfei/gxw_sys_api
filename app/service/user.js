@@ -30,12 +30,17 @@ class UserService extends Service {
         userId: user.userId,
         isDefault: true
       })
-
+      // 收货地址为用户单独户的收货地址
       if (total !== 0) {
         user.defaultAddress = list[0]
       }
 
       user.historyExtract = extractRet
+    }
+
+    if (user && user.defaultExtract) {
+      const defaultExtract = await service.agent.findOne({ extractId: user.defaultExtract })
+      user.defaultExtract = defaultExtract
     }
 
     if (user && user.unionid) {
@@ -147,6 +152,23 @@ class UserService extends Service {
       encryptedData,
     })
     return enCodeData
+  }
+  // 设置用户使用过的代理
+  async setHistoryAgent({ userId, extractId }) {
+    const { model, service } = this.ctx
+    let { historyExtract } = await service.user.findOne({ userId })
+    // 过滤出来只剩下 extractId
+    historyExtract = historyExtract.map(i=>i.extractId)
+    historyExtract.push(extractId)
+
+    const newHistory = new Set(historyExtract)
+    const user = await service.user.updateOne(userId, {
+      historyExtract: [...newHistory]
+    })
+
+    const agent = await service.agent.findOne({ extractId })
+    // 过滤掉非当前代理区域的商品
+    await service.shoppingCart.filterCard(userId, agent.areaId)
   }
 }
 

@@ -100,7 +100,7 @@ class OrderController extends Controller {
     }
 
     // 判断有多少未支付订单 或许不用判断
-    const { products, extractId, addressId, isExtractReceive, isCart } = req.body
+    const { products, extractId, addressId, isExtractReceive, isCart, remark } = req.body
     if (!products || !products.length) {
       ctx.body = { code: 201, msg: '商品有误' }
       return
@@ -144,6 +144,7 @@ class OrderController extends Controller {
       addressId,
       isExtractReceive,
       city: areaId,
+      remark,
     })
     if (code !== 200) {
       ctx.logger.error({ code: error.code, msg, data: error.productId })
@@ -168,7 +169,8 @@ class OrderController extends Controller {
       })
       ctx.logger.info({ msg: '购物车清空完成', userId })
     }
-
+    // 存入使用过的代理地址
+    await service.user.setHistoryAgent({ userId, extractId })
     ctx.body = { code: 200, msg: '订单创建成功', data }
   }
   async payOrder() {
