@@ -110,7 +110,12 @@ class OrderController extends Controller {
       return
     }
 
-    const { areaId } = await service.agent.findOne({ extractId: extractId })
+    const agent = await service.agent.findOne({ extractId: extractId })
+    if (!agent) {
+      ctx.body = { code: 201, msg: '请选择提货点' }
+      return
+    }
+    const { areaId } = agent
 
     let isogeny = true
     let isDelete = false
