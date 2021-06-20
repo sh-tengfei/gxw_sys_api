@@ -14,5 +14,11 @@ module.exports = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+  },
+  cluster: {
+    listen: {
+      port: 8102,
+      hostname: '127.0.0.1',
+    }
   }
 }
