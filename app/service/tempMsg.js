@@ -32,10 +32,16 @@ class TempMsgService extends Service {
     if (res.data && !res.data.errcode) {
       ctx.logger.info({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
-      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data })
-      this.sendmail({ 
-        mailbox: '13739668118@163.com, sh_tengda@163.com', 
-        subject: '模板消息发送失败', 
+      ctx.logger.error({ code: 201, msg: '模板消息发送失败', data: res.data, info: {
+        touser: openid,
+        template_id,
+        data,
+        page,
+        tokenType,
+      }})
+      this.sendmail({
+        mailbox: '13739668118@163.com, sh_tengda@163.com',
+        subject: '模板消息发送失败',
         html: JSON.stringify(data, null, 4)
       })
     }

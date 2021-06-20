@@ -78,7 +78,7 @@ module.exports = {
       tokenType = 'mall'
     }
     let { cache } = app.config
-    const { [tokenType + '_access_token']: token } = cache
+    let { [tokenType + '_access_token']: token } = cache
     if (!token) {
       await app.runSchedule('access-token')
       token = cache[tokenType + '_access_token']
