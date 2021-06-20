@@ -314,7 +314,8 @@ class OrderController extends Controller {
     const { service, params, logger, request: { body }, query } = ctx
 
     // 成功要查找 parentId
-    let order, isSuccess = +query.type === 1
+    let order
+    let isSuccess = +query.type === 1
     if (isSuccess) {
       const { list } = await service.order.find({ parentId: params.id })
       order = list
@@ -402,13 +403,13 @@ class OrderController extends Controller {
       logger.info({ msg: '收益创建成功' })
     }
 
-    let page , product = order.products[0]
+    let page; let product = order.products[0]
     if (billRet.orders.length === 1) {
       page = `/pages/orderDetail/detail?orderId=${order.orderId}`
     } else {
       page = `/pages/delivery/list?state=3`
     }
-    
+
     await service.tempMsg.sendWxMsg({
       openid: retUser.openid,
       template_id: weAppTemp.paySuccess,
