@@ -42,14 +42,14 @@ module.exports = appInfo => {
 
   config.mongoose = {
     url: 'mongodb://127.0.0.1:9001/guoxianDevelop', //
-    // options: {
-    //   user: 'guoxian_dev',
-    //   pass: '!Qing001401',
-    //   config: { autoIndex: false },
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true,
-    //   useFindAndModify: false,
-    // }
+    options: {
+      user: 'guoxian_dev',
+      pass: '!Qing001401',
+      config: { autoIndex: false },
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    }
   }
   config.security = {
     xframe: {
