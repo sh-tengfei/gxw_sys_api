@@ -2,9 +2,10 @@
 
 'use strict'
 
-var defaultConfig = require('./config.default')
-
-defaultConfig.mongoose = {
+/**
+ * @param {Egg.EggAppInfo} appInfo app info
+ */
+module.exports = {
   url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
   options: {
     user: 'guoxian_dev',
@@ -14,17 +15,4 @@ defaultConfig.mongoose = {
     useUnifiedTopology: true,
     useFindAndModify: false,
   }
-}
-
-/**
- * @param {Egg.EggAppInfo} appInfo app info
- */
-module.exports = appInfo => {
-  /**
-   * built-in config
-   * @type {Egg.EggAppConfig}
-   **/
-  exports = defaultConfig
-
-  return defaultConfig
 }
