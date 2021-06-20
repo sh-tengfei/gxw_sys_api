@@ -6,5 +6,4 @@ export default function({ router, controller: contr, jwt }) {
 
   router.put('/common/productType', jwt, contr.config.upProductType)
   router.put('/common/shareTitle', jwt, contr.config.setShareTitle)
-  
 }
