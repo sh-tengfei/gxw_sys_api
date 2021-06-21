@@ -207,7 +207,6 @@ class LoginController extends Controller {
       ctx.body = { msg: '上传失败！', code: 201 }
     }
   }
-
   // 团长端登录
   async getGroupLogin() {
     const { ctx, app } = this
@@ -264,7 +263,6 @@ class LoginController extends Controller {
       ctx.body = { msg: '保存错误，联系管理员', code: 201 }
     }
   }
-
   async getGroupInfo() {
     const { ctx, app } = this
     const { state, service } = ctx
@@ -327,32 +325,18 @@ class LoginController extends Controller {
     const citys = await service.sellingCity.getCitys()
     ctx.body = { msg: '获取成功', code: 200, data: citys }
   }
-  async addSetAgent() {
+  async setDefaultExtract() {
     const { ctx } = this
-    const { service, request: req } = ctx
-    const { extractId, userId } = req.body
+    const { service, params, request: { body }, state } = ctx
+    const { userId } = state.user
 
-    if (!extractId || !userId) {
-      ctx.body = { msg: '参数错误', code: 201, data: req.body }
+    const agent = await service.agent.findOne({ extractId: body.extractId })
+    if (agent) {
+      const user = await service.user.updateOne(userId, { defaultExtract: body.extractId })
+      ctx.body = { msg: '设置成功', code: 200, data: user }
       return
-    }
-
-    let { historyExtract } = await service.user.findOne({ userId })
-    historyExtract = historyExtract.map(i=>i.extractId)
-    historyExtract.push(extractId)
-
-    const newHistory = new Set(historyExtract)
-    const user = await service.user.updateOne(userId, {
-      historyExtract: [...newHistory]
-    })
-
-    const agent = await service.agent.findOne({ extractId })
-    const card = await service.shoppingCart.filterCard(userId, agent.areaId)
-
-    if (user) {
-      ctx.body = { msg: '修改成功', code: 200, data: user }
     } else {
-      ctx.body = { msg: '用户不存在', code: 201, data: user }
+      ctx.body = { msg: '代理不存在', code: 201 }
     }
   }
 }

@@ -187,7 +187,7 @@ class ShoppingCartService extends Service {
       }
     }
     cart.products = products
-    const ret = await this.updateOne(userId, cart)
+    await this.updateOne(userId, cart)
   }
   getProductId(cart, productId) {
     if (!cart || !cart.products) {
