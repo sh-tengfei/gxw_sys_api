@@ -7,19 +7,14 @@ class ConfigService extends Service {
     const config = await ctx.model.Config.findOne()
     return config
   }
-  async getConfigVal(key) {
-    const { ctx } = this
-    const config = await ctx.model.Config.findOne()
-    return config[key]
-  }
-  async update({ key, value }) {
+  async update(data) {
     const { ctx } = this
     let config = await this.getConfig()
     if (config) {
-      config[key] = value
+      Object.assign(config, data)
     } else {
       try {
-        config = await ctx.model.Config.create({ [key]: value })
+        config = await ctx.model.Config.create(data)
       } catch (e) {
         return e
       }

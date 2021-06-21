@@ -1,9 +1,12 @@
 export default function({ router, controller: contr, jwt }) {
   // 公共模块
-  router.get('/admin/productType', jwt, contr.config.getProductType)
-  router.get('/small/types', contr.config.getProductType)
-  router.get('/common/shares', contr.config.getShareTitle)
+  router.get('/small/productType', contr.productType.getProductType)
 
-  router.put('/common/productType', jwt, contr.config.upProductType)
-  router.put('/common/shareTitle', jwt, contr.config.setShareTitle)
+  router.get('/admin/productType', /* jwt, */ contr.productType.getProductType)
+  router.post('/admin/productType', /* jwt, */ contr.productType.createProductType)
+  router.put('/admin/productType', /* jwt, */ contr.productType.updateProductType)
+  router.delete('/admin/productType', /* jwt, */ contr.productType.delProductType)
+
+  router.get('/common/config', contr.config.getConfig)
+  router.put('/common/config', contr.config.updateUpdateConfig)
 }

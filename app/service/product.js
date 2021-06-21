@@ -37,7 +37,7 @@ class ProductService extends Service {
     if (query['sellerOfType.code'] && query['sellerOfType.code'] !== 101) {
       opt = query
     }
-    
+
     delete query.range
 
     const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
@@ -74,7 +74,7 @@ class ProductService extends Service {
     delete data.productId
     data.productId = `SP${(Math.random() * 1000).toFixed(0)}${productId}`
     data.productIndex = index
-    
+
     try {
       newProduct = await ctx.model.Product.create(data)
       newProduct = newProduct.toObject()

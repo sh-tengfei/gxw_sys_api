@@ -7,26 +7,24 @@ module.exports = app => {
   require('mongoose-double')(mongoose)
 
   const Config = new mongoose.Schema({
-    productType: [
+    mallShareTitle: { type: String },
+    agentShareTitle: { type: String },
+    mallHomePageShareImage: { type: String },
+    groupHomePageShareImage: { type: String },
+    userAgreement: { type: String },
+    platformQualification: [
       {
-        label: { type: String, required: true },
-        id: { type: Number, required: true },
-        iconSrc: { type: String, required: true },
-        desc: { type: String, default: '' },
+        name: { type: String },
+        src: { type: String },
       }
     ],
-    shareTitle: {
-      mallTitle: { type: String },
-      agentTitle: { type: String },
-      mallIndexShareImage: { type: String },
-      groupIndexShareImage: { type: String },
-    },
+    aboutUs: { type: String },
     version: { type: Number, default: 1 },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
   Config.plugin(uniqueValidator)
-  const ret = mongoose.model('config', Config)
+  const ret = mongoose.model('Config', Config)
   return ret
 }

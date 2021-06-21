@@ -23,14 +23,27 @@ class CountersService extends Service {
       if (env !== 'prod') {
         onlineId = 'DEV'
       }
-      return { index, id: onlineId + (moment().format('YYYYMMDD').replace('-', '')) + index }
+      // 排除的规则
+      if (type === 'productTypeId') {
+        return { index, id: index }
+      } else {
+        return { index, id: onlineId + (moment().format('YYYYMMDD').replace('-', '')) + index }
+      }
     }
     return null
   }
   async startCheck() {
+    const { ctx, app } = this
     let counters = await this.findOne()
     if (counters === null) {
       counters = await this.create()
+      return
+    }
+    const numberList = app.config.autoNumberTypeList
+    for (const key in numberList) {
+      if (!counters[key]) {
+        await ctx.model.Counters.updateOne({ _id: counters._id },{ [key]: numberList[key] })
+      }
     }
   }
 }
