@@ -19,9 +19,10 @@ class ProductTypeController extends Controller {
       ctx.body = { code: 201, msg: '该类型不存在！' }
       return
     }
+
     const typed = await service.productType.findOne({ label: body.label })
-    if (typed) {
-      ctx.body = { code: 201, msg: '该类型已经存在！' }
+    if (typed && typed.id !== body.id) {
+      ctx.body = { code: 201, msg: '该类型名称已经存在！' }
       return
     }
     if (!body.weight) {
