@@ -24,8 +24,8 @@ class ProductTypeController extends Controller {
       ctx.body = { code: 201, msg: '该类型已经存在！' }
       return
     }
-    if (!body.desc) {
-      ctx.body = { code: 201, msg: '简介为空' }
+    if (!body.weight) {
+      ctx.body = { code: 201, msg: '权重为空' }
       return
     }
     if (!body.label) {
@@ -38,7 +38,7 @@ class ProductTypeController extends Controller {
     }
 
     const data = {
-      desc: body.desc,
+      weight: body.weight,
       label: body.label,
       iconSrc: body.iconSrc,
     }
@@ -54,8 +54,8 @@ class ProductTypeController extends Controller {
       ctx.body = { code: 201, msg: '类型为空' }
       return
     }
-    if (!body.desc) {
-      ctx.body = { code: 201, msg: '简介为空' }
+    if (!body.weight) {
+      ctx.body = { code: 201, msg: '权重为空' }
       return
     }
     if (!body.label) {
@@ -74,7 +74,7 @@ class ProductTypeController extends Controller {
     }
 
     const data = {
-      desc: body.desc,
+      weight: body.weight,
       label: body.label,
       iconSrc: body.iconSrc,
     }

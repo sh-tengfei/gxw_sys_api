@@ -10,7 +10,7 @@ module.exports = app => {
     label: { type: String, required: true },
     id: { type: String, required: true },
     iconSrc: { type: String, required: true },
-    desc: { type: String, default: '' },
+    weight: { type: Number, default: 1 },
     version: { type: Number, default: 1 },
   }, {
     versionKey: false,
