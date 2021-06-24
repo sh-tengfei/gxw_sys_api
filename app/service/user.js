@@ -151,6 +151,13 @@ class UserService extends Service {
       iv,
       encryptedData,
     })
+    ctx.logger.info({
+      appId: config.AppID,
+      sessionKey: sessionKey,
+      iv,
+      encryptedData,
+      enCodeData: enCodeData,
+    })
     return enCodeData
   }
   // 设置用户使用过的代理
