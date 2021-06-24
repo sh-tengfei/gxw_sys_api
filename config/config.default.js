@@ -104,7 +104,7 @@ module.exports = appInfo => {
       addressId: '1000',
       drawMoneyId: '1000',
       purchaseId: '1000',
-      productTypeId: '100',
+      productTypeId: '102', // 101 为产地直发
     },
     orderCompleteTimeout: 4, // 订单完成超时时间天
     commissionComplete: 4, // 收益结算时间天
