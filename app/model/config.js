@@ -12,6 +12,7 @@ module.exports = app => {
     mallHomePageShareImage: { type: String },
     groupHomePageShareImage: { type: String },
     userAgreement: { type: String },
+    groupAgreement: { type: String },
     platformQualification: [
       {
         name: { type: String },
