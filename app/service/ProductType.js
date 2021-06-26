@@ -4,7 +4,7 @@ import moment from 'moment'
 class ProductTypeService extends Service {
   async find() {
     const { ctx } = this
-    const types = await ctx.model.ProductType.find({}).sort({ id: -1 })
+    const types = await ctx.model.ProductType.find({}).sort({ weight: -1 })
     return types
   }
   async findOne(data) {
