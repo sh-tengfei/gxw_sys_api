@@ -14,9 +14,9 @@ module.exports = appInfo => {
       }
     },
     mongoose: {
-      url: 'mongodb://127.0.0.1:9001/guoxianTest',
+      url: 'mongodb://49.235.247.173:9001/guoxianTest',
       options: {
-        user: 'guoxian_test',
+        user: 'guoxianTest',
         pass: '!Qing001401',
         config: { autoIndex: false },
         useNewUrlParser: true,
