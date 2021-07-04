@@ -9,17 +9,17 @@
 module.exports = {
   mongoose: {
     url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
+    options: {
+      user: 'guoxianDevelop',
+      pass: '!Qing001401',
+      config: { autoIndex: false },
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    },
   },
   jwt: {
     secret: 'guoxianwang',
-  },
-  options: {
-    user: 'guoxianDevelop',
-    pass: '!Qing001401',
-    config: { autoIndex: false },
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
   },
   cluster: {
     listen: {
