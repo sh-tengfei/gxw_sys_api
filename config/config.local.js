@@ -8,7 +8,7 @@
 module.exports = {
   url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
   options: {
-    user: 'guoxian_dev',
+    user: 'guoxianDevelop',
     pass: '!Qing001401',
     config: { autoIndex: false },
     useNewUrlParser: true,

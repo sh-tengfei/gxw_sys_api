@@ -12,14 +12,14 @@ module.exports = appInfo => {
     },
     cluster: {
       listen: {
-        port: 8102,
+        port: 8100,
         hostname: '127.0.0.1',
       }
     },
     mongoose: {
-      url: 'mongodb://127.0.0.1:9001/guoxian',
+      url: 'mongodb://127.0.0.1:9001/guoxianwang',
       options: {
-        user: 'guoxian',
+        user: 'guoxianwang',
         pass: '!Qing001401',
         config: { autoIndex: false },
         useNewUrlParser: true,
