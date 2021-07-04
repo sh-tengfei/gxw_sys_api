@@ -17,12 +17,12 @@ module.exports = appInfo => {
       }
     },
     logger: {
-      dir: '/home/logs/api/product',
+      dir: '/home/logs/api/pre',
     },
     mongoose: {
-      url: 'mongodb://127.0.0.1:9001/guoxianwang',
+      url: 'mongodb://127.0.0.1:9001/guoxianwangPre',
       options: {
-        user: 'guoxianwang',
+        user: 'guoxianwangPre',
         pass: '!Qing001401',
         config: { autoIndex: false },
         useNewUrlParser: true,
@@ -36,9 +36,6 @@ module.exports = appInfo => {
       httpOnly: true,
       encrypt: true,
       renew: true, // 每次刷新页面，Session 都会被延期。
-    },
-    wxPayment: {
-      wxurl: 'https://mall.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
     }
   }
 }

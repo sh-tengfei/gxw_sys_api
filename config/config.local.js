@@ -1,3 +1,4 @@
+
 /* eslint valid-jsdoc: "off" */
 
 'use strict'
@@ -6,7 +7,12 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = {
-  url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
+  mongoose: {
+    url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
+  },
+  jwt: {
+    secret: 'guoxianwang',
+  },
   options: {
     user: 'guoxianDevelop',
     pass: '!Qing001401',
@@ -17,8 +23,11 @@ module.exports = {
   },
   cluster: {
     listen: {
-      port: 8102,
+      port: 8100,
       hostname: '127.0.0.1',
     }
+  },
+  wxPayment: {
+    wxurl: 'https://test.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
   }
 }
