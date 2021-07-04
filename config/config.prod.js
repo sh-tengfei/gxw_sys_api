@@ -17,7 +17,7 @@ module.exports = appInfo => {
       }
     },
     mongoose: {
-      url: 'mongodb://127.0.0.1:9001/guoxianwang',
+      url: 'mongodb://49.235.247.173:9001/guoxianwang',
       options: {
         user: 'guoxianwang',
         pass: '!Qing001401',
