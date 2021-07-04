@@ -12,7 +12,7 @@ module.exports = {
   cluster: {
     listen: {
       port: 8102,
-      hostname: '127.0.0.1',
+      hostname: '0.0.0.0',
     }
   },
   logger: {
