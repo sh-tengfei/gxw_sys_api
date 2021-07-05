@@ -5,7 +5,7 @@ export default function({ router, controller: contr, jwt }) {
 
   router.post('/small/login', contr.user.getUserLogin)
   router.post('/small/getUserPhone', contr.user.getUserPhone)
-  // router.get('/small/classify', contr.classify.getClassifys)
+
   router.post('/small/agentOfQrode', contr.user.getAgentOfQrode)
 
   // 团长首页的销售数据

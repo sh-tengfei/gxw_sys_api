@@ -128,12 +128,16 @@ class LoginController extends Controller {
   }
   async getUserPhone() {
     const { ctx, app } = this
-    const { request: req, service } = ctx
+    const { request: req, service, logger } = ctx
 
     const phoneData = await service.user.getPhone({
       sessionKey: req.body.session_key,
       iv: req.body.iv,
       encryptedData: req.body.encryptedData
+    }).catch((e)=>{
+      const opt = { msg: '手机号码解密失败', code: 201, data: req }
+      logger.warn(opt)
+      ctx.body = opt
     })
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
