@@ -30,7 +30,7 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/products', contr.product.getProducts)
   router.get('/small/product/:id', contr.product.getProduct)
   router.get('/small/product/index/:index', jwt, contr.product.getProductByIndex)
-  
+
   router.get('/small/order', jwt, contr.order.getOrders)
   router.post('/small/order', jwt, contr.order.makeOrder)
   router.get('/small/order/:id', jwt, contr.order.getOrder)

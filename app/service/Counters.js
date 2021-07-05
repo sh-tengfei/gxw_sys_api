@@ -19,9 +19,18 @@ class CountersService extends Service {
       await ctx.model.Counters.updateOne({ _id: counter._id },{ [type]: (+counter[type]) + 1 })
       let index = counter[type]
       let env = this.app.config.env
-      let onlineId = 'GXWP'
-      if (env !== 'prod') {
-        onlineId = 'DEV'
+      let onlineId
+      if (env === 'prod') {
+        onlineId = 'GXWP'
+      }
+      if (env === 'local') {
+        onlineId = 'LOCAL'
+      }
+      if (env === 'pre') {
+        onlineId = 'PRE'
+      }
+      if (env === 'test') {
+        onlineId = 'TEST'
       }
       // 排除的规则
       if (type === 'productTypeId') {
