@@ -37,14 +37,25 @@ class AdminController extends Controller {
 
   async addAdmin() {
     const { ctx, app } = this
-    const { params, request } = ctx
+    const { params, request, service } = ctx
     const { username, password } = request.body
     const user = await ctx.service.admin.findOne({ username })
     if (user) {
       ctx.body = { code: 201, msg: '用户名已存在' }
       return
     }
-    const admin = await ctx.service.admin.create({ username, password: md5Pwd(password) })
+
+    if (!body.username || !body.password) {
+      ctx.body = { code: 201, msg: '注册信息错误' }
+      return
+    }
+
+    if (body.password.length < 6) {
+      ctx.body = { code: 201, msg: '密码不符合规则' }
+      return
+    }
+
+    const admin = await service.admin.create({ username, password: md5Pwd(password) })
     ctx.body = { code: 200, msg: '添加成功' }
   }
 }
