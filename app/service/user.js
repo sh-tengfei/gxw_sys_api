@@ -151,7 +151,7 @@ class UserService extends Service {
       iv,
       encryptedData,
     })
-    ctx.logger.info({
+    this.ctx.logger.info({
       appId: config.AppID,
       sessionKey: sessionKey,
       iv,
