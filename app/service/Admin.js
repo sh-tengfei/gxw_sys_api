@@ -46,7 +46,8 @@ class AdminService extends Service {
   async initialUser() {
     let env = this.app.config.env
     let onlinePwd = '!guoxianwang123'
-    if (env !== 'prod') {
+    let target = ['pre', 'prod']
+    if (!target.includes(env)) {
       onlinePwd = '123456'
     }
     const users = await this.find()
