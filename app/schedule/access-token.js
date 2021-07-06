@@ -18,7 +18,7 @@ module.exports = {
     })
     cache.mall_access_token = mallRes.data
     cache.group_access_token = groupRes.data
-    ctx.logger.inf(cache.mall_access_token, 'mallRes')
-    ctx.logger.inf(cache.group_access_token, 'groupRes')
+    ctx.logger.info(cache.mall_access_token, 'mallRes')
+    ctx.logger.info(cache.group_access_token, 'groupRes')
   },
 }
