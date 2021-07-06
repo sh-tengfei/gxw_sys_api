@@ -177,7 +177,7 @@ class LoginController extends Controller {
   }
   async getAgentOfQrode() {
     const { ctx, app } = this
-    const { request: { body }, helper } = ctx
+    const { request: { body }, helper, logger } = ctx
     const { cache } = app.config
     let { mall_access_token: token } = cache
 
@@ -198,8 +198,13 @@ class LoginController extends Controller {
       scene: `${body.productId},${body.extractId || ''}`,
       width: 160,
     }, localUrl).catch((e)=>{
+      logger.error({ msg: '二维码获取失败！', code: 201, data: e })
       ctx.body = { msg: '二维码获取失败！', code: 201, data: e }
     })
+
+    if (ret !== true) {
+      logger.error(ret)
+    }
 
     const fileUrl = await this.qiniu(localUrl, body.productId)
     // 删除文件

@@ -1,6 +1,5 @@
 'use strict'
 import { Controller } from 'egg'
-import { weAppTemp } from '../../../config/noticeTemp'
 
 const EARTH_RADIUS = 6378.137 // 地球半径
 
