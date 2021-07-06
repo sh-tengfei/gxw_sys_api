@@ -142,6 +142,7 @@ class LoginController extends Controller {
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
   uploadFile(uptoken, key, localFile) {
+    const { ctx, app } = this
     return new Promise((resolve, reject) => {
       // 文件上传
       formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
