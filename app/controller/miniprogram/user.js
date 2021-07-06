@@ -196,7 +196,7 @@ class LoginController extends Controller {
     
     const fileUrl = await this.qiniu(localUrl, body.productId)
 
-    fs.unlinkSync(localUrl)
+    // fs.unlinkSync(localUrl)
 
     if (fileUrl) {
       ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
