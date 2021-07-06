@@ -71,7 +71,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@gitee.com:fruit_fairy_net/gxw_sys_api.git"
   },
   "author": "shangtengfei",
   "license": "MIT"
