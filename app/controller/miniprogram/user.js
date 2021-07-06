@@ -147,14 +147,14 @@ class LoginController extends Controller {
       formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
         if (respErr) {
           reject(respErr)
-          console.log('图片上传至七牛失败', respErr)
+          ctx.logger.error('图片上传至七牛失败', respErr)
           throw respErr
         }
         if (respInfo.statusCode == 200) {
           resolve(respBody)
         } else {
           reject(respBody)
-          console.log('图片上传至七牛异常', respBody)
+          ctx.logger.error('图片上传至七牛异常', respBody)
         }
       })
     })
@@ -182,7 +182,7 @@ class LoginController extends Controller {
     let { mall_access_token: token } = cache
 
     if (!token) {
-      console.log(token, '不存在')
+      ctx.logger.warn(token, '不存在')
       ctx.body = { msg: '缓存错误！', code: 201 }
       return
     }

@@ -68,6 +68,7 @@ class AgentService extends Service {
     } catch (e) {
       console.log(newAgent, 1)
       if (e.errors) {
+        ctx.logger.error(e.errors)
         console.log(e.errors)
       }
       return e

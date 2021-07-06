@@ -26,7 +26,8 @@ class AppBootHook {
       if (error.status === 401) {
         return
       }
-      console.log(error)
+
+      // console.log(error)
       service.tempMsg.sendmail({
         mailbox: 'sh_tengda@163.com',
         subject: '全局报错',

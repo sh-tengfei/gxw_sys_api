@@ -15,7 +15,7 @@ class ProductTypeController extends Controller {
     const { service, request: { body }} = ctx
 
     const type = await service.productType.findOne({ id: body.id })
-    console.log('type', type, { id: body.id })
+
     if (!type) {
       ctx.body = { code: 201, msg: '该类型不存在！' }
       return

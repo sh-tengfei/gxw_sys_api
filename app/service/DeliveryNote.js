@@ -86,6 +86,7 @@ class DeliveryNoteService extends Service {
       newNote.updateTime = moment(newNote.updateTime).format('YYYY-MM-DD HH:mm:ss')
     } catch (e) {
       if (e.errors) {
+        ctx.logger.error('本地商品采购单生成完成', JSON.stringify(purchase))
         console.log(e.errors)
       }
       return e._message

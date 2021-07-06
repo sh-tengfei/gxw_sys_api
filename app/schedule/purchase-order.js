@@ -12,12 +12,13 @@ class PurchaseOrder extends Subscription {
   }
   async subscribe() {
     const { ctx } = this
-    const { service } = ctx
+    const { service, logger } = ctx
     const purchased = await service.purchase.findOne({
       dateTime: moment().format('YYYY-MM-DD')
     })
     if (purchased) {
-      return console.log('今日统计数据已完成， 退出统计！')
+      logger.info('今日统计数据已完成， 退出统计！')
+      return
     }
     const citys = await service.sellingCity.getCitys()
     // 本地订单统计
@@ -34,7 +35,7 @@ class PurchaseOrder extends Subscription {
       if (list.length) {
         const data = this.computeTotalList({ list }, item, 1)
         const purchase = await service.purchase.create(data)
-        console.log('本地商品采购单生成完成', JSON.stringify(purchase))
+        logger.info('本地商品采购单生成完成', JSON.stringify(purchase))
       }
     }
     // 产地订单统计
@@ -49,13 +50,13 @@ class PurchaseOrder extends Subscription {
     if (orders.list.length) {
       const data = this.computeTotalList(orders, {}, 2)
       const purchase = await service.purchase.create(data)
-      console.log('产地商品采购单生成完成', JSON.stringify(purchase))
+      logger.info('本地商品采购单生成完成', JSON.stringify(purchase))
     }
   }
   computeTotalList({ list }, { id: cityCode }, purchaseType) {
     let orders = []
     let totalAmount = 0
-    let dateTime =  moment().format('YYYY-MM-DD')
+    let dateTime = moment().format('YYYY-MM-DD')
     let products = []
 
     totalAmount = list.reduce((total, i)=>{
