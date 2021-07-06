@@ -6,6 +6,9 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = {
+  jwt: {
+    secret: 'guoxianwang',
+  },
   mongoose: {
     url: 'mongodb://49.235.247.173:9001/guoxianTest',
     options: {

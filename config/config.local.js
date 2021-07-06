@@ -7,6 +7,9 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = {
+  jwt: {
+    secret: 'guoxianwang',
+  },
   mongoose: {
     url: 'mongodb://127.0.0.1:9001/guoxianDevelop',
     options: {
@@ -17,9 +20,6 @@ module.exports = {
       useUnifiedTopology: true,
       useFindAndModify: false,
     },
-  },
-  jwt: {
-    secret: 'guoxianwang',
   },
   cluster: {
     listen: {

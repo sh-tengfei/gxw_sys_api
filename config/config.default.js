@@ -109,7 +109,7 @@ module.exports = appInfo => {
     orderCompleteTimeout: 4, // 订单完成超时时间天
     commissionComplete: 4, // 收益结算时间天
     qiniuConfig: {
-      cdn: '//static.gxianwang.cn/',
+      cdn: '//static.gxianwang.com/',
       qiniu: {
         upSite: '//up-z1.qiniup.com'
       },
