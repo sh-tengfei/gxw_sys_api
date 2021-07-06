@@ -3,6 +3,7 @@ const { Decimal } = require('decimal.js')
 
 const WXBizDataCrypt = require('./WXBizDataCrypt')
 const { parseString } = require('xml2js')
+const fs = require('fs')
 
 function raw(args) {
   let keys = Object.keys(args)
@@ -116,5 +117,34 @@ module.exports = {
     return new Promise((resolve, reject)=>{
       func.call(null, resolve, reject)
     })
-  }
+  },
+  async getWxQrcode({ productId, extractId, path }) {
+    const { ctx, app } = this
+    const { cache } = app.config
+    let { mall_access_token: token } = cache
+
+    const localUrl = `./catch/${productId}${Date.now()}111.png`
+    const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
+    
+    const res = await ctx.curl(url, {
+      method: 'POST',
+      timeout: 10000,
+      data: JSON.stringify({
+        page: path,
+        scene: `${productId},${extractId || ''}`,
+        width: 160,
+      }),
+      consumeWriteStream: true,
+      writeStream: fs.createWriteStream(localUrl),
+    })
+
+    this.logger.info(res, {
+      page: path,
+      scene: `${productId},${extractId || ''}`,
+      width: 160,
+      url,
+    })
+
+    return { localUrl , ...res }
+  },
 }

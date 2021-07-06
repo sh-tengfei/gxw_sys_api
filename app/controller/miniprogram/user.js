@@ -162,7 +162,7 @@ class LoginController extends Controller {
   }
   async qiniu(localUrl, productId) {
     const { cdn, bucket } = this.app.config.qiniuConfig
-    const key = `wx_share_qrcode/${productId}-${Date.now()}`
+    const key = `wx_share_qrcode/${productId}_${Date.now()}`
     function uptoken(key) {
       const putPolicy = new qiniu.rs.PutPolicy({
         scope: `${bucket}:${key}`,
@@ -191,25 +191,13 @@ class LoginController extends Controller {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
     }
-    const localUrl = `./catch/${body.productId}.png`
-    const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
 
-    const ret = await ctx.postWxQrcode(url, {
-      page: body.path,
-      scene: `${body.productId},${body.extractId || ''}`,
-      width: 160,
-    }, localUrl).catch((e)=>{
-      logger.error({ msg: '二维码获取失败！', code: 201, data: e })
-      ctx.body = { msg: '二维码获取失败！', code: 201, data: e }
-    })
-
-    if (ret !== true) {
-      logger.error(ret)
-    }
-
+    const { localUrl, ...args } = await helper.getWxQrcode(body)
+    
     const fileUrl = await this.qiniu(localUrl, body.productId)
-    // 删除文件
+
     fs.unlinkSync(localUrl)
+
     if (fileUrl) {
       ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }
       return
