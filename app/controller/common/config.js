@@ -29,15 +29,7 @@ class ConfigController extends Controller {
       return
     }
 
-    let { [body.tokenType]: token } = cache
-
-    if (!token) {
-      logger.warn(token, '不存在')
-      ctx.body = { msg: '缓存错误！', code: 201 }
-      return
-    }
-
-    ctx.body = { msg: '获取成功', code: 200, token }
+    ctx.body = { msg: '获取成功', code: 200, data: cache }
   }
 
   async refreshAccessToken() {

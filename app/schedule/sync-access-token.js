@@ -9,26 +9,15 @@ module.exports = {
     const { app, logger } = ctx
     const { cache, env } = app.config
 
-    const url = env === 'local' ? 'https://mall.gxianwang.com' : 'http://49.235.247.173:8102'
+    const url = env === 'local' ? 'https://test-mall.gxianwang.com' : 'http://49.235.247.173:8102'
 
-    const mallRes = await ctx.curl(`${url}/common/accessToken`, {
-      data: {
-        tokenType: 'mall_access_token',
-      },
+    const { data } = await ctx.curl(`${url}/common/accessToken`, {
       method: 'POST',
     })
 
-    const groupRes = await ctx.curl(`${url}/common/accessToken`, {
-      data: {
-        tokenType: 'group_access_token',
-      },
-      method: 'POST',
-    })
+    logger.info(data, 'mallRes')
 
-    logger.info(mallRes, 'mallRes')
-    logger.info(groupRes, 'groupRes')
-
-    cache.mall_access_token = mallRes.data
-    cache.group_access_token = groupRes.data
+    cache.mall_access_token = data
+    cache.group_access_token = data
   },
 }
