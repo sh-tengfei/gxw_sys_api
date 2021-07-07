@@ -19,16 +19,38 @@ class TempMsgService extends Service {
     if (data.thing3) {
       data.thing3.value = data.thing3.value.replace(/\s/gi, '')
     }
-    const res = await app.sendTempMsg(this, {
+
+    const option = {
       touser: openid,
       template_id,
       data,
       page,
       tokenType,
-    }).catch((e)=>{
-      ctx.logger.error({ code: 201, msg: '模板消息发送错误', data: e })
-    })
+    }
 
+    return app.sendTempMsg(option).then((res)=>{
+      this.sendMail(res, option)
+    }).catch(async()=>{
+      if (ctx.logger.canRefreshAccessToken()) {
+        await app.runSchedule('access-token')
+      } else {
+        await app.runSchedule('sync-access-token')
+      }
+      app.sendTempMsg(option).then((res)=>{
+        this.sendMail(res, option)
+      })
+    })
+  }
+
+  async sendMail(res, option) {
+    const { ctx } = this
+    const {
+      touser: openid,
+      template_id,
+      data,
+      page,
+      tokenType,
+    } = option
     if (res.data && !res.data.errcode) {
       ctx.logger.info({ code: 200, msg: '模板消息发送成功', data: res.data })
     } else {
@@ -45,8 +67,8 @@ class TempMsgService extends Service {
         html: JSON.stringify(data, null, 4)
       })
     }
-    return res.data
   }
+
   sendmail({ mailbox, subject, html }) {
     if (!mailbox || !subject || !html) {
       return {

@@ -19,6 +19,43 @@ class ConfigController extends Controller {
     const newConfig = await service.config.update(body)
     ctx.body = { code: 200, msg: '', data: newConfig }
   }
+  async getAccessToken() {
+    const { ctx, app } = this
+    const { request: { body }, logger } = ctx
+    const { cache } = app.config
+
+    if (!body.tokenType) {
+      ctx.body = { code: 201, msg: 'tokenType为空' }
+      return
+    }
+
+    let { [body.tokenType]: token } = cache
+
+    if (!token) {
+      logger.warn(token, '不存在')
+      ctx.body = { msg: '缓存错误！', code: 201 }
+      return
+    }
+
+    ctx.body = { msg: '获取成功', code: 200, token }
+  }
+
+  async refreshAccessToken() {
+    const { ctx, app } = this
+    const { logger } = ctx
+
+    try {
+      if (logger.canRefreshAccessToken()) {
+        await app.runSchedule('access-token')
+      } else {
+        await app.runSchedule('sync-access-token')
+      }
+
+      ctx.body = { msg: '刷新成功', code: 200 }
+    } catch (error) {
+      ctx.body = { msg: '刷新失败', code: 201, data: error }
+    }
+  }
 }
 
 module.exports = ConfigController

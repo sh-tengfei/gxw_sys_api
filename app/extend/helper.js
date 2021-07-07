@@ -32,6 +32,11 @@ function raw(args) {
 }
 
 module.exports = {
+  canRefreshAccessToken() {
+    const { app } = this
+    const { env } = app.config
+    return ['pre', 'prod'].includes(env)
+  },
   // 把金额转为分
   getmoney(money) {
     return Number(new Decimal(parseFloat(money)).mul(new Decimal(100)))

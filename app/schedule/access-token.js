@@ -2,10 +2,12 @@ module.exports = {
   schedule: {
     interval: '2h', // 分钟间隔两小时
     type: 'all',
+    env: ['prod', 'pre'],
     immediate: true,
   },
   async task(ctx) {
-    const { mallMiniprogram: config, cache, groupMiniprogram: groupConfig } = ctx.app.config
+    const { app, logger } = ctx
+    const { mallMiniprogram: config, cache, groupMiniprogram: groupConfig } = app.config
     const mallUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.AppID}&secret=${config.AppSecret}`
     const groupUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${groupConfig.AppID}&secret=${groupConfig.AppSecret}`
 
@@ -18,7 +20,7 @@ module.exports = {
     })
     cache.mall_access_token = mallRes.data
     cache.group_access_token = groupRes.data
-    ctx.logger.info(cache.mall_access_token, 'mallRes')
-    ctx.logger.info(cache.group_access_token, 'groupRes')
+    logger.info(cache.mall_access_token, 'mallRes')
+    logger.info(cache.group_access_token, 'groupRes')
   },
 }

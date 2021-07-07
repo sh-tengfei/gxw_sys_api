@@ -53,7 +53,7 @@ class OrderPayTimeout extends Subscription {
           // 订单关闭
           logger.info(trade_state_desc)
           const orderRet = await service.order.updateOne(item.orderId, { state: 8 })
-          logger.info(orderRet.orderId, '支付时间超时，订单关闭')
+          logger.info(JSON.stringify(orderRet), '支付时间超时，订单关闭')
           // 发送消息
         }
       }

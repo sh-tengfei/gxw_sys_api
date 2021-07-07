@@ -27,7 +27,7 @@ class OrderCompleteTimeout extends Subscription {
       const targetTime = moment(createTime).startOf('day').add(orderCompleteTimeout, 'days')
       if (curTime.isAfter(targetTime)) {
         const order = await ctx.service.order.updateOne(orderId, { state: 5 })
-        ctx.logger.info(orderId, '确认收货超时，自动确认')
+        ctx.logger.info(JSON.stringify(order), '确认收货超时，自动确认')
       }
     }
   }
