@@ -1,19 +1,7 @@
 'use strict'
 import { Controller } from 'egg'
-import qiniu from 'qiniu'
-import fs from 'fs'
 import { weAppTemp } from '../../../config/noticeTemp'
 
-const accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3'
-const secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
-const mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
-const config = new qiniu.conf.Config()
-// 上传是否使用cdn加速
-// 是否使用https域名
-config.useHttpsDomain = true
-config.useCdnDomain = true
-const formUploader = new qiniu.form_up.FormUploader(config)
-const putExtra = new qiniu.form_up.PutExtra()
 const contact = '13739668118'
 
 class LoginController extends Controller {
@@ -141,41 +129,6 @@ class LoginController extends Controller {
     })
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
-  uploadFile(uptoken, key, localFile) {
-    const { ctx, app } = this
-    return new Promise((resolve, reject) => {
-      // 文件上传
-      formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
-        if (respErr) {
-          reject(respErr)
-          ctx.logger.error('图片上传至七牛失败', respErr)
-          throw respErr
-        }
-        if (respInfo.statusCode == 200) {
-          resolve(respBody)
-        } else {
-          reject(respBody)
-          ctx.logger.error('图片上传至七牛异常', respBody)
-        }
-      })
-    })
-  }
-  async qiniu(localUrl, productId) {
-    const { cdn, bucket } = this.app.config.qiniuConfig
-    const key = `wx_share_qrcode/${productId}_${Date.now()}`
-    function uptoken(key) {
-      const putPolicy = new qiniu.rs.PutPolicy({
-        scope: `${bucket}:${key}`,
-        returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
-      })
-      return putPolicy.uploadToken(mac)
-    }
-
-    const imgUrl = await this.uploadFile(uptoken(key), key, localUrl)
-    return {
-      url: cdn + imgUrl.key
-    }
-  }
   async getAgentOfQrode() {
     const { ctx, app } = this
     const { request: { body }, helper, logger } = ctx
@@ -193,10 +146,13 @@ class LoginController extends Controller {
     }
 
     const { localUrl, ...args } = await helper.getWxQrcode(body)
-    
-    const fileUrl = await this.qiniu(localUrl, body.productId)
 
-    // fs.unlinkSync(localUrl)
+    const fileUrl = await helper.qiniUpload({
+      localFile: localUrl,
+      key: `wx_share_qrcode/${body.productId}_${Date.now()}`
+    })
+
+    fs.unlinkSync(localUrl)
 
     if (fileUrl) {
       ctx.body = { msg: '获取成功！', code: 200, data: fileUrl }

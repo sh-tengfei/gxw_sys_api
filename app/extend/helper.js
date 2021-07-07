@@ -4,6 +4,17 @@ const { Decimal } = require('decimal.js')
 const WXBizDataCrypt = require('./WXBizDataCrypt')
 const { parseString } = require('xml2js')
 const fs = require('fs')
+const qiniu = require('qiniu')
+
+const accessKey = '_XAiDbZkL8X1U4_Sn5jUim9oGNMbafK2aYZbQDd3'
+const secretKey = 'vuWyS1b0NZgNTmk_er1J6bgzxIYGAZ1ZAYkPmj9Z'
+const mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
+const config = new qiniu.conf.Config()
+
+// 上传是否使用cdn加速
+// 是否使用https域名
+config.useHttpsDomain = true
+config.useCdnDomain = true
 
 function raw(args) {
   let keys = Object.keys(args)
@@ -125,7 +136,6 @@ module.exports = {
 
     const localUrl = `./catch/${productId}${Date.now()}111.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
-    
     const res = await ctx.curl(url, {
       method: 'POST',
       timeout: 10000,
@@ -147,4 +157,41 @@ module.exports = {
 
     return { localUrl , ...res }
   },
+  async qiniUpload({ localFile, key }) {
+    const { ctx, app } = this
+    const { cdn, bucket } = this.app.config.qiniuConfig
+
+    function uptoken(key) {
+      const putPolicy = new qiniu.rs.PutPolicy({
+        scope: `${bucket}:${key}`,
+        returnBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}'
+      })
+      return putPolicy.uploadToken(mac)
+    }
+
+    const imgUrl = await this.qiniuUp(uptoken(key), key, localFile).catch((err)=>{
+      ctx.logger.error('图片上传至七牛异常', err)
+    })
+    return {
+      url: cdn + imgUrl.key
+    }
+  },
+  async qiniuUp(uptoken, key, localFile) {
+    const formUploader = new qiniu.form_up.FormUploader(config)
+    const putExtra = new qiniu.form_up.PutExtra()
+    return new Promise((resolve, reject) => {
+      // 文件上传
+      formUploader.putFile(uptoken, key, localFile, putExtra, (respErr, respBody, respInfo)=> {
+        if (respErr) {
+          reject(respErr)
+          throw respErr
+        }
+        if (respInfo.statusCode == 200) {
+          resolve(respBody)
+        } else {
+          reject(respBody)
+        }
+      })
+    })
+  }
 }
