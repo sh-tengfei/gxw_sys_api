@@ -15,6 +15,8 @@ module.exports = {
       method: 'POST',
     })
 
+    console.log(res, 'mallRes')
+
     logger.info(res, 'mallRes')
 
     cache.mall_access_token = res
