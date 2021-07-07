@@ -21,15 +21,7 @@ class ConfigController extends Controller {
   }
   async getAccessToken() {
     const { ctx, app } = this
-    const { request: { body }, logger } = ctx
-    const { cache } = app.config
-
-    if (!body.tokenType) {
-      ctx.body = { code: 201, msg: 'tokenType为空' }
-      return
-    }
-
-    ctx.body = { msg: '获取成功', code: 200, data: cache }
+    ctx.body = { msg: '获取成功', code: 200, data: app.config.cache }
   }
 
   async refreshAccessToken() {
