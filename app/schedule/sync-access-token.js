@@ -9,7 +9,7 @@ module.exports = {
     const { app, logger } = ctx
     const { cache, env } = app.config
 
-    const url = env === 'local' ? 'https://test-mall.gxianwang.com' : 'http://49.235.247.173:8102'
+    const url = env === 'local' ? 'https://test-mall.gxianwang.com/api' : 'http://49.235.247.173:8102'
 
     const { data: res } = await ctx.curl(`${url}/common/accessToken`, {
       method: 'POST',
