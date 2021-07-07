@@ -2,7 +2,7 @@ module.exports = {
   schedule: {
     interval: '2h', // 分钟间隔两小时
     type: 'all',
-    env: ['test', 'pre'],
+    env: ['test', 'local'],
     immediate: true,
   },
   async task(ctx) {
@@ -25,9 +25,10 @@ module.exports = {
       method: 'POST',
     })
 
-    cache.mall_access_token = mallRes.data
-    cache.group_access_token = groupRes.data
     logger.info(mallRes, 'mallRes')
     logger.info(groupRes, 'groupRes')
+
+    cache.mall_access_token = mallRes.data
+    cache.group_access_token = groupRes.data
   },
 }
