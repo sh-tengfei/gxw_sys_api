@@ -150,7 +150,7 @@ class LoginController extends Controller {
 
     const fileUrl = await helper.qiniUpload({
       localFile: localUrl,
-      key: `wx_share_qrcode/${body.productId}_${Date.now()}`
+      key: `fe-static/share_qrcode/${body.productId}_${Date.now()}`
     })
 
     fs.unlinkSync(localUrl)
