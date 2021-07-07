@@ -153,7 +153,7 @@ module.exports = {
       writeStream: fs.createWriteStream(localUrl),
     })
 
-    this.logger.info(res, {
+    this.logger.info({
       page: path,
       scene: `${productId},${extractId || ''}`,
       width: 160,

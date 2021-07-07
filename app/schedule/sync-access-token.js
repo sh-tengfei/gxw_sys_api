@@ -11,13 +11,13 @@ module.exports = {
 
     const url = env === 'local' ? 'https://test-mall.gxianwang.com' : 'http://49.235.247.173:8102'
 
-    const { data } = await ctx.curl(`${url}/common/accessToken`, {
+    const res = await ctx.curl(`${url}/common/accessToken`, {
       method: 'POST',
     })
 
-    logger.info(data, 'mallRes')
+    logger.info(res, 'mallRes')
 
-    cache.mall_access_token = data
-    cache.group_access_token = data
+    cache.mall_access_token = res
+    cache.group_access_token = res
   },
 }
