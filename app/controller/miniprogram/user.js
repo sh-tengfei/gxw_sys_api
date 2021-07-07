@@ -1,6 +1,7 @@
 'use strict'
 import { Controller } from 'egg'
 import { weAppTemp } from '../../../config/noticeTemp'
+import fs from 'fs'
 
 const contact = '13739668118'
 
