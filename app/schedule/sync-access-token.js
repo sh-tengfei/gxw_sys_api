@@ -13,6 +13,8 @@ module.exports = {
 
     const res = await ctx.curl(`${url}/common/accessToken`, {
       method: 'POST',
+      dataType: 'json',
+      contentType: 'json',
     })
 
     console.log(res, 'mallRes')
