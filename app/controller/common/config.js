@@ -42,10 +42,10 @@ class ConfigController extends Controller {
 
   async refreshAccessToken() {
     const { ctx, app } = this
-    const { logger } = ctx
+    const { logger, helper } = ctx
 
     try {
-      if (logger.canRefreshAccessToken()) {
+      if (helper.canRefreshAccessToken()) {
         await app.runSchedule('access-token')
       } else {
         await app.runSchedule('sync-access-token')
