@@ -11,6 +11,7 @@ module.exports = app => {
     productIndex: { type: Number, required: true },
     name: { type: String, required: true },
     slide: [{
+      fileType: { type: Number, required: true }, // 1图片2视频
       url: { type: String, required: true }, // 图片的相对路径
       src: { type: String, required: true }, // 图片的全部路径
       source: { type: Object, required: true } // 图片原始信息

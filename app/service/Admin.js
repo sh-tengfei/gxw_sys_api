@@ -54,10 +54,7 @@ class AdminService extends Service {
     if (users.length === 0) {
       await this.create({
         username: 'root',
-        password: md5Pwd(onlinePwd)
-      })
-      await this.create({
-        username: 'admin',
+        role: 2,
         password: md5Pwd(onlinePwd)
       })
     }

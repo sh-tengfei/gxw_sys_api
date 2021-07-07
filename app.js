@@ -27,7 +27,7 @@ class AppBootHook {
         return
       }
 
-      // console.log(error)
+      console.dir(error)
       service.tempMsg.sendmail({
         mailbox: 'sh_tengda@163.com',
         subject: '全局报错',

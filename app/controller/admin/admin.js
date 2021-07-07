@@ -2,6 +2,12 @@
 
 const Controller = require('egg').Controller
 const qiniu = require('qiniu')
+import crypto from 'crypto'
+
+export function md5Pwd(pwd) {
+  const md5 = crypto.createHash('md5')
+  return md5.update(pwd).digest('hex')
+}
 
 class AdminController extends Controller {
   async userInfo() {
@@ -50,6 +56,35 @@ class AdminController extends Controller {
     const putPolicy = new qiniu.rs.PutPolicy(options)
     const uploadToken = putPolicy.uploadToken(mac)
     ctx.body = { code: 200, data: { uploadToken }}
+  }
+
+  async addAdmin() {
+    const { ctx, app } = this
+    const { params, request, service } = ctx
+    const { username, password, role } = request.body
+    const user = await ctx.service.admin.findOne({ username })
+    if (user) {
+      ctx.body = { code: 201, msg: '用户名已存在' }
+      return
+    }
+
+    if (!username || !password) {
+      ctx.body = { code: 201, msg: '注册信息错误' }
+      return
+    }
+
+    if (!role) {
+      ctx.body = { code: 201, msg: '角色不存在' }
+      return
+    }
+
+    if (password.length < 6) {
+      ctx.body = { code: 201, msg: '密码不符合规则' }
+      return
+    }
+
+    const admin = await service.admin.create({ username, password: md5Pwd(password), role })
+    ctx.body = { code: 200, msg: '添加成功', data: admin }
   }
 }
 

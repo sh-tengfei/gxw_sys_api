@@ -7,8 +7,8 @@ export default function({ router, controller, jwt }) {
 
   router.post('/admin/login', controller.login.login)
   router.post('/admin/logout', controller.login.logout)
-  router.post('/admin/add', controller.login.addAdmin)
 
+  router.post('/admin/add', controller.admin.addAdmin)
   router.get('/admin/userInfo', jwt, controller.admin.userInfo)
   router.get('/admin/dashboard', jwt, controller.admin.dashboard)
   router.get('/admin/salesData', jwt, controller.sales.salesData)
@@ -59,5 +59,4 @@ export default function({ router, controller, jwt }) {
   // 统计销售数据
   router.get('/admin/purchases', controller.purchase.getPurchases)
   router.get('/admin/purchase/:id', controller.purchase.downloadPurchase)
-
 }
