@@ -146,7 +146,14 @@ class LoginController extends Controller {
       return
     }
 
-    const { localUrl, ...args } = await helper.getWxQrcode(body)
+    let { localUrl, res, ...args } = await helper.getWxQrcode(body)
+
+    if (res.headers.logicret === '40001') {
+      await app.runSchedule('access-token')
+      const resInfo = await helper.getWxQrcode(body)
+      localUrl = resInfo.localUrl
+      res = resInfo.res
+    }
 
     const fileUrl = await helper.qiniUpload({
       localFile: localUrl,
