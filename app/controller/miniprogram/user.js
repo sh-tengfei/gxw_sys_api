@@ -147,7 +147,7 @@ class LoginController extends Controller {
     }
 
     let { localUrl, res, ...args } = await helper.getWxQrcode(body)
-
+    logger.info(res, args)
     if (res.headers.logicret === '40001') {
       if (helper.canRefreshAccessToken()) {
         await app.runSchedule('access-token')

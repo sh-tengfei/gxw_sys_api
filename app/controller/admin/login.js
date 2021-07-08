@@ -21,9 +21,9 @@ class AdminController extends Controller {
     if (md5Pwd(password) !== admin.password) {
       ctx.body = { code: 201, msg: '密码不正确' }
     } else {
-      const isProd = app.config.env === 'prod'
+      const isProd = app.config.env === 'prod' || app.config.env === 'pre'
       token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
-        expiresIn: '1d',
+        expiresIn: isProd ? '7d' : '1d',
       })
       ctx.body = { code: 200, msg: '登陆成功', data: { token }}
     }

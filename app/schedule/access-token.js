@@ -20,7 +20,5 @@ module.exports = {
     })
     cache.mall_access_token = mallRes.data
     cache.group_access_token = groupRes.data
-    logger.info(cache.mall_access_token, 'mallRes')
-    logger.info(cache.group_access_token, 'groupRes')
   },
 }
