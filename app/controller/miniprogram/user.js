@@ -147,16 +147,18 @@ class LoginController extends Controller {
     }
 
     let { localUrl, res, ...args } = await helper.getWxQrcode(body)
-    logger.info(res, args)
-    if (res.headers.logicret === '40001') {
+    logger.info(res)
+    if (String(res.headers.logicret) === '40001') {
       if (helper.canRefreshAccessToken()) {
         await app.runSchedule('access-token')
       } else {
+        logger.info('sync-access-token')
         await app.runSchedule('sync-access-token')
       }
       const resInfo = await helper.getWxQrcode(body)
       localUrl = resInfo.localUrl
       res = resInfo.res
+      logger.info('sync-access-token', res)
     }
 
     const fileUrl = await helper.qiniUpload({
