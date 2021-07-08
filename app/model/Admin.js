@@ -8,6 +8,7 @@ module.exports = app => {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: Number, required: true, default: 1 }, // 1 普通操作员 2管理员
+    state: { type: Number, required: true, default: 1 }, // 1 启用 2停用
     city: {
       pinyin: [{ type: String, default: '' }],
     	id: { type: String, default: '' },

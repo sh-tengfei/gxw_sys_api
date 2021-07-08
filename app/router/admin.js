@@ -9,6 +9,8 @@ export default function({ router, controller, jwt }) {
   router.post('/admin/logout', controller.login.logout)
 
   router.post('/admin/add', controller.admin.addAdmin)
+  router.get('/admin', controller.admin.getAdmins)
+
   router.get('/admin/userInfo', jwt, controller.admin.userInfo)
   router.get('/admin/dashboard', jwt, controller.admin.dashboard)
   router.get('/admin/salesData', jwt, controller.sales.salesData)

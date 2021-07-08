@@ -86,6 +86,14 @@ class AdminController extends Controller {
     const admin = await service.admin.create({ username, password: md5Pwd(password), role })
     ctx.body = { code: 200, msg: '添加成功', data: admin }
   }
+  async getAdmins() {
+    const { ctx, app } = this
+    const { params, request, service } = ctx
+    const { username, password, role } = request.body
+    const { list, total } = await service.admin.find({})
+
+    ctx.body = { code: 201, msg: '获取成功', data: list, total }
+  }
 }
 
 module.exports = AdminController

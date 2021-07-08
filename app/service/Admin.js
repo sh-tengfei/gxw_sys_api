@@ -8,10 +8,33 @@ function md5Pwd(pwd) {
 }
 
 class AdminService extends Service {
-  async find(query) {
+  async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this
-    const users = await ctx.model.Admin.find(query)
-    return users
+    const { limit = 10, skip = 0 } = option
+
+    if (!query.state) {
+      query.state = 1
+    }
+
+    if (+query.state === -1) {
+      delete query.state
+    }
+
+    delete query.limit
+    delete query.skip
+
+    const users = await ctx.model.Admin.find(query).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
+    
+    users.forEach(i=>{
+      i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
+      i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
+    })
+
+    const total = await ctx.model.Admin.find(query).countDocuments()
+    return {
+      list: users,
+      total
+    }
   }
   async findOne(query) {
     const { ctx } = this
@@ -55,6 +78,7 @@ class AdminService extends Service {
       await this.create({
         username: 'root',
         role: 2,
+        state: 1,
         password: md5Pwd(onlinePwd)
       })
     }
