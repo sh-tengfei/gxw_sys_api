@@ -7,7 +7,7 @@ module.exports = app => {
     adminId: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: Number, required: true, default: 1 }, // 1 普通操作员 2管理员
+    role: { type: Number, required: true, default: 1 }, // 1管理员 2 地区操作员
     state: { type: Number, required: true, default: 1 }, // 1 启用 2停用
     city: {
       pinyin: [{ type: String, default: '' }],
@@ -19,7 +19,8 @@ module.exports = app => {
         lat: { type: Number },
         lng: { type: Number }
       },
-    }
+    },
+    email: { type: String, required: true },
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

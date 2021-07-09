@@ -79,8 +79,9 @@ class AdminService extends Service {
     if (total === 0) {
       await this.create({
         username: 'root',
-        role: 2,
+        role: 1,
         state: 1,
+        email: 'sh_tengda@163.com',
         password: md5Pwd(onlinePwd)
       })
     }

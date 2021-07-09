@@ -26,16 +26,23 @@ class AppBootHook {
       if (error.status === 401) {
         return
       }
+      if (this.app.config.env === 'local') {
+        return
+      }
 
       console.dir(error)
       service.tempMsg.sendmail({
         mailbox: 'sh_tengda@163.com',
         subject: '全局报错',
         html: JSON.stringify({
+          message: error.message,
+          fileName: error.fileName,
+          lineNumber: error.lineNumber,
+          name: error.name,
+          stack: error.stack,
           inner: error.inner,
           status: error.status,
           code: error.code,
-          name: error.name,
         })
       })
     })

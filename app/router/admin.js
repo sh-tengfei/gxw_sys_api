@@ -10,6 +10,7 @@ export default function({ router, controller, jwt }) {
 
   router.get('/admin/user', jwt, controller.admin.getAdmins)
   router.put('/admin/user/:id', jwt, controller.admin.updateAdmin)
+  router.put('/admin/user/pwd/:id', jwt, controller.admin.updateAdminPwd)
   router.post('/admin/user/add', jwt, controller.admin.addAdmin)
   router.delete('/admin/user/:id', jwt, controller.admin.delAdmin)
 

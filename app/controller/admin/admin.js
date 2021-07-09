@@ -66,7 +66,7 @@ class AdminController extends Controller {
   async addAdmin() {
     const { ctx, app } = this
     const { request, service } = ctx
-    const { username, password, role, city } = request.body
+    const { username, password, role, city, email } = request.body
     const user = await service.admin.findOne({ username })
     if (user) {
       ctx.body = { code: 201, msg: '用户名已存在' }
@@ -92,14 +92,30 @@ class AdminController extends Controller {
       ctx.body = { code: 201, msg: '归属城市不存在' }
       return
     }
+    if (!email) {
+      ctx.body = { code: 201, msg: '邮箱不存在' }
+      return
+    }
 
-    const admin = await service.admin.create({ username, password: md5Pwd(password), role, city })
+    const admin = await service.admin.create({ username, password: md5Pwd(password), role, city, email })
+
+    await service.tempMsg.sendmail({
+      mailbox: admin.email,
+      subject: '您的账户已创建',
+      html: JSON.stringify({
+        username: admin.username,
+        role: admin.role === 1 ? '管理员' : '普通用户',
+        password: admin.password,
+        city: admin.city.fullname,
+        email: admin.email,
+      })
+    })
+
     ctx.body = { code: 200, msg: '添加成功', data: admin }
   }
   async getAdmins() {
     const { ctx, app } = this
-    const { query: _query, request, service } = ctx
-    const { username, password, role } = request.body
+    const { query: _query, service } = ctx
 
     const query = {
       state: +_query.state || -1,
@@ -118,7 +134,7 @@ class AdminController extends Controller {
   async updateAdmin() {
     const { ctx, app } = this
     const { request, service, params } = ctx
-    const { role, city, state } = request.body
+    const { role, city, state, email } = request.body
     const admin = await service.admin.findOne({ adminId: params.id })
     if (!admin) {
       ctx.body = { code: 201, msg: '用户不存在' }
@@ -129,9 +145,27 @@ class AdminController extends Controller {
       role,
       city,
       state,
+      email,
     }
 
     const newAdmin = await service.admin.updateOne({ adminId: params.id }, data)
+
+    if (!newAdmin) {
+      ctx.body = { code: 201, msg: '修改失败', data: newAdmin }
+      return
+    }
+
+    await service.tempMsg.sendmail({
+      mailbox: newAdmin.email,
+      subject: '登录账户更新通知',
+      html: JSON.stringify({
+        username: newAdmin.username,
+        role: newAdmin.role === 1 ? '管理员' : '普通用户',
+        city: newAdmin.city.fullname,
+        email: newAdmin.email,
+      })
+    })
+
     ctx.body = { code: 200, msg: '修改成功', data: newAdmin }
   }
 
@@ -144,7 +178,7 @@ class AdminController extends Controller {
     }
     const admin = await service.admin.findOne({ adminId: id })
     if (admin && admin.state === 1) {
-      ctx.body = { msg: '管理员正在使用中', code: 201, data: admin }
+      ctx.body = { msg: '用户正在使用中', code: 201, data: admin }
       return
     }
 
@@ -154,7 +188,67 @@ class AdminController extends Controller {
     }
 
     const delAdmin = await service.admin.delete(id)
+
+    await service.tempMsg.sendmail({
+      mailbox: newAdmin.email,
+      subject: '账户已被移除！',
+      html: JSON.stringify({
+        username: delAdmin.username,
+        role: delAdmin.role === 1 ? '管理员' : '普通用户',
+        city: delAdmin.city.fullname,
+        email: delAdmin.email,
+      })
+    })
+
     ctx.body = { msg: '删除成功', code: 200, data: delAdmin }
+  }
+
+  async updateAdminPwd() {
+    const { ctx, app } = this
+    const { service, params: { id }, request: { body }} = ctx
+
+    if (!id) {
+      ctx.body = { msg: '参数不正确', code: 201 }
+      return
+    }
+    const admin = await service.admin.findOne({ adminId: id })
+
+    if (!admin) {
+      ctx.body = { msg: '用户不存在', code: 201, data: admin }
+      return
+    }
+
+    if (admin && admin.state !== 1) {
+      ctx.body = { msg: '用户未使用中', code: 201, data: admin }
+      return
+    }
+
+    if (body.password !== body.prepassword) {
+      ctx.body = { msg: '两次密码不相等！', code: 201, data: body }
+      return
+    }
+
+    delete admin._id
+    const newAdmin = await service.admin.updateOne({ adminId: id }, {
+      ...admin,
+      password: md5Pwd(body.password)
+    })
+
+    delete newAdmin.password
+
+    await service.tempMsg.sendmail({
+      mailbox: newAdmin.email,
+      subject: '账户密码更新通知',
+      html: JSON.stringify({
+        username: newAdmin.username,
+        password: body.password,
+        role: newAdmin.role === 1 ? '管理员' : '普通用户',
+        city: admin.city.fullname,
+        email: admin.email,
+      })
+    })
+
+    ctx.body = { code: 200, msg: '修改成功', data: newAdmin }
   }
 }
 
