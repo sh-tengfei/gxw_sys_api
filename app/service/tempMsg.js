@@ -29,7 +29,7 @@ class TempMsgService extends Service {
     }
 
     return app.sendTempMsg(option).then((res)=>{
-      this.sendMail(res, option)
+      this.sendTempMail(res, option)
     }).catch(async()=>{
       if (ctx.helper.canRefreshAccessToken()) {
         await app.runSchedule('access-token')
@@ -37,12 +37,12 @@ class TempMsgService extends Service {
         await app.runSchedule('sync-access-token')
       }
       app.sendTempMsg(option).then((res)=>{
-        this.sendMail(res, option)
+        this.sendTempMail(res, option)
       })
     })
   }
 
-  async sendMail(res, option) {
+  async sendTempMail(res, option) {
     const { ctx } = this
     const {
       touser: openid,
@@ -61,6 +61,7 @@ class TempMsgService extends Service {
         page,
         tokenType,
       }})
+
       this.sendmail({
         mailbox: '13739668118@163.com, sh_tengda@163.com',
         subject: '模板消息发送失败',
@@ -85,11 +86,12 @@ class TempMsgService extends Service {
         pass: formMail.pass,
       }
     })
+
     const mailOpt = {
       from: formMail.mail,
       to: mailbox,
       subject: subject,
-      html: `<pre>${html}</pre>`,
+      html: `<div><h1>${app.config.env}</h1><pre>${html}</pre></div>`,
     }
     transporter.sendMail(mailOpt, (error, info)=>{
       if (!error) {
