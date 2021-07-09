@@ -192,7 +192,7 @@ class LoginController extends Controller {
     }
 
     if (app.config.env === 'test') {
-      userInfo.unionid = 'ongED5QnJJUlsGYRWGGaKCeITrIs'
+      userInfo.unionid = 'oHylb6FLZP9672bnAxERjAHOdirg'
     }
 
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
