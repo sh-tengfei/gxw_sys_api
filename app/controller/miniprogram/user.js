@@ -279,7 +279,7 @@ class LoginController extends Controller {
     const { ctx } = this
     const { service, request: { body }, logger } = ctx
 
-    logger.inf({ data: body, msg: '团长手机号解码' })
+    logger.info({ data: body, msg: '团长手机号解码' })
 
     const phoneData = await service.user.getPhone({
       sessionKey: body.sessionkey,
