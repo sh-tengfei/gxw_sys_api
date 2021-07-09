@@ -8,8 +8,10 @@ export default function({ router, controller, jwt }) {
   router.post('/admin/login', controller.login.login)
   router.post('/admin/logout', controller.login.logout)
 
-  router.post('/admin/add', controller.admin.addAdmin)
-  router.get('/admin', controller.admin.getAdmins)
+  router.get('/admin/user', jwt, controller.admin.getAdmins)
+  router.put('/admin/user/:id', jwt, controller.admin.updateAdmin)
+  router.post('/admin/user/add', jwt, controller.admin.addAdmin)
+  router.delete('/admin/user/:id', jwt, controller.admin.delAdmin)
 
   router.get('/admin/userInfo', jwt, controller.admin.userInfo)
   router.get('/admin/dashboard', jwt, controller.admin.dashboard)

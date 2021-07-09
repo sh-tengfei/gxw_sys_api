@@ -11,9 +11,9 @@ module.exports = app => {
     state: { type: Number, required: true, default: 1 }, // 1 启用 2停用
     city: {
       pinyin: [{ type: String, default: '' }],
-    	id: { type: String, default: '' },
-    	name: { type: String, default: '' },
-    	fullname: { type: String, default: '' },
+      id: { type: String, default: '' },
+      name: { type: String, default: '' },
+      fullname: { type: String, default: '' },
       level: { type: String, default: '' },
       location: {
         lat: { type: Number },

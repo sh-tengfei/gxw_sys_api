@@ -24,7 +24,7 @@ class AdminService extends Service {
     delete query.skip
 
     const users = await ctx.model.Admin.find(query).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
-    
+
     users.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -59,11 +59,13 @@ class AdminService extends Service {
     }
     return newAdmin
   }
-  async updateOne(adminId, data) {
-
+  async updateOne(query, data) {
+    const { ctx } = this
+    const newAdmin = await ctx.model.Admin.findOneAndUpdate(query, data, { _id: 0, new: true })
+    return newAdmin
   }
   async delete(adminId) {
-
+    return await this.ctx.model.Admin.findOneAndRemove({ adminId })
   }
 
   async initialUser() {
@@ -73,8 +75,8 @@ class AdminService extends Service {
     if (!target.includes(env)) {
       onlinePwd = '123456'
     }
-    const users = await this.find()
-    if (users.length === 0) {
+    const { total } = await this.find()
+    if (total === 0) {
       await this.create({
         username: 'root',
         role: 2,

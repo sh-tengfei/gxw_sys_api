@@ -18,6 +18,11 @@ class AdminController extends Controller {
       ctx.body = { code: 401, msg: '非法访问' }
       return
     }
+
+    if (data.state !== 1) {
+      ctx.body = { code: 201, msg: '您的账号已经停用，请联系管理员' }
+      return
+    }
     const { qiniuConfig } = app.config
     ctx.body = { code: 200, msg: '', data: { user: data, config: qiniuConfig }}
   }
@@ -60,9 +65,9 @@ class AdminController extends Controller {
 
   async addAdmin() {
     const { ctx, app } = this
-    const { params, request, service } = ctx
-    const { username, password, role } = request.body
-    const user = await ctx.service.admin.findOne({ username })
+    const { request, service } = ctx
+    const { username, password, role, city } = request.body
+    const user = await service.admin.findOne({ username })
     if (user) {
       ctx.body = { code: 201, msg: '用户名已存在' }
       return
@@ -83,16 +88,73 @@ class AdminController extends Controller {
       return
     }
 
-    const admin = await service.admin.create({ username, password: md5Pwd(password), role })
+    if (!city) {
+      ctx.body = { code: 201, msg: '归属城市不存在' }
+      return
+    }
+
+    const admin = await service.admin.create({ username, password: md5Pwd(password), role, city })
     ctx.body = { code: 200, msg: '添加成功', data: admin }
   }
   async getAdmins() {
     const { ctx, app } = this
-    const { params, request, service } = ctx
+    const { query: _query, request, service } = ctx
     const { username, password, role } = request.body
-    const { list, total } = await service.admin.find({})
+
+    const query = {
+      state: +_query.state || -1,
+    }
+
+    const { page = 1, limit = 100 } = _query
+    const option = {
+      limit: _query.limit || 10,
+      skip: (page - 1) * limit,
+    }
+
+    const { list, total } = await service.admin.find(query, option)
 
     ctx.body = { code: 201, msg: '获取成功', data: list, total }
+  }
+  async updateAdmin() {
+    const { ctx, app } = this
+    const { request, service, params } = ctx
+    const { role, city, state } = request.body
+    const admin = await service.admin.findOne({ adminId: params.id })
+    if (!admin) {
+      ctx.body = { code: 201, msg: '用户不存在' }
+      return
+    }
+
+    const data = {
+      role,
+      city,
+      state,
+    }
+
+    const newAdmin = await service.admin.updateOne({ adminId: params.id }, data)
+    ctx.body = { code: 200, msg: '修改成功', data: newAdmin }
+  }
+
+  async delAdmin() {
+    const { ctx, app } = this
+    const { service, params: { id }} = ctx
+    if (!id) {
+      ctx.body = { msg: '参数不正确', code: 201 }
+      return
+    }
+    const admin = await service.admin.findOne({ adminId: id })
+    if (admin && admin.state === 1) {
+      ctx.body = { msg: '管理员正在使用中', code: 201, data: admin }
+      return
+    }
+
+    if (admin.usernam === 'root') {
+      ctx.body = { msg: '超级管理员不可删除！', code: 201, data: admin }
+      return
+    }
+
+    const delAdmin = await service.admin.delete(id)
+    ctx.body = { msg: '删除成功', code: 200, data: delAdmin }
   }
 }
 
