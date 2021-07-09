@@ -2,7 +2,7 @@
 import { Controller } from 'egg'
 import crypto from 'crypto'
 
-export function md5Pwd(pwd) {
+function md5Pwd(pwd) {
   const md5 = crypto.createHash('md5')
   return md5.update(pwd).digest('hex')
 }
@@ -22,6 +22,7 @@ class AdminController extends Controller {
       ctx.body = { code: 201, msg: '密码不正确' }
     } else {
       const isProd = app.config.env === 'prod' || app.config.env === 'pre'
+      console.log(admin)
       token = app.jwt.sign({ userId: admin.adminId }, app.config.jwt.secret, {
         expiresIn: isProd ? '7d' : '1d',
       })

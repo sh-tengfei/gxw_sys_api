@@ -4,7 +4,7 @@ const Controller = require('egg').Controller
 const qiniu = require('qiniu')
 import crypto from 'crypto'
 
-export function md5Pwd(pwd) {
+function md5Pwd(pwd) {
   const md5 = crypto.createHash('md5')
   return md5.update(pwd).digest('hex')
 }
@@ -190,7 +190,7 @@ class AdminController extends Controller {
     const delAdmin = await service.admin.delete(id)
 
     await service.tempMsg.sendmail({
-      mailbox: newAdmin.email,
+      mailbox: delAdmin.email,
       subject: '账户已被移除！',
       html: JSON.stringify({
         username: delAdmin.username,
@@ -229,10 +229,10 @@ class AdminController extends Controller {
     }
 
     delete admin._id
-    const newAdmin = await service.admin.updateOne({ adminId: id }, {
-      ...admin,
-      password: md5Pwd(body.password)
-    })
+
+    admin.password = md5Pwd(body.password)
+
+    const newAdmin = await service.admin.updateOne({ adminId: id }, admin)
 
     delete newAdmin.password
 
