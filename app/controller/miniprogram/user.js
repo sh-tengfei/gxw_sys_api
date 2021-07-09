@@ -191,6 +191,10 @@ class LoginController extends Controller {
       return ctx.body = { msg: '回话过期重新登录', code: 401 }
     }
 
+    if (app.config.env === 'test') {
+      userInfo.unionid = 'ongED5QnJJUlsGYRWGGaKCeITrIs'
+    }
+
     let agent = await ctx.service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
       ctx.logger.info({ msg: '登录用户！', data: agent.extractId })
