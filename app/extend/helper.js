@@ -82,7 +82,14 @@ module.exports = {
   },
   decryptData({ appId, sessionKey, iv, encryptedData }) {
     const pc = new WXBizDataCrypt(appId, sessionKey)
-    const data = pc.decryptData(encryptedData, iv)
+    let data
+
+    try {
+      data = pc.decryptData(encryptedData, iv)
+    } catch (e) {
+      return e
+    }
+
     return data
   },
   // 支付签名加密算法

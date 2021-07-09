@@ -124,7 +124,7 @@ class LoginController extends Controller {
       iv: req.body.iv,
       encryptedData: req.body.encryptedData
     }).catch((e)=>{
-      const opt = { msg: '手机号码解密失败', code: 201, data: req }
+      const opt = { msg: '手机号码解密失败', code: 201, data: req.body, error: e }
       logger.warn(opt)
       ctx.body = opt
     })
@@ -277,14 +277,21 @@ class LoginController extends Controller {
   }
   async getAgentPhone() {
     const { ctx } = this
-    const { service, request: req, } = ctx
+    const { service, request: { body }, logger } = ctx
+
+    logger.inf({ data: body, msg: '团长手机号解码' })
 
     const phoneData = await service.user.getPhone({
-      sessionKey: req.body.sessionkey,
-      iv: req.body.iv,
-      encryptedData: req.body.encryptedData,
+      sessionKey: body.sessionkey,
+      iv: body.iv,
+      encryptedData: body.encryptedData,
       type: 'groupMiniprogram'
+    }).catch((e)=>{
+      const opt = { msg: '手机号码解密失败', code: 201, data: req.body, error: e }
+      logger.warn(opt)
+      ctx.body = opt
     })
+
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
   async getCitys() {

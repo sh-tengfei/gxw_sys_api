@@ -15,7 +15,7 @@ module.exports = {
       contentType: 'json',
     })
 
-    logger.info(res.data, 'access-token')
+    // logger.info(res.data, 'access-token')
 
     cache.mall_access_token = res.data.mall_access_token
     cache.group_access_token = res.data.group_access_token
