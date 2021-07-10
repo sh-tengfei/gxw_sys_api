@@ -39,10 +39,16 @@ class ProductTypeController extends Controller {
       return
     }
 
+    if (!body.city) {
+      ctx.body = { msg: '请输入所属城市', code: 201, data: body }
+      return
+    }
+
     const data = {
       weight: body.weight,
       label: body.label,
       iconSrc: body.iconSrc,
+      city: body.city
     }
 
     const newType = await service.productType.updateOne(body.id, data)

@@ -15,6 +15,7 @@ module.exports = app => {
         hash: { type: String }
       }
     ],
+    city: { type: String, required: true }, // 订单城市
     state: { type: Number, default: 1 }, // 1关闭 2开启
     activityId: { type: String, required: true },
     name: { type: String, required: true, unique: true }

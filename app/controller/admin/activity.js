@@ -39,6 +39,10 @@ class ActivityController extends Controller {
         return
       }
     }
+    if (!body.city) {
+      ctx.body = { msg: '请输入所属城市', code: 201, data: body }
+      return
+    }
     const retBody = await service.activity.create(body)
     ctx.body = { msg: '创建成功', code: 200, data: retBody }
   }

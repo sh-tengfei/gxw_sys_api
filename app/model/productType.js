@@ -12,6 +12,7 @@ module.exports = app => {
     iconSrc: { type: String, required: true },
     weight: { type: Number, default: 1, required: true },
     version: { type: Number, default: 1 },
+    city: { type: String, required: true }, // 订单城市
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
