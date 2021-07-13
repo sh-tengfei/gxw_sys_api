@@ -98,8 +98,6 @@ class ProductController extends Controller {
       if (!salesTerritory) {
         ctx.body = { code: 201, msg: '商品销售区域必须填！' }
         return
-      } else {
-        await service.sellingCity.PushCity(salesTerritory)
       }
     } else {
     // 产地产品不用地区区分

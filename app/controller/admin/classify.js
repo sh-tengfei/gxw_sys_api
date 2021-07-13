@@ -5,7 +5,7 @@ import { Controller } from 'egg'
 class ClassifyController extends Controller {
   async newClassify() {
     const { app, ctx } = this
-    const { request: { body }, service} = ctx
+    const { request: { body }, service } = ctx
     const data = {
       classifyCity: body.city,
       classifyIndex: body.index,

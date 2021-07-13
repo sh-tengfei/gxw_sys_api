@@ -5,8 +5,18 @@ import { Decimal } from 'decimal.js'
 class ProductTypeController extends Controller {
   async getProductType() {
     const { ctx } = this
-    const { service } = ctx
-    const types = await service.productType.find()
+    const { service, query } = ctx
+
+    const opt = {
+      id: query.city
+    }
+
+    const { page = 1, limit = 10 } = query
+    const option = {
+      limit: query.limit || 10,
+      skip: (page - 1) * limit,
+    }
+    const types = await service.productType.find(opt)
 
     ctx.body = { code: 200, msg: '', data: types }
   }
@@ -74,6 +84,10 @@ class ProductTypeController extends Controller {
       ctx.body = { code: 201, msg: '类型图片为空' }
       return
     }
+    if (!body.city) {
+      ctx.body = { code: 201, msg: '类型城市为空' }
+      return
+    }
 
     const typed = await service.productType.findOne({ label: body.label })
     if (typed) {
@@ -85,9 +99,14 @@ class ProductTypeController extends Controller {
       weight: body.weight,
       label: body.label,
       iconSrc: body.iconSrc,
+      city: body.city,
     }
 
     const newType = await service.productType.create(data)
+    if (newType.errors) {
+      ctx.body = { code: 201, msg: Object.values(newType.errors).join(',') }
+      return
+    }
     ctx.body = { code: 200, msg: '', data: newType }
   }
 

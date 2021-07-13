@@ -49,6 +49,8 @@ export default function({ router, controller, jwt }) {
   router.get('/admin/active/:id', jwt, controller.activity.getActive)
 
   router.get('/admin/sellingCitys', jwt, controller.sellingCity.getSellingCitys)
+  router.post('/admin/sellingCitys', jwt, controller.sellingCity.addCity)
+  router.delete('/admin/sellingCitys/:id', jwt, controller.sellingCity.delCity)
 
   router.get('/admin/classify', jwt, controller.classify.getClassifys)
   router.post('/admin/classify', jwt, controller.classify.newClassify)

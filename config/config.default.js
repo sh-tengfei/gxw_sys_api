@@ -20,7 +20,7 @@ module.exports = appInfo => {
         // 转化报错
         if (err.status === 401) {
           ctx.set('content-type', 'application/json;charset=UTF-8')
-          ctx.response.body = JSON.stringify({ code: 401, msg: '用户未登录或则已过期！' })
+          ctx.body = JSON.stringify({ code: 401, msg: '用户未登录或则已过期！' })
           ctx.status = 401
         }
       }

@@ -28,7 +28,6 @@ class ProductTypeService extends Service {
       newProductType = newProductType.toObject()
       delete newProductType._id
     } catch (e) {
-      console.log(e)
       return e
     }
     return newProductType
