@@ -12,7 +12,7 @@ module.exports = app => {
     mallHomePageShareImage: { type: String },
     groupHomePageShareImage: { type: String },
     userAgreement: { type: String },
-    city: { type: String },
+    city: { type: String, required: true },
     groupAgreement: { type: String },
     platformQualification: [
       {

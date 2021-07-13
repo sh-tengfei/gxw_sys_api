@@ -8,7 +8,7 @@ class ProductTypeController extends Controller {
     const { service, query } = ctx
 
     const opt = {
-      id: query.city
+      city: query.city
     }
 
     const { page = 1, limit = 10 } = query
@@ -16,7 +16,7 @@ class ProductTypeController extends Controller {
       limit: query.limit || 10,
       skip: (page - 1) * limit,
     }
-    const types = await service.productType.find(opt)
+    const types = await service.productType.find(opt, option)
 
     ctx.body = { code: 200, msg: '', data: types }
   }

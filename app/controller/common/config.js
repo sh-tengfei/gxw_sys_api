@@ -4,8 +4,16 @@ import { Controller } from 'egg'
 class ConfigController extends Controller {
   async getConfig() {
     const { ctx } = this
-    const { service } = ctx
-    const config = await service.config.getConfig()
+    const { service, query } = ctx
+    const opt = {
+      city: query.city
+    }
+
+    if (!opt.city) {
+      ctx.body = { code: 201, msg: '参数不正确！' }
+      return
+    }
+    const config = await service.config.getConfig(opt)
 
     ctx.body = { code: 200, msg: '', data: config }
   }

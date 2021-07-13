@@ -2,9 +2,9 @@ import { Service } from 'egg'
 import moment from 'moment'
 
 class ProductTypeService extends Service {
-  async find() {
+  async find(query = {}, option = {}, other = { _id: 0 }) {
     const { ctx } = this
-    const types = await ctx.model.ProductType.find({}).sort({ weight: -1 })
+    const types = await ctx.model.ProductType.find(query).sort({ weight: -1 })
     return types
   }
   async findOne(data) {

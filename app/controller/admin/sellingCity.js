@@ -4,6 +4,24 @@ import { Controller } from 'egg'
 class SellingCityController extends Controller {
   async getSellingCitys() {
     const { ctx, app } = this
+
+    // const { query } = ctx
+    // const { page = 1, limit = 10 } = query
+
+    // const option = {
+    //   limit: query.limit || 10,
+    //   skip: (page - 1) * limit
+    // }
+
+    // if (!query.city) {
+    //   ctx.body = { code: 201, data: city, msg: '参数不正确' }
+    //   return
+    // }
+
+    // const opt = {
+    //   city: query.city,
+    // }
+
     const citys = await ctx.service.sellingCity.getCitys({})
     ctx.body = { code: 200, msg: '获取成功', data: citys }
   }

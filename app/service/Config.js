@@ -2,9 +2,9 @@ import { Service } from 'egg'
 import moment from 'moment'
 
 class ConfigService extends Service {
-  async getConfig() {
+  async getConfig(opt) {
     const { ctx } = this
-    const config = await ctx.model.Config.findOne()
+    const config = await ctx.model.Config.findOne(opt)
     return config
   }
   async update(data) {

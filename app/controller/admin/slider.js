@@ -6,7 +6,8 @@ class SliderController extends Controller {
   async getSlider() {
     const { query: search, service } = this.ctx
     const query = {
-      name: search.name
+      name: search.name,
+      city: search.city,
     }
 
     const { page = 1, limit = 10 } = search
