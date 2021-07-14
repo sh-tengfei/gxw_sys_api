@@ -39,12 +39,10 @@ module.exports = app => {
         url: { type: String, required: true }
       }
     ],
-    sellerOfType: { // 商品所属类型 就是商品分类 就是商品特征
-      code: { type: Number, required: true },
-      title: { type: String, required: true }
-    },
+    supplyType: { type: Number, required: true }, // 商品供应类型
+    city: { type: String, required: true }, // 商品销售区域
+
     productType: { type: Number, required: true }, // 商品类型
-    salesTerritory: { type: Object, default: null }, // 销售区域
     state: { type: Number, required: true, default: 1 }, // 商品销售状态 1未上线  2已上线  3已删除
     salesNumber: { type: Number, default: 0 }, // 销售数量
   }, {

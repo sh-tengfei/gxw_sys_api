@@ -12,12 +12,12 @@ class ProductController extends Controller {
       query.name = _query.name
     }
 
-    if (_query.sellerOfType) {
-      query['sellerOfType.code'] = _query.sellerOfType
+    if (_query.city) {
+      query.city = _query.city
     }
 
-    if (_query.salesTerritory) {
-      query['salesTerritory.id'] = _query.salesTerritory
+    if (_query.supplyType) {
+      query.supplyType = _query.supplyType
     }
 
     const { page = 1, limit = 10 } = _query
@@ -27,6 +27,7 @@ class ProductController extends Controller {
     }
 
     const { list, total } = await service.product.find(query, option)
+    // 这里有问题 翻页就会有问题
     const newList = list.filter((i)=>{
       if (!_query.sellOut) {
         return i
@@ -42,7 +43,7 @@ class ProductController extends Controller {
         }
       }
     })
-    ctx.body = { code: 200, msg: '', data: newList, total }
+    ctx.body = { code: 200, msg: '', data: newList, total: newList.length }
   }
 
   async getProduct() {
@@ -65,13 +66,13 @@ class ProductController extends Controller {
       costPrice,
       mallPrice,
       imageDetail,
-      sellerOfType,
+      supplyType,
       productType,
       rebate,
       weight,
       unitValue,
       address,
-      salesTerritory,
+      city,
       shareTitle,
       specs,
       qualitys,
@@ -89,19 +90,6 @@ class ProductController extends Controller {
     const queryName = {
       name,
     }
-    let localType = ''
-    // 本地产品
-    if (sellerOfType && sellerOfType.code !== 101) {
-      queryName['sellerOfType.code'] = sellerOfType.code
-      localType = '本地产品'
-      if (!salesTerritory) {
-        ctx.body = { code: 201, msg: '商品销售区域必须填！' }
-        return
-      }
-    } else {
-    // 产地产品不用地区区分
-      localType = '产地特供'
-    }
 
     const pro = await service.product.findOne({ name })
     if (pro !== null) {
@@ -113,17 +101,17 @@ class ProductController extends Controller {
       slide,
       cover,
       desc,
+      city,
       scribingPrice,
       costPrice,
       mallPrice,
       imageDetail,
-      sellerOfType,
+      supplyType,
       productType,
       rebate,
       weight,
       unitValue,
       address,
-      salesTerritory,
       shareTitle,
       specs,
       qualitys,

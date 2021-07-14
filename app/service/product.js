@@ -17,28 +17,23 @@ class ProductService extends Service {
     if (query.name) {
       query.name = new RegExp(query.name, 'i')
     }
+
     const $or = Object.assign({}, query)
-    delete $or['salesTerritory.id']
-    $or.productType = 101
 
     delete query.limit
     delete query.skip
 
-    let opt = {}
+    let opt = query
 
-    if (query.range === 'all') {
-      delete $or.city
-      delete $or.range
-      opt['$or'] = [query, $or]
-    } else {
-      opt = query
-    }
+    // if (query.range === 'all') {
+    //   delete $or.city
+    //   delete $or.range
+    //   opt['$or'] = [query, $or]
+    // } else {
+    //   opt = query
+    // }
 
-    if (query['sellerOfType.code'] && query['sellerOfType.code'] !== 101) {
-      opt = query
-    }
-
-    delete query.range
+    // delete query.range
 
     const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
@@ -53,7 +48,7 @@ class ProductService extends Service {
       } else {
         item.stockNumber = null
       }
-      if (item.sellerOfType.code !== 101) {
+      if (item.supplyType !== 1) {
         item.deliveryTime = moment().add(1, 'days').date()
       }
     }
