@@ -4,8 +4,7 @@ import { Controller } from 'egg'
 class ProductController extends Controller {
   async getProducts() {
     const { ctx, app } = this
-    const { request, service } = ctx
-    const { query: _query } = request
+    const { service, query: _query } = ctx
     const query = {
       state: +_query.state || -1,
     }

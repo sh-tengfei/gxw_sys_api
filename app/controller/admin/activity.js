@@ -5,8 +5,8 @@ class ActivityController extends Controller {
   async getActives() {
     const { ctx } = this
     const opt = {}
-    if (ctx.query.name) {
-      opt.name = ctx.query.name
+    if (ctx.query.city) {
+      opt.city = ctx.query.city
     }
     const { list, total } = await ctx.service.activity.find(opt)
     ctx.body = { msg: '', code: 200, data: { list, total }}
@@ -56,7 +56,7 @@ class ActivityController extends Controller {
         return
       }
     }
-    
+
     const ret = await service.activity.updateOne(params.id, body)
     if (!ret) {
       ctx.body = { msg: '修改失败', code: 201, data: ret }
