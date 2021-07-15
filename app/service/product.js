@@ -18,12 +18,12 @@ class ProductService extends Service {
       query.name = new RegExp(query.name, 'i')
     }
 
-    const $or = Object.assign({}, query)
+    // const $or = Object.assign({}, query)
 
     delete query.limit
     delete query.skip
 
-    let opt = query
+    // let opt = query
 
     // if (query.range === 'all') {
     //   delete $or.city
@@ -35,7 +35,9 @@ class ProductService extends Service {
 
     // delete query.range
 
-    const list = await ctx.model.Product.find(opt, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
+    console.log(query)
+
+    const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')

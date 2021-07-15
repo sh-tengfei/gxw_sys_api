@@ -16,6 +16,7 @@ class SliderController extends Controller {
       skip: (page - 1) * limit
     }
     if (!query.name) delete query.name
+
     const data = await service.slider.find(query, option)
 
     this.ctx.body = { code: 200, msg: '', data }

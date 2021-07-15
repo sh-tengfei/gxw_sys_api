@@ -10,6 +10,7 @@ class StockController extends Controller {
 
     const query = {
       productName: _query.productName,
+      city: _query.city
     }
 
     const option = {

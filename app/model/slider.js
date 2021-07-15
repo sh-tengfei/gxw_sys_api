@@ -7,6 +7,7 @@ module.exports = app => {
     jumpType: { type: Number, default: 1 }, // 1无跳转 2商品 3活动
     productId: { type: String },
     activityId: { type: String },
+    city: { type: String, required: true },
     weight: { type: Number, required: true },
     sliderId: { type: String, required: true, unique: true },
     name: { type: String, required: true, unique: true },

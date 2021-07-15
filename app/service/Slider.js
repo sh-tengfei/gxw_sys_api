@@ -14,7 +14,7 @@ class SliderService extends Service {
     }
 
     const list = await ctx.model.Slider.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
-    
+
     for (const i of list) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
