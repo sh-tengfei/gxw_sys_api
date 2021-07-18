@@ -21,6 +21,7 @@ class SliderService extends Service {
       if (i.jumpType === 3) {
         i.activity = await ctx.service.activity.findOne(i.activityId)
       }
+
       if (i.jumpType === 2) {
         i.product = await ctx.service.product.findOne({ productId: i.productId })
       }

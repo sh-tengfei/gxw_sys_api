@@ -30,32 +30,34 @@ class LoginController extends Controller {
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
-        data: { token: this.createUserToken(user), user, weAppTemp },
-        session_key: userInfo.session_key,
+        data: { 
+          user,
+          token: this.createUserToken(user),
+          weAppTemp,
+          isRegister: true
+        }
       }
       return
     }
-
     try {
       // 不存在 创建
-      user = await service.user.create({
-        ...userInfo
-      })
+      // user = await service.user.create({
+      //   ...userInfo
+      // })
 
-      if (!user || user.errors) {
-        logger.error({ msg: '保存失败，联系管理员', data: user })
-        ctx.body = {
-          msg: '保存失败，联系管理员',
-          data: user,
-        }
-        return
-      }
+      // if (!user || user.errors) {
+      //   logger.error({ msg: '保存失败，联系管理员', data: userInfo })
+      //   ctx.body = {
+      //     msg: '保存失败，联系管理员',
+      //     data: user,
+      //   }
+      //   return
+      // }
 
       ctx.body = {
         code: 200,
-        msg: '登陆成功！',
-        data: { token: this.createUserToken(user), user, weAppTemp },
-        session_key: userInfo.session_key
+        msg: '获取成功！',
+        data: { ...userInfo, isRegister: false }
       }
       return
     } catch (e) {
@@ -75,25 +77,50 @@ class LoginController extends Controller {
   // 更新用户
   async updateInfo() {
     const { ctx, app } = this
-    const { request: req, params, service } = ctx
-    const { nickName, avatarUrl, phoneNumber } = req.body
+    const { request: req, service } = ctx
+    const { province, openid, nickName, avatarUrl, phoneNumber, unionid, userId, city, country, gender, language } = req.body
     const newData = {
       username: nickName,
       picture: avatarUrl,
-      source: req.body
+      province,
+      unionid,
+      openid,
+      city,
+      source: req.body,
     }
+
     if (phoneNumber) {
       newData.phone = phoneNumber
     }
 
-    if (!params.id) {
-      ctx.body = { msg: '参数错误', code: 201 }
-      return
+    if (!unionid && !userId) {
+       ctx.body = { msg: '参数错误', code: 201 }
+       return
     }
-    const user = await service.user.updateOne(params.id, newData)
+
+    let user
+    if (unionid) {
+      user = await service.user.findOne({ unionid: unionid })
+    }
+
+    if (userId) {
+      user = await service.user.findOne({ userId: userId })
+    }
 
     if (!user) {
-      ctx.body = { msg: '更新失败', data: user, code: 201 }
+      user = await service.user.create(newData)
+      ctx.body = { msg: '注册成功',  code: 200, data: {
+        user,
+        token: this.createUserToken(user),
+        weAppTemp,
+      } }
+      return
+    } else {
+      user = await service.user.updateOne(user.userId, newData)
+    }
+
+    if (!user) {
+      ctx.body = { msg: '更新失败',  code: 201, data: user }
       return
     }
     ctx.body = { msg: '更新成功', code: 200, data: user }

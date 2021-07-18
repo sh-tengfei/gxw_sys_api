@@ -39,7 +39,7 @@ module.exports = app => {
         url: { type: String, required: true }
       }
     ],
-    supplyType: { type: Number, required: true }, // 商品供应类型
+    supplyType: { type: Number, required: true }, // 商品供应类型 1本地产品 2产地直供
     city: { type: String, required: true }, // 商品销售区域
 
     productType: { type: Number, required: true }, // 商品类型

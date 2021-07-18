@@ -28,11 +28,32 @@ class AdminController extends Controller {
   }
   async dashboard() {
     const { ctx } = this
-    const { service, model } = ctx
-    const { total: orderTotal } = await service.order.find({ state: -1 })
-    const { total: productTotal } = await service.product.find({ state: -1 })
-    const { total: userTotal } = await service.user.find({})
+    const { service, model, query } = ctx
+    const opt = {
+      state: -1
+    }
+    if (query.city) {
+      opt.city = query.city
+    }
+
+
+    const { total: orderTotal, list } = await service.order.find(opt)
+    
+    const userMap = {}
+
+    list.forEach((i)=>{
+      userMap[i.user.userIndex] = i
+    })
+
+    const users = Object.values(userMap)
+    
+    const { total: productTotal } = await service.product.find(opt)
+
     const quota = await model.Order.aggregate([
+      { $match: {
+          city: query.city
+        }
+      },
       {
         $group: {
           _id: null,
@@ -44,8 +65,9 @@ class AdminController extends Controller {
     ])
 
     const quotaAmount = quota.shift()
+
     ctx.body = { code: 200, msg: '', data: {
-      user: userTotal,
+      user: users.length,
       product: productTotal,
       order: orderTotal,
       quota: Number((quotaAmount && quotaAmount.amount || 0).toFixed(2)),

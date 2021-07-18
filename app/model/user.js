@@ -12,8 +12,8 @@ module.exports = app => {
     level: { type: Number, default: 1 },
     userIndex: { type: Number, required: true },
     levelText: { type: String, default: '普通会员' },
-    phone: { type: String, default: '' },
-    unionid: { type: String, unique: true },
+    phone: { type: String, default: '', required: true },
+    unionid: { type: String, unique: true, required: true },
     openid: { type: String, required: true, unique: true },
     picture: { type: String, default: '' },
     buyTotal: { type: String, default: '0' },
@@ -23,15 +23,7 @@ module.exports = app => {
     historyExtract: [
       { type: String }
     ],
-    source: {
-      nickName: { type: String, default: '' },
-      avatarUrl: { type: String, default: '' },
-      city: { type: String, default: '' },
-      province: { type: String, default: '' },
-      country: { type: String, default: '' },
-      gender: { type: Number, default: '' }, // 性别 0：未知、1：男、2：女
-      phoneNumber: { type: String, default: '' }
-    }
+    source: { type: Object }
   }, {
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }

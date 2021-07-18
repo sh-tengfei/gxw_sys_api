@@ -35,8 +35,6 @@ class ProductService extends Service {
 
     // delete query.range
 
-    console.log(query)
-
     const list = await ctx.model.Product.find(query, other).skip(+skip).limit(+limit).lean().sort({ createTime: 0 })
 
     list.forEach(i=>{
@@ -50,7 +48,7 @@ class ProductService extends Service {
       } else {
         item.stockNumber = null
       }
-      if (item.supplyType !== 1) {
+      if (item.supplyType === 2) {
         item.deliveryTime = moment().add(1, 'days').date()
       }
     }
@@ -95,7 +93,7 @@ class ProductService extends Service {
       // 存在库存
       product.stockNumber = curStock.stockNumber
     }
-    if (product.sellerOfType.code !== 101) {
+    if (product.supplyType === 2) {
       product.deliveryTime = moment().add(1, 'days').date()
     }
     return product
@@ -106,7 +104,7 @@ class ProductService extends Service {
     delete newProduct._id
     newProduct.createTime = moment(newProduct.createTime).format('YYYY-MM-DD HH:mm:ss')
     newProduct.updateTime = moment(newProduct.updateTime).format('YYYY-MM-DD HH:mm:ss')
-    if (newProduct.sellerOfType.code !== 101) {
+    if (newProduct.supplyType === 2) {
       newProduct.deliveryTime = moment().add(1, 'days').date()
     }
     return newProduct

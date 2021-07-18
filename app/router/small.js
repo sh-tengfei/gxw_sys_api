@@ -20,7 +20,7 @@ export default function({ router, controller: contr, jwt }) {
   router.delete('/small/cart/:id', jwt, contr.shoppingCart.deleteCard)
 
   router.get('/small/userInfo', jwt, contr.user.getUserInfo)
-  router.put('/small/userInfo/:id', contr.user.updateInfo)
+  router.put('/small/userInfo', contr.user.updateInfo)
   router.get('/small/location', contr.user.getLocation)
   router.put('/small/defaultExtract', jwt, contr.user.setDefaultExtract)
 
