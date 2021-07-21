@@ -32,7 +32,7 @@ class LoginController extends Controller {
         msg: '登陆成功！',
         data: { 
           user,
-          token: this.createUserToken(user),
+          token: this.createUserToken({ userId: user.userId }),
           weAppTemp,
           isRegister: true
         }
@@ -40,24 +40,10 @@ class LoginController extends Controller {
       return
     }
     try {
-      // 不存在 创建
-      // user = await service.user.create({
-      //   ...userInfo
-      // })
-
-      // if (!user || user.errors) {
-      //   logger.error({ msg: '保存失败，联系管理员', data: userInfo })
-      //   ctx.body = {
-      //     msg: '保存失败，联系管理员',
-      //     data: user,
-      //   }
-      //   return
-      // }
-
       ctx.body = {
         code: 200,
-        msg: '获取成功！',
-        data: { ...userInfo, isRegister: false }
+        msg: '用户未注册！',
+        data: { user: userInfo, isRegister: false }
       }
       return
     } catch (e) {
@@ -77,25 +63,23 @@ class LoginController extends Controller {
   // 更新用户
   async updateInfo() {
     const { ctx, app } = this
-    const { request: req, service } = ctx
-    const { province, openid, nickName, avatarUrl, phoneNumber, unionid, userId, city, country, gender, language } = req.body
-    const newData = {
+    const { request: { body }, service } = ctx
+    const { province, openid, nickName, avatarUrl, phoneNumber, unionid, userId, city, country, gender, language } = body
+    
+    const userData = {
+      phone: phoneNumber,
       username: nickName,
       picture: avatarUrl,
       province,
       unionid,
       openid,
       city,
-      source: req.body,
-    }
-
-    if (phoneNumber) {
-      newData.phone = phoneNumber
+      source: body,
     }
 
     if (!unionid && !userId) {
-       ctx.body = { msg: '参数错误', code: 201 }
-       return
+      ctx.body = { msg: '参数错误', code: 201 }
+      return
     }
 
     let user
@@ -108,12 +92,16 @@ class LoginController extends Controller {
     }
 
     if (!user) {
-      user = await service.user.create(newData)
-      ctx.body = { msg: '注册成功',  code: 200, data: {
-        user,
-        token: this.createUserToken(user),
-        weAppTemp,
-      } }
+      user = await service.user.create(userData)
+      ctx.body = { 
+        msg: '注册成功',
+        code: 200,
+        data: {
+          user,
+          token: this.createUserToken({ userId: user.userId }),
+          weAppTemp,
+        }
+      }
       return
     } else {
       user = await service.user.updateOne(user.userId, newData)
@@ -144,17 +132,22 @@ class LoginController extends Controller {
   }
   async getUserPhone() {
     const { ctx, app } = this
-    const { request: req, service, logger } = ctx
+    const { request: { body }, service, logger } = ctx
 
     const phoneData = await service.user.getPhone({
-      sessionKey: req.body.session_key,
-      iv: req.body.iv,
-      encryptedData: req.body.encryptedData
+      sessionKey: body.session_key,
+      iv: body.iv,
+      encryptedData: body.encryptedData
     }).catch((e)=>{
-      const opt = { msg: '手机号码解密失败', code: 201, data: req.body, error: e }
+      const opt = { msg: '手机号码解密失败', code: 201, data: body, error: e }
       logger.warn(opt)
       ctx.body = opt
     })
+
+    if(phoneData.code) {
+      ctx.body = { msg: '手机号码解密失败', code: 201, data: phoneData }
+      return
+    }
     ctx.body = { msg: '获取成功', code: 200, data: phoneData }
   }
   async getAgentOfQrode() {
