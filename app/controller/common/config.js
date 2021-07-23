@@ -48,6 +48,11 @@ class ConfigController extends Controller {
       ctx.body = { msg: '刷新失败', code: 201, data: error }
     }
   }
+  async getCitys() {
+    const citys = await this.ctx.service.sellingCity.getCitys({})
+
+    this.ctx.body = { code: 200, msg: '获取成功', data: citys }
+  }
 }
 
 module.exports = ConfigController

@@ -12,4 +12,6 @@ export default function({ router, controller: contr, jwt }) {
 
   router.post('/common/accessToken', contr.config.getAccessToken)
   router.get('/common/refreshAccessToken', contr.config.refreshAccessToken)
+
+  router.get('/common/citys', contr.config.getCitys)
 }

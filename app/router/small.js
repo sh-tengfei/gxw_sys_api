@@ -65,8 +65,9 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/groupLogin', contr.user.getGroupLogin)
   // 获取团长信息
   router.get('/small/groupInfo', jwt, contr.user.getGroupInfo)
-  router.put('/small/agent', jwt, contr.user.updateAgent) // 登陆后更新信息
-  router.post('/small/getAgentPhone', jwt, contr.user.getAgentPhone)
+  router.post('/small/agent', contr.user.makeAgent) // 创建代理
+  router.put('/small/agent', jwt, contr.user.submitReviewAgent) // 登陆后更新信息
+  router.post('/small/getAgentPhone', contr.user.getAgentPhone)
 
   router.post('/small/agent', jwt, contr.agent.regGroupUser) // 团长注册
   router.get('/small/deliveryNote', jwt, contr.deliveryNote.getDeliveryList)
