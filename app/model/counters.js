@@ -11,6 +11,7 @@ module.exports = app => {
     userId: { type: String, required: true, unique: true },
     stockId: { type: String, required: true, unique: true },
     activityId: { type: String, required: true, unique: true },
+    historyId: { type: String, required: true, unique: true },
     sliderId: { type: String, required: true, unique: true },
     deliveryId: { type: String, required: true, unique: true },
     classifyId: { type: String, required: true, unique: true },

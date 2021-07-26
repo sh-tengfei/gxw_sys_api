@@ -6,36 +6,16 @@ class UserService extends Service {
     const { service, model } = this.ctx
     const user = await model.User.findOne(query).lean()
 
-    if (user && user.historyExtract) {
-      const extractRet = []
-      for (const extractId of user.historyExtract) {
-        const extract = await service.agent.findOne({ extractId })
-        if (extract && extract.state === 2) {
-          const { extractIndex, avatarUrl, nickName, applyName, communitySite, extractId, applyPhone, location, areaId, communityName } = extract
-          extractRet.unshift({
-            nickName,
-            avatarUrl,
-            applyName,
-            communitySite,
-            extractId,
-            applyPhone,
-            location,
-            areaId,
-            communityName,
-            extractIndex,
-          })
-        }
-      }
+    if (user) {
       const { list, total } = await service.address.find({
         userId: user.userId,
         isDefault: true
       })
+
       // 收货地址为用户单独户的收货地址
       if (total !== 0) {
         user.defaultAddress = list[0]
       }
-
-      user.historyExtract = extractRet
     }
 
     if (user && user.defaultExtract) {
@@ -67,16 +47,6 @@ class UserService extends Service {
     for (const i of list) {
       i.updateTime = moment(i.updateTime).format('YYYY-MM-DD HH:mm:ss')
       i.createTime = moment(i.createTime).format('YYYY-MM-DD HH:mm:ss')
-
-      const extractRet = []
-      i.historyExtract = i.historyExtract || []
-      for (const extractId of i.historyExtract) {
-        const extract = await service.agent.findOne({ extractId })
-        if (extract && extract.state === 2) {
-          extractRet.unshift(extract)
-        }
-      }
-      i.historyExtract = extractRet
 
       if (i.unionid) {
         const agent = await service.agent.findOne({ unionid: i.unionid })
@@ -113,14 +83,6 @@ class UserService extends Service {
     if (newUser) {
       newUser.createTime = moment(newUser.createTime).format('YYYY-MM-DD HH:mm:ss')
       newUser.updateTime = moment(newUser.updateTime).format('YYYY-MM-DD HH:mm:ss')
-      const extractRet = []
-      for (const extractId of newUser.historyExtract) {
-        const extract = await service.agent.findOne({ extractId })
-        if (extract && extract.state === 2) {
-          extractRet.unshift(extract)
-        }
-      }
-      newUser.historyExtract = extractRet
 
       if (newUser.unionid) {
         const agent = await service.agent.findOne({ unionid: newUser.unionid })
@@ -130,6 +92,7 @@ class UserService extends Service {
         }
       }
     }
+
     const { list, total } = await service.address.find({
       userId: newUser.userId,
       isDefault: true
@@ -163,17 +126,24 @@ class UserService extends Service {
   // 设置用户使用过的代理
   async setHistoryAgent({ userId, extractId }) {
     const { model, service } = this.ctx
-    let { historyExtract } = await service.user.findOne({ userId })
-    // 过滤出来只剩下 extractId
-    historyExtract = historyExtract.map(i=>i.extractId)
-    historyExtract.push(extractId)
 
-    const newHistory = new Set(historyExtract)
-    const user = await service.user.updateOne(userId, {
+    let history = await service.historyExtract.findOne({ userId })
+    if (!history) {
+      return await service.historyExtract.create({
+        historyExtract: [extractId],
+        userId
+      })
+    }
+
+    // 过滤出来只剩下 extractId
+    history.historyExtract = history.historyExtract.map(i=>i.extractId)
+    history.historyExtract.unshift(extractId)
+
+    const newHistory = new Set(history.historyExtract)
+
+    const agent = await service.historyExtract.updateOne({ userId }, {
       historyExtract: [...newHistory]
     })
-
-    const agent = await service.agent.findOne({ extractId })
     // 过滤掉非当前代理区域的商品
     await service.shoppingCart.filterCard(userId, agent.areaId)
   }

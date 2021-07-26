@@ -30,7 +30,7 @@ class LoginController extends Controller {
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
-        data: { 
+        data: {
           user,
           token: this.createUserToken({ userId: user.userId }),
           weAppTemp,
@@ -65,7 +65,7 @@ class LoginController extends Controller {
     const { ctx, app } = this
     const { request: { body }, service } = ctx
     const { province, openid, nickName, avatarUrl, phoneNumber, unionid, userId, city, country, gender, language } = body
-    
+
     const userData = {
       phone: phoneNumber,
       username: nickName,
@@ -93,7 +93,7 @@ class LoginController extends Controller {
 
     if (!user) {
       user = await service.user.create(userData)
-      ctx.body = { 
+      ctx.body = {
         msg: '注册成功',
         code: 200,
         data: {
@@ -108,7 +108,7 @@ class LoginController extends Controller {
     }
 
     if (!user) {
-      ctx.body = { msg: '更新失败',  code: 201, data: user }
+      ctx.body = { msg: '更新失败', code: 201, data: user }
       return
     }
     ctx.body = { msg: '更新成功', code: 200, data: user }
@@ -144,7 +144,7 @@ class LoginController extends Controller {
       ctx.body = opt
     })
 
-    if(phoneData.code) {
+    if (phoneData.code) {
       ctx.body = { msg: '手机号码解密失败', code: 201, data: phoneData }
       return
     }
@@ -299,7 +299,7 @@ class LoginController extends Controller {
     const { request: { body }, service, state } = ctx
     const { userId } = state.user
 
-    const { 
+    const {
       applyName,
       applyUrgentPhone,
       areaId,
@@ -319,7 +319,6 @@ class LoginController extends Controller {
       ctx.body = { msg: '用户不存在！', code: 201 }
       return
     }
-
 
     const agent = await service.agent.updateOne(agented.extractId, {
       applyName,
@@ -382,6 +381,16 @@ class LoginController extends Controller {
     } else {
       ctx.body = { msg: '代理不存在', code: 201 }
     }
+  }
+  async getUserHistoryExtract() {
+    const { app, ctx } = this
+    const { service, query } = ctx
+    if (!query.userId) {
+      ctx.body = { msg: '参数不正确！', code: 201 }
+      return
+    }
+    const history = await service.historyExtract.findOne({ userId: query.userId })
+    ctx.body = { msg: '获取成功', code: 200, data: history }
   }
 }
 

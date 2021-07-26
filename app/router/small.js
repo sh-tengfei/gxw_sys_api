@@ -24,6 +24,8 @@ export default function({ router, controller: contr, jwt }) {
   router.get('/small/location', contr.user.getLocation)
   router.put('/small/defaultExtract', jwt, contr.user.setDefaultExtract)
 
+  router.get('/small/historyExtract', jwt, contr.user.getUserHistoryExtract)
+
   // 开通的城市
   router.get('/small/citys', contr.user.getCitys)
 

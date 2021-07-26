@@ -20,9 +20,6 @@ module.exports = app => {
     username: { type: String, default: '' },
     useCity: { type: Object, default: null },
     defaultExtract: { type: String, default: null },
-    historyExtract: [
-      { type: String }
-    ],
     source: { type: Object }
   }, {
     versionKey: false,
