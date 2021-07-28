@@ -36,23 +36,24 @@ class AdminController extends Controller {
       opt.city = query.city
     }
 
-
     const { total: orderTotal, list } = await service.order.find(opt)
-    
+
     const userMap = {}
 
     list.forEach((i)=>{
-      userMap[i.user.userIndex] = i
+      if (i.user) {
+        userMap[i.user.userIndex] = i
+      }
     })
 
     const users = Object.values(userMap)
-    
+
     const { total: productTotal } = await service.product.find(opt)
 
     const quota = await model.Order.aggregate([
       { $match: {
-          city: query.city
-        }
+        city: query.city
+      }
       },
       {
         $group: {
