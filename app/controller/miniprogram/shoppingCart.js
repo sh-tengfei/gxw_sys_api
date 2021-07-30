@@ -151,6 +151,7 @@ class ShoppingCartController extends Controller {
             return total
           }
         }, 0)
+        _cart.cardProNum = String(service.shoppingCart.getProductNum(_cart))
         ctx.body = { code: 200, msg: '修改成功', data: _cart }
       } else {
         ctx.body = { code: 200, msg: '操作失败', data: _cart }
