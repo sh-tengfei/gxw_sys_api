@@ -106,7 +106,7 @@ class LoginController extends Controller {
       }
       return
     } else {
-      user = await service.user.updateOne(user.userId, newData)
+      user = await service.user.updateOne(user.userId, userData)
     }
 
     if (!user) {

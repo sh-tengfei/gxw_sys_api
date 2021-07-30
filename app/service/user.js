@@ -91,6 +91,9 @@ class UserService extends Service {
           newUser.extractId = agent.extractId
         }
       }
+      if (newUser.defaultExtract) {
+        newUser.defaultExtract = await service.agent.findOne({ extractId: newUser.defaultExtract })
+      }
     }
 
     const { list, total } = await service.address.find({
@@ -101,6 +104,7 @@ class UserService extends Service {
     if (total !== 0) {
       newUser.defaultAddress = list[0]
     }
+
     return newUser
   }
   async delete(userId) {
