@@ -50,7 +50,7 @@ class ShoppingCartController extends Controller {
   }
   async increaseCard() {
     const { ctx, app } = this
-    const { service, state, request: { body } } = ctx
+    const { service, state, request: { body }} = ctx
     const { userId } = state.user
 
     if (!body.productId) {
@@ -172,6 +172,8 @@ class ShoppingCartController extends Controller {
       }
     }, 0)
 
+    cart.cardProNum = String(service.shoppingCart.getProductNum(cart))
+
     ctx.body = { code: 200, msg: '修改成功', data: cart }
   }
   async reduceCard() { // 购买数减少
@@ -218,7 +220,7 @@ class ShoppingCartController extends Controller {
     }
 
     const cardProNum = service.shoppingCart.getProductNum(cart)
-    ctx.body = { code: 200, msg: '获取成功', data: { cardProNum: cardProNum > 0 ? String(cardProNum): null } }
+    ctx.body = { code: 200, msg: '获取成功', data: { cardProNum: cardProNum > 0 ? String(cardProNum) : null }}
   }
 }
 
