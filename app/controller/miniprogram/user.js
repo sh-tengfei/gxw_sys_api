@@ -74,7 +74,9 @@ class LoginController extends Controller {
       unionid,
       openid,
       city,
-      source: body,
+      source: {
+        country, gender, language, avatarUrl, nickName, phoneNumber, unionid, openid
+      }
     }
 
     if (!unionid && !userId) {
