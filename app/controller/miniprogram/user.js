@@ -220,7 +220,7 @@ class LoginController extends Controller {
 
     let agent = await service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
-      logger.info({ msg: '登录用户！', data: agent })
+      logger.info({ msg: '登录用户！', nickName: agent.nickName, applyPhone: agent.applyPhone })
       const token = this.createAgentToken({ extractId: agent.extractId })
       ctx.body = {
         code: 200,
@@ -292,7 +292,9 @@ class LoginController extends Controller {
       return
     }
 
-    ctx.body = { msg: '注册成功', code: 200, data: { agent, weAppTemp, contact }}
+    const token = this.createAgentToken({ extractId: agent.extractId })
+
+    ctx.body = { msg: '注册成功', code: 200, data: { agent, weAppTemp, contact, token }}
   }
 
   // 提交审核团长
