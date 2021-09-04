@@ -34,7 +34,6 @@ module.exports = {
       dataType: 'json',
       contentType: 'json',
     })
-    console.log(type, res)
     if (res.code === 200) {
       return res.data[type]
     } else {
