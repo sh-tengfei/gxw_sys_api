@@ -155,13 +155,7 @@ class LoginController extends Controller {
   async getAgentOfQrode() {
     const { ctx, app } = this
     const { request: { body }, helper, logger } = ctx
-    let { mall_access_token: token } = await ctx.getAccessToken('mall_access_token')
 
-    if (!token.access_token) {
-      ctx.logger.warn(token, '不存在')
-      ctx.body = { msg: '缓存错误！', code: 201 }
-      return
-    }
     if (!body.path) {
       ctx.body = { msg: '参数错误！', code: 201 }
       return
