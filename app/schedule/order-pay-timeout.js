@@ -12,7 +12,7 @@ class OrderPayTimeout extends Subscription {
   }
   // subscribe 是真正定时任务执行时被运行的函数
   async subscribe() {
-    const { ctx } = this
+    const { ctx, app } = this
     const { list } = await ctx.service.order.find({ state: 1 })
     await this.computeState(list)
   }
@@ -20,7 +20,7 @@ class OrderPayTimeout extends Subscription {
     if (!list.length) {
       return
     }
-    const { ctx } = this
+    const { ctx, app } = this
     const { logger, service, postWebSite } = ctx
     for (const item of list) {
       // 当前时间大于支付结束时间 判定为要关闭订单
@@ -45,7 +45,8 @@ class OrderPayTimeout extends Subscription {
         } else if (trade_state === 'SUCCESS') {
           // 订单已经支付回调未收到
           // 对本机发出请求 改变订单状态以及收益信息
-          const { data } = await ctx.postWebSite('http://127.0.0.1:8100/small/payTimeout', item)
+          const { cluster } = app.config
+          const { data } = await ctx.postWebSite(`http://127.0.0.1:${cluster.listen.port}/small/payTimeout`, item)
           if (data.code === 200) {
             logger.info(data)
           }

@@ -45,22 +45,18 @@
     "dev": "egg-bin dev --env=local",
     "dev:start": "egg-scripts start --daemon --env=local --title=local-egg-gxw",
     "dev:stop": "egg-scripts stop --title=local-egg-gxw",
-
     "test:dev": "egg-bin dev --env=test",
     "test:start": "egg-scripts start --daemon --env=test --title=test-egg-gxw",
     "test:stop": "egg-scripts stop --title=test-egg-gxw",
     "test:restart": "npm run test:stop && npm run test:start",
-
     "pre:dev": "egg-bin dev --env=pre",
     "pre:start": "egg-scripts start --daemon --env=pre --title=pre-egg-gxw",
     "pre:stop": "egg-scripts stop --title=pre-egg-gxw",
     "pre:restart": "npm run pre:stop && npm run pre:start",
-
     "prod:dev": "egg-bin dev --env=prod",
     "prod:start": "egg-scripts start --daemon --env=prod --title=prod-egg-gxw",
     "prod:stop": "egg-scripts stop --title=prod-egg-gxw",
     "prod:restart": "npm run prod:stop && npm run prod:start",
-
     "debug": "egg-bin debug",
     "lint": "eslint .",
     "lint:fix": "eslint --fix --ext .js app config",

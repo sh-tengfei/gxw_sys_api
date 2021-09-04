@@ -27,5 +27,17 @@ module.exports = {
         resolve({ err, data })
       })
     })
+  },
+  async getAccessToken({ type = 'mall_access_token' }) {
+    const { data: res } = await this.curl('https://mall.gxianwang.com/api/common/accessToken', {
+      method: 'POST',
+      dataType: 'json',
+      contentType: 'json',
+    })
+    if (res.code === 200) {
+      return res.data[type]
+    } else {
+      return { code: res.code, msg: res.msg }
+    }
   }
 }

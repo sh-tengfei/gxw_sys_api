@@ -155,10 +155,9 @@ class LoginController extends Controller {
   async getAgentOfQrode() {
     const { ctx, app } = this
     const { request: { body }, helper, logger } = ctx
-    const { cache } = app.config
-    let { mall_access_token: token } = cache
+    let { mall_access_token: token } = await ctx.getAccessToken('mall_access_token')
 
-    if (!token) {
+    if (!token.access_token) {
       ctx.logger.warn(token, '不存在')
       ctx.body = { msg: '缓存错误！', code: 201 }
       return
@@ -170,17 +169,9 @@ class LoginController extends Controller {
 
     let { localUrl, res, ...args } = await helper.getWxQrcode(body)
     logger.info(res)
+
     if (String(res.headers.logicret) === '40001') {
-      if (helper.canRefreshAccessToken()) {
-        await app.runSchedule('access-token')
-      } else {
-        logger.info('sync-access-token')
-        await app.runSchedule('sync-access-token')
-      }
-      const resInfo = await helper.getWxQrcode(body)
-      localUrl = resInfo.localUrl
-      res = resInfo.res
-      logger.info('sync-access-token', res)
+      throw new Error('access_token错误')
     }
 
     const fileUrl = await helper.qiniUpload({

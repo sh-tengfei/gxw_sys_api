@@ -143,8 +143,7 @@ module.exports = {
   },
   async getWxQrcode({ productId, extractId, path }) {
     const { ctx, app } = this
-    const { cache } = app.config
-    let { mall_access_token: token } = cache
+    let { mall_access_token: token } = await ctx.getAccessToken('mall_access_token')
 
     const localUrl = `./catch/${productId}${Date.now()}111.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`

@@ -78,17 +78,13 @@ module.exports = {
       tokenType = 'mall'
     }
 
-    let { [tokenType + '_access_token']: token } = app.config.cache
-    if (!token) {
-      if (ctx.logger.canRefreshAccessToken()) {
-        await app.runSchedule('access-token')
-      } else {
-        await app.runSchedule('sync-access-token')
-      }
+    tokenType = tokenType + '_access_token'
 
-      token = app.config.cache[tokenType + '_access_token']
+    let token = await ctx.getAccessToken(tokenType)
+    if (!token.access_token) {
+      throw new new Error('access_token 错误')
     }
 
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')
-  },
+  }
 }
