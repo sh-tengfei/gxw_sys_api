@@ -30,15 +30,8 @@ class TempMsgService extends Service {
 
     return app.sendTempMsg(option).then((res)=>{
       this.sendTempMail(res, option)
-    }).catch(async()=>{
-      if (ctx.helper.canRefreshAccessToken()) {
-        await app.runSchedule('access-token')
-      } else {
-        await app.runSchedule('sync-access-token')
-      }
-      app.sendTempMsg(option).then((res)=>{
-        this.sendTempMail(res, option)
-      })
+    }).catch(async(err)=>{
+      ctx.logger.warn(err)
     })
   }
 
