@@ -32,22 +32,6 @@ class ConfigController extends Controller {
     ctx.body = { msg: '获取成功', code: 200, data: app.config.cache }
   }
 
-  async refreshAccessToken() {
-    const { ctx, app } = this
-    const { logger, helper } = ctx
-
-    try {
-      if (helper.canRefreshAccessToken()) {
-        await app.runSchedule('access-token')
-      } else {
-        await app.runSchedule('sync-access-token')
-      }
-
-      ctx.body = { msg: '刷新成功', code: 200 }
-    } catch (error) {
-      ctx.body = { msg: '刷新失败', code: 201, data: error }
-    }
-  }
   async getCitys() {
     const citys = await this.ctx.service.sellingCity.getCitys({})
 
