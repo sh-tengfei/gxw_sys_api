@@ -28,7 +28,7 @@ class TempMsgService extends Service {
       tokenType,
     }
 
-    return app.sendTempMsg(option).then((res)=>{
+    return app.sendTempMsg(this, option).then((res)=>{
       this.sendTempMail(res, option)
     }).catch(async(err)=>{
       ctx.logger.warn(err)
