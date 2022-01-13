@@ -12,7 +12,7 @@ function md5Pwd(pwd) {
 class AdminController extends Controller {
   async userInfo() {
     const { ctx, app } = this
-    const { userId: adminId } = ctx.state.user
+    const { userId: adminId } = ctx.user
     const data = await ctx.service.admin.findOne({ adminId })
     if (!data) {
       ctx.body = { code: 401, msg: '非法访问' }

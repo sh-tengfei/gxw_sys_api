@@ -6,7 +6,7 @@ import { Decimal } from 'decimal.js'
 class BillController extends Controller {
   async getBills() {
     const { ctx, app } = this
-    const { service, state: { user }, query } = ctx
+    const { service, user, query } = ctx
     const { timeType, startTime, endTime } = query // 1是天 2是周 3是月
     const { userId } = user
 

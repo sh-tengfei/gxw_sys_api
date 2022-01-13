@@ -11,7 +11,7 @@ function getTabelCell(title, width) {
     val: title,
     opts: {
       cellColWidth: width || null,
-      color: "333333",
+      color: '333333',
       back: '000088',
       b: true,
       sz: 20,
@@ -28,7 +28,7 @@ function getText(val, option = {}) {
       font_face: option.font_face || 'Arial',
       font_size: option.font_size || 10,
       color: option.color || '#333',
-      align: option.align ||'center',
+      align: option.align || 'center',
       vAlign: option.align || 'center'
     }
   }
@@ -44,9 +44,9 @@ async function generateDownload({
   const docx = officegen({
     type: 'docx',
     pageMargins: {
-      left: 400, 
-      right: 400, 
-      top: 300, 
+      left: 400,
+      right: 400,
+      top: 300,
       bottom: 300,
     }
   })
@@ -106,10 +106,10 @@ async function generateDownload({
   // 团长配送信息
   const jsonData = [
     [
-      getText(`采购日期：${createTime}`), 
-      getText(`                                  采购总金额：${'￥' + totalAmount}`), 
-      { type: 'linebreak' }, 
-      getText(`采购类型：${purchaseType === 1 ? '本地采购' : '产地采购' }`),
+      getText(`采购日期：${createTime}`),
+      getText(`                                  采购总金额：${'￥' + totalAmount}`),
+      { type: 'linebreak' },
+      getText(`采购类型：${purchaseType === 1 ? '本地采购' : '产地采购'}`),
       {
         type: 'table',
         val: table,
@@ -139,7 +139,6 @@ async function generateDownload({
     docx.generate(out)
   })
 }
-
 
 class PurchaseController extends Controller {
   async getPurchases() {
@@ -179,7 +178,7 @@ class PurchaseController extends Controller {
       ctx.body = { code: 201, msg: '参数不正确！' }
       return
     }
-    const data = await service.purchase.findOne({ purchaseId: params.id})
+    const data = await service.purchase.findOne({ purchaseId: params.id })
     if (!data) {
       ctx.body = { code: 201, msg: '获取失败', data }
       return

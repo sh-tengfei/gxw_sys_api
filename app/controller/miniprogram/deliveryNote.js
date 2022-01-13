@@ -4,7 +4,7 @@ import { Controller } from 'egg'
 class DeliveryNoteController extends Controller {
   async getDeliveryList() {
     const { ctx, app } = this
-    const { service, state: { user }, query } = ctx
+    const { service, user, query } = ctx
     const opt = {
       extractId: user.userId,
       state: -1,

@@ -80,9 +80,12 @@ module.exports = {
 
     tokenType = tokenType + '_access_token'
 
-    let token = await ctx.getAccessToken(tokenType)
+    let token = await ctx.getWebSite('http://token.gxianwang.com/getToken', {
+      type: tokenType
+    })
+
     if (!token.access_token) {
-      throw new new Error('access_token 错误')
+      throw new Error('access_token 错误')
     }
 
     return ctx.postWebSite(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${token.access_token}`, data, 'json')

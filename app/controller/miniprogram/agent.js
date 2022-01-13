@@ -10,8 +10,8 @@ function rad(d) {
 class AgentController extends Controller {
   async regGroupUser() {
     const { ctx } = this
-    const { request: { body }, service, state } = ctx
-    let info = await service.agent.findOne({ extractId: state.user.userId })
+    const { request: { body }, service, user } = ctx
+    let info = await service.agent.findOne({ extractId: user.userId })
     if (info && info.communityName) {
       ctx.body = { msg: '用户已注册，重复提交！', code: 202 }
       return
@@ -24,7 +24,7 @@ class AgentController extends Controller {
       return
     }
 
-    agent = await service.agent.updateOne(state.user.userId, { ...body, state: 1 })
+    agent = await service.agent.updateOne(user.userId, { ...body, state: 1 })
 
     let html = `<p style="margin: 0px;">姓名：${agent.applyName}</p>
                 <p style="margin: 0px;">手机：${agent.applyPhone}<p>
@@ -122,7 +122,7 @@ class AgentController extends Controller {
   async postWithdraw() {
     const { ctx } = this
     const { service, request: req, state } = ctx
-    const { userId } = state.user
+    const { userId } = user
 
     let { amount } = req.body
     amount = +amount

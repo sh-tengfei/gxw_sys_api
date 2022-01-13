@@ -27,11 +27,6 @@ class ConfigController extends Controller {
     const newConfig = await service.config.update(body)
     ctx.body = { code: 200, msg: '', data: newConfig }
   }
-  async getAccessToken() {
-    const { ctx, app } = this
-    ctx.body = { msg: '获取成功', code: 200, data: app.config.cache }
-  }
-
   async getCitys() {
     const citys = await this.ctx.service.sellingCity.getCitys({})
 

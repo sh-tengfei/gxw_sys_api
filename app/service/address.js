@@ -28,7 +28,7 @@ class AddressService extends Service {
   }
   async create(data) {
     const { model, state, service } = this.ctx
-    const { userId } = state.user
+    const { userId } = user
 
     let newAddress; const addressId = 'addressId'
     let { id } = await service.counters.findAndUpdate(addressId)
@@ -56,7 +56,7 @@ class AddressService extends Service {
   }
   async changeStatus(addressId, data) {
     const { model, state } = this.ctx
-    const { userId } = state.user
+    const { userId } = user
     // 找到默认那条数据改变状态
     const defaultAddr = await model.Address.findOneAndUpdate({ userId, isDefault: true }, { isDefault: false })
     const upData = this.updateOne(addressId, data)

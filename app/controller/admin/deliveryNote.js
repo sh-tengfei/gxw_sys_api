@@ -10,7 +10,7 @@ function getTabelCell(title, width) {
     val: title,
     opts: {
       cellColWidth: width || null,
-      color: "333333",
+      color: '333333',
       back: '000088',
       b: true,
       sz: 20,
@@ -27,7 +27,7 @@ function getText(val, option = {}) {
       font_face: option.font_face || 'Arial',
       font_size: option.font_size || 10,
       color: option.color || '#333',
-      align: option.align ||'center',
+      align: option.align || 'center',
       vAlign: option.align || 'center'
     }
   }
@@ -44,9 +44,9 @@ async function generateDownload({
   const docx = officegen({
     type: 'docx',
     pageMargins: {
-      left: 400, 
-      right: 400, 
-      top: 300, 
+      left: 400,
+      right: 400,
+      top: 300,
       bottom: 300,
     }
   })
@@ -154,9 +154,9 @@ async function generateDownload({
   // 团长配送信息
   const jsonData = [
     [
-      getText(`送货日期：${moment(extract.createTime).format('YYYY-MM-DD')}`), 
-      getText(`                                   配送人 / 手机：吕凤波 / 13739668118`), 
-      { type: 'linebreak' }, 
+      getText(`送货日期：${moment(extract.createTime).format('YYYY-MM-DD')}`),
+      getText(`                                   配送人 / 手机：吕凤波 / 13739668118`),
+      { type: 'linebreak' },
       getText(`团长电话：${extract.applyPhone}`),
       { type: 'linebreak' },
       getText(`团长地址：${extract.communitySite}`),
@@ -166,9 +166,9 @@ async function generateDownload({
         opt: proTableStyle
       }
     ], [
-      { type: 'linebreak' }, 
-      { type: 'linebreak' }, 
-      getText(`团长订单商品清单`, { 
+      { type: 'linebreak' },
+      { type: 'linebreak' },
+      getText(`团长订单商品清单`, {
         font_size: 13
       }),
       {

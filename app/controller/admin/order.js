@@ -75,7 +75,7 @@ class OrderController extends Controller {
       return
     }
     order = await service.order.updateOne(params.id, {
-      $push: { expressNo: 
+      $push: { expressNo:
         [{
           companyName,
           number,
@@ -87,22 +87,22 @@ class OrderController extends Controller {
     if (order.state === 2) {
       ret = await service.order.sendGoods([params.id])
     }
-    
+
     if (order) {
       ctx.body = { code: 200, msg: '发货成功', data: order }
       return
     }
-    
+
     ctx.body = { code: 201, msg: '发货失败', data: ret }
   }
   async delLogistics() {
     const { ctx, app } = this
-    const { service, params, request: { body } } = ctx
+    const { service, params, request: { body }} = ctx
     if (!params.id || Object.keys(body).length === 0) {
       return ctx.body = { code: 200, msg: '参数错误！' }
     }
     let { expressNo } = await service.order.findOne({ orderId: params.id })
-    
+
     let retList = expressNo.filter(i=>i.number !== body.numberId)
     await service.order.updateOne(params.id, {
       expressNo: retList

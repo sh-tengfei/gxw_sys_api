@@ -12,6 +12,7 @@ module.exports = appInfo => {
    * @type {Egg.EggAppConfig}
    **/
   const config = exports = {
+    middleware: ['authentication'],
     jwt: {
       secret: 'guoxianwang',
     },

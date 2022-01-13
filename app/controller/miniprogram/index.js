@@ -95,7 +95,7 @@ class IndexController extends Controller {
   async getIndexSales() {
     const { ctx, app } = this
     const { service, state } = ctx
-    const { userId } = state.user
+    const { userId } = user
     const todayStart = moment().startOf('day')
     const todayEnd = moment().endOf('day')
 

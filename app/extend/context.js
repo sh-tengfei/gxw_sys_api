@@ -28,19 +28,4 @@ module.exports = {
       })
     })
   },
-  async getAccessToken(type = 'mall_access_token') {
-    if (['pre', 'prod'].includes(this.app.config.env)) {
-      return this.config.cache.mall_access_token[type]
-    }
-    const { data: res } = await this.curl('https://mall.gxianwang.com/api/common/accessToken', {
-      method: 'POST',
-      dataType: 'json',
-      contentType: 'json',
-    })
-    if (res.code === 200) {
-      return res.data[type]
-    } else {
-      return { code: res.code, msg: res.msg }
-    }
-  }
 }

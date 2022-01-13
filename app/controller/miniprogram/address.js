@@ -4,18 +4,18 @@ import { Controller } from 'egg'
 class AddressController extends Controller {
   async getOneAddress() {
     const { ctx, app } = this
-    const { request, service, params } = ctx
+    const { service, params } = ctx
 
     const pro = await service.address.findOne(params.id)
     ctx.body = { code: 200, msg: '', data: pro }
   }
   async getAddress() {
     const { ctx } = this
-    const { request, service, state, query: que } = ctx
+    const { service, user, query: que } = ctx
     const { limit = 10, skip = 0 } = que
 
     const query = {
-      userId: state.user.userId,
+      userId: user.userId,
     }
 
     const { list, total } = await service.address.find(query)
@@ -45,8 +45,8 @@ class AddressController extends Controller {
   }
   async makeAddress() {
     const { ctx, app } = this
-    const { request, service, state } = ctx
-    const { userId } = state.user
+    const { request, service, user } = ctx
+    const { userId } = user
     const body = {
       ...request.body,
       userId
@@ -83,8 +83,8 @@ class AddressController extends Controller {
   }
   async putAddress() {
     const { ctx, app } = this
-    const { service, params, request, state } = ctx
-    const { userId } = state.user
+    const { service, params, request, user } = ctx
+    const { userId } = user
     const body = {
       ...request.body,
     }

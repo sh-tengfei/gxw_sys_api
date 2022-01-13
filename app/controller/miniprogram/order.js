@@ -8,7 +8,7 @@ import { weAppTemp } from '../../../config/noticeTemp'
 class OrderController extends Controller {
   async getOrder() {
     const { ctx, app } = this
-    const { service, params, state } = ctx
+    const { service, params } = ctx
 
     const order = await service.order.findOne({ orderId: params.id })
 
@@ -32,8 +32,7 @@ class OrderController extends Controller {
   }
   async getOrders() {
     const { ctx, app } = this
-    const { service, query, state } = ctx
-    const { userId } = state.user
+    const { service, query, user: { userId }} = ctx
     query.state = decodeURIComponent(query.state)
     const opt = {
       state: -1,
@@ -90,9 +89,7 @@ class OrderController extends Controller {
   }
   async makeOrder() {
     const { ctx, app } = this
-    const { request: req, service, state, logger } = ctx
-    // 当前登录用户
-    const { userId } = state.user
+    const { request: req, service, user: { userId }, logger } = ctx
 
     if (this.isPauseService()) {
       ctx.body = { code: 202, msg: '购买服务暂停中！' }
@@ -175,7 +172,7 @@ class OrderController extends Controller {
   }
   async payOrder() {
     const { ctx, app } = this
-    const { service, request: req, state, logger } = ctx
+    const { service, request: req, user: { userId }, logger } = ctx
     const { payType, orderId, acceptName, acceptPhone } = req.body
 
     if (['wx', 'zfb'].indexOf(payType) === -1) {
@@ -194,7 +191,7 @@ class OrderController extends Controller {
       return
     }
 
-    const user = await service.user.findOne({ userId: state.user.userId })
+    const user = await service.user.findOne({ userId })
     if (user === null) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return

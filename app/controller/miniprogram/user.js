@@ -17,7 +17,7 @@ class LoginController extends Controller {
       return ctx.body = { msg: '参数错误联系管理员', code: 201, data: code }
     }
 
-    const userInfo = await service.mallToken.get2Session(code) // 获取用户信息
+    const userInfo = await service.token.get2Session(code, 'mallMiniprogram') // 获取用户信息
 
     if (!userInfo || userInfo.errcode) {
       logger.warn({ msg: '回话过期重新登录', code: 401 })
@@ -32,7 +32,7 @@ class LoginController extends Controller {
         msg: '登陆成功！',
         data: {
           user,
-          token: this.createUserToken({ userId: user.userId }),
+          token: this.createToken(user.userId),
           weAppTemp,
           isRegister: true
         }
@@ -53,13 +53,14 @@ class LoginController extends Controller {
     }
   }
   // 创建User token { userId }
-  createUserToken({ userId }) {
+  createToken(userId) {
     const isProd = this.app.config.env === 'prod'
     const token = this.app.jwt.sign({ userId }, this.app.config.jwt.secret, {
       expiresIn: isProd ? '7d' : '1d',
-    }) // 生成token
+    })
     return token
   }
+
   // 更新用户
   async updateInfo() {
     const { ctx, app } = this
@@ -100,7 +101,7 @@ class LoginController extends Controller {
         code: 200,
         data: {
           user,
-          token: this.createUserToken({ userId: user.userId }),
+          token: this.createToken(user.userId),
           weAppTemp,
         }
       }
@@ -117,8 +118,8 @@ class LoginController extends Controller {
   }
   async getUserInfo() {
     const { ctx, app } = this
-    const { state, service } = ctx
-    const user = await service.user.findOne({ userId: state.user.userId })
+    const { user: { userId }, service } = ctx
+    const user = await service.user.findOne({ userId })
     if (!user) {
       ctx.body = { code: 201, msg: '用户不存在' }
       return
@@ -192,7 +193,7 @@ class LoginController extends Controller {
       return ctx.body = { msg: '参数错误联系管理员', code: 201 }
     }
 
-    const userInfo = await service.groupToken.get2Session(code) // 获取团长用户信息
+    const userInfo = await service.token.get2Session(code, 'groupMiniprogram') // 获取团长用户信息
     if (!userInfo || userInfo.errcode) {
       const opt = { msg: '回话过期重新登录', code: 401 }
       logger.warn(opt)
@@ -206,13 +207,12 @@ class LoginController extends Controller {
     let agent = await service.agent.findOne({ unionid: userInfo.unionid })
     if (agent !== null) {
       logger.info({ msg: '登录用户！', nickName: agent.nickName, applyPhone: agent.applyPhone })
-      const token = this.createAgentToken({ extractId: agent.extractId })
       ctx.body = {
         code: 200,
         msg: '登陆成功！',
         data: {
           isRegister: true,
-          token,
+          token: this.createToken(agent.extractId),
           agent,
           weAppTemp,
           contact
@@ -234,25 +234,15 @@ class LoginController extends Controller {
   }
   async getGroupInfo() {
     const { ctx, app } = this
-    const { state, service } = ctx
+    const { user, service } = ctx
 
-    const agent = await ctx.service.agent.findOne({ extractId: state.user.userId })
+    const agent = await ctx.service.agent.findOne({ extractId: user.userId })
     if (!agent) {
       ctx.body = { code: 201, msg: '用户不存在', data: agent }
       return
     }
 
     ctx.body = { code: 200, msg: '获取成功', data: { agent, weAppTemp, contact }}
-  }
-  // 创建Agent token { extractId }
-  createAgentToken({ extractId }) {
-    const isProd = this.app.config.env === 'prod'
-    const token = this.app.jwt.sign({
-      userId: extractId
-    }, this.app.config.jwt.secret, {
-      expiresIn: isProd ? '7d' : '1d',
-    }) // 生成token
-    return token
   }
 
   async makeAgent() {
@@ -277,7 +267,7 @@ class LoginController extends Controller {
       return
     }
 
-    const token = this.createAgentToken({ extractId: agent.extractId })
+    const token = this.createToken({ extractId: agent.extractId })
 
     ctx.body = { msg: '注册成功', code: 200, data: { agent, weAppTemp, contact, token }}
   }
@@ -285,8 +275,8 @@ class LoginController extends Controller {
   // 提交审核团长
   async submitReviewAgent() {
     const { ctx, app } = this
-    const { request: { body }, service, state } = ctx
-    const { userId } = state.user
+    const { request: { body }, service, user } = ctx
+    const { userId } = user
 
     const {
       applyName,
@@ -359,8 +349,8 @@ class LoginController extends Controller {
   }
   async setDefaultExtract() {
     const { ctx } = this
-    const { service, params, request: { body }, state } = ctx
-    const { userId } = state.user
+    const { service, params, request: { body }, user } = ctx
+    const { userId } = user
 
     const agent = await service.agent.findOne({ extractId: body.extractId })
     if (agent) {

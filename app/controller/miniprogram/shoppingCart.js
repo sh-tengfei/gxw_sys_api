@@ -6,8 +6,8 @@ import { Decimal } from 'decimal.js'
 class ShoppingCartController extends Controller {
   async getCard() {
     const { ctx } = this
-    const { service, state, query } = ctx
-    const { userId } = state.user
+    const { service, user, query } = ctx
+    const { userId } = user
 
     const cart = await service.shoppingCart.findOne(userId)
     if (!cart) {
@@ -51,7 +51,7 @@ class ShoppingCartController extends Controller {
   async increaseCard() {
     const { ctx, app } = this
     const { service, state, request: { body }} = ctx
-    const { userId } = state.user
+    const { userId } = user
 
     if (!body.productId) {
       ctx.body = { code: 201, msg: '参数不正确', data: body }
@@ -99,7 +99,7 @@ class ShoppingCartController extends Controller {
   async deleteCard() { // 商品删除
     const { ctx, app } = this
     const { service, state, params } = ctx
-    const { userId } = state.user
+    const { userId } = user
     if (!params.id) {
       ctx.body = { code: 201, msg: '参数不正确' }
       return
@@ -131,7 +131,7 @@ class ShoppingCartController extends Controller {
     const { ctx, app } = this
     const { service, state, request: req } = ctx
     const { productId, status } = req.body
-    const { userId } = state.user
+    const { userId } = user
 
     if (status === undefined) {
       ctx.body = { code: 201, msg: '参数不正确', data: req.body }
@@ -180,7 +180,7 @@ class ShoppingCartController extends Controller {
   async reduceCard() { // 购买数减少
     const { ctx, app } = this
     const { service, state, request: req } = ctx
-    const { userId } = state.user
+    const { userId } = user
     if (!req.body.productId) {
       ctx.body = { code: 201, msg: '参数不正确', data: req.body }
       return
@@ -210,8 +210,7 @@ class ShoppingCartController extends Controller {
   }
   async getCartNum() {
     const { ctx } = this
-    const { service, state } = ctx
-    const { userId } = state.user
+    const { service, user: { userId }} = ctx
 
     const cart = await service.shoppingCart.findOne(userId)
 
