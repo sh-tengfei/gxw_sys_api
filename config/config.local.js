@@ -34,6 +34,6 @@ module.exports = {
     logdir: '/home/logs/alinode/local',
   },
   wxPayment: {
-    wxurl: 'https://test.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
+    wxurl: 'https://test-mall.gxianwang.com/api/small/wxPayNotify', // 微信小程序回调
   }
 }

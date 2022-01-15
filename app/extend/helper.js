@@ -143,6 +143,7 @@ module.exports = {
 
     const localUrl = `./catch/${productId}${Date.now()}.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
+    const isProd = app.config.env === 'prod' || app.config.env === 'pre'
     const res = await ctx.curl(url, {
       method: 'POST',
       timeout: 10000,
@@ -150,6 +151,8 @@ module.exports = {
         page: path,
         scene: `${productId},${extractId || ''}`,
         width: 160,
+        // 正式版和 开发版
+        env_version: isProd ? 'release' : 'develop',
       }),
       consumeWriteStream: true,
       writeStream: fs.createWriteStream(localUrl),
