@@ -7,14 +7,13 @@ module.exports = {
   },
   parser: 'babel-eslint',
   env: {
-    browser: false,
     node: true,
     es6: true,
   },
   extends: ['eslint:recommended'],
 
   // add your custom rules here
-  //it is base on https://github.com/vuejs/eslint-config-vue
+  // it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
     'accessor-pairs': 0,
     'arrow-spacing': 0,

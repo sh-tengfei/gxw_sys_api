@@ -1,6 +1,5 @@
-// app.js
 'use strict'
-require('babel-core/register')
+require('@babel/register')
 // let crypto = require('crypto')
 
 class AppBootHook {
@@ -23,14 +22,10 @@ class AppBootHook {
     await service.admin.initialUser()
     this.app.setRankingList(service)
     this.app.on('error', error => {
-      if (error.status === 401) {
-        return
-      }
       if (this.app.config.env === 'local') {
         return
       }
 
-      console.dir(error)
       service.tempMsg.sendmail({
         mailbox: 'sh_tengda@163.com',
         subject: '全局报错',

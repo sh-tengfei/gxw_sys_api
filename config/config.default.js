@@ -18,25 +18,14 @@ module.exports = appInfo => {
     },
     onerror: {
       all(err, ctx) {
-        // 转化报错
-        if (err.status === 401) {
-          ctx.set('content-type', 'application/json;charset=UTF-8')
-          ctx.body = JSON.stringify({ code: 401, msg: '用户未登录或则已过期！' })
-          ctx.status = 401
-        }
+        console.log(err)
       }
     }
   }
 
-  config.alinode = {
-    // 从 `Node.js 性能平台` 获取对应的接入参数
-    appid: '85889',
-    secret: 'd0b3c2fe8bf0bf477e2ce2d71f9fb59cafd1460b',
-  }
-
   config.cluster = {
     listen: {
-      port: 8100,
+      port: 8000,
       hostname: '127.0.0.1',
     }
   }
@@ -52,6 +41,7 @@ module.exports = appInfo => {
       useFindAndModify: false,
     }
   }
+
   config.security = {
     xframe: {
       enable: false,
@@ -158,7 +148,6 @@ module.exports = appInfo => {
       mchkey: 'plmnkoijbvhuygcxftrdz1234567890q',
       payUrl: 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers', // 微信企业支付
     },
-    cache: {}
   }
 
   return {
