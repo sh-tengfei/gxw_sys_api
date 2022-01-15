@@ -10,7 +10,7 @@ class IndexController extends Controller {
 
     // 本地产品
     const localQuery = {
-      'sellerOfType.code': 100,
+      'supplyType': 1,
       'state': 2,
     }
 
@@ -25,15 +25,10 @@ class IndexController extends Controller {
       return
     }
 
-    localQuery['salesTerritory.id'] = query.cityCode
+    localQuery.city = query.cityCode
 
     const localHot = await service.product.find(localQuery, {
       limit: 10,
-    })
-
-    // 销售排序
-    const hotList = localHot.list.sort((a, b) => {
-      return b.weight - a.weight
     })
 
     // 轮播图
@@ -61,7 +56,6 @@ class IndexController extends Controller {
       data: {
         slider: slider.list,
         classifys,
-        hotList
       }
     }
   }
@@ -78,9 +72,9 @@ class IndexController extends Controller {
 
     // 本地产品
     const localQuery = {
-      'sellerOfType.code': 100,
+      'supplyType': 1,
       'state': 2,
-      'salesTerritory.id': query.cityCode
+      'city': query.cityCode
     }
 
     const option = {
@@ -89,7 +83,13 @@ class IndexController extends Controller {
     }
 
     const { list, total } = await service.product.find(localQuery, option)
-    ctx.body = { code: 200, msg: '获取成功！', data: list, total }
+
+    // 销售排序
+    const hotList = list.sort((a, b) => {
+      return b.weight - a.weight
+    })
+
+    ctx.body = { code: 200, msg: '获取成功！', data: hotList, total }
   }
   // 果仙网团长端接口
   async getIndexSales() {

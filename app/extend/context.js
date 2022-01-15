@@ -4,6 +4,12 @@ module.exports = {
   getWebSite(url, query = {}) {
     return this.curlGet(url, query)
   },
+  getAccessToken(type = 'mall_access_token') {
+    const url = `http://token.gxianwang.com/getToken`
+    return this.curlGet(url, {
+      type: type
+    })
+  },
   postWebSite(url, data = {}, dataType = 'text') {
     return this.curl(url, {
       dataType,

@@ -18,12 +18,12 @@ rankingUser.prototype.setList = function(service) {
 
 module.exports = {
   ranking: new rankingUser(),
-  async getBaseUnionid({ openid }, { ctx, app }) {
-    // 获取unionid的请求地址
-    const { baseWxAccessToken: access_token } = app.catch
-    const url = `https://api.weixin.qq.com/cgi-bin/user/info?access_token=${access_token}&openid=${openid}&lang=zh_CN`
-    return ctx.getWebSite(url)
-  },
+  // async getBaseUnionid({ openid }, { ctx, app }) {
+  //   // 获取unionid的请求地址
+  //   const { baseWxAccessToken: access_token } = app.catch
+  //   const url = `https://api.weixin.qq.com/cgi-bin/user/info?access_token=${access_token}&openid=${openid}&lang=zh_CN`
+  //   return ctx.getWebSite(url)
+  // },
 
   // 小程序接口
   async getCode2Session({ code }, { ctx, app }) {
@@ -80,9 +80,7 @@ module.exports = {
 
     tokenType = tokenType + '_access_token'
 
-    let token = await ctx.getWebSite('http://token.gxianwang.com/getToken', {
-      type: tokenType
-    })
+    let token = await ctx.getAccessToken(tokenType)
 
     if (!token.access_token) {
       throw new Error('access_token 错误')

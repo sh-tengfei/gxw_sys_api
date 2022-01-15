@@ -29,7 +29,7 @@ module.exports = app => {
         value: { type: String, required: true }
       }
     ],
-    feature: { type: String, required: true },
+    feature: { type: String, required: true }, // 可以理解为商品口头禅
     shareTitle: { type: String, required: true }, // 分享标题
     cover: { type: String, required: true }, // 缩略图
     desc: { type: String, required: true, maxLength: 150 }, // 简介

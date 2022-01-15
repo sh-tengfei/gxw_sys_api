@@ -141,7 +141,7 @@ module.exports = {
 
     let token = await ctx.getAccessToken('mall_access_token')
 
-    const localUrl = `./catch/${productId}${Date.now()}111.png`
+    const localUrl = `./catch/${productId}${Date.now()}.png`
     const url = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${token.access_token}`
     const res = await ctx.curl(url, {
       method: 'POST',

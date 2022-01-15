@@ -100,6 +100,7 @@ module.exports = appInfo => {
     },
     orderCompleteTimeout: 4, // 订单完成超时时间天
     commissionComplete: 4, // 收益结算时间天
+    goodsShareImageLogo: 'https://static.gxianwang.com/fe-static/mall/i6km0icurq00',
     qiniuConfig: {
       cdn: '//static.gxianwang.com/',
       qiniu: {

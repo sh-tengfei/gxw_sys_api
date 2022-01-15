@@ -3,7 +3,7 @@ import { Controller } from 'egg'
 
 class ConfigController extends Controller {
   async getConfig() {
-    const { ctx } = this
+    const { ctx, app } = this
     const { service, query } = ctx
     const opt = {
       city: query.city
@@ -14,8 +14,10 @@ class ConfigController extends Controller {
       return
     }
     const config = await service.config.getConfig(opt)
-
-    ctx.body = { code: 200, msg: '', data: config }
+    ctx.body = { code: 200, msg: '', data: {
+      ...config,
+      goodsShareImageLogo: app.config.goodsShareImageLogo
+    } }
   }
   async updateUpdateConfig() {
     const { ctx } = this

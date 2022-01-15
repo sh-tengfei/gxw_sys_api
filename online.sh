@@ -13,4 +13,6 @@ scp ./release.tgz root@49.235.247.173:/home/www/gxw_api_prod/
 ssh root@49.235.247.173 'cd /home/www/gxw_api_prod/ &&\
 tar -xf release.tgz &&\
 npm run prod:stop &&\
-npm run prod:start'
+npm run prod:start &&\
+mkdir catch &&\
+chmod 777 catch'
