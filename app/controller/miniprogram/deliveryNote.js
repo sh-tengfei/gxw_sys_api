@@ -36,7 +36,7 @@ class DeliveryNoteController extends Controller {
   }
   async getDeliveryDetail() {
     const { ctx, app } = this
-    const { service, state: { user }, params } = ctx
+    const { service, user, params } = ctx
     if (!params.id) {
       ctx.body = { code: 201, msg: '参数不正确！', data: params }
       return
@@ -54,7 +54,7 @@ class DeliveryNoteController extends Controller {
   }
   async updateDelivery() {
     const { ctx, app } = this
-    const { service, state: { user }, params, request: req } = ctx
+    const { service, user, params, request: req } = ctx
     const note = await service.deliveryNote.updateOne(params.id, req.body)
     if (note) {
       ctx.body = { code: 200, msg: '更新成功', data: note }

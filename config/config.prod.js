@@ -20,8 +20,8 @@ module.exports = {
   },
   alinode: {
     // 从 `Node.js 性能平台` 获取对应的接入参数
-    appid: '85889',
-    secret: 'd0b3c2fe8bf0bf477e2ce2d71f9fb59cafd1460b',
+    appid: '90087',
+    secret: '2b0c6d799d7fff53b6c155f4badf88e625b0016f',
     logdir: '/home/logs/alinode/prod'
   },
   mongoose: {

@@ -50,7 +50,7 @@ class ShoppingCartController extends Controller {
   }
   async increaseCard() {
     const { ctx, app } = this
-    const { service, state, request: { body }} = ctx
+    const { service, user, request: { body }} = ctx
     const { userId } = user
 
     if (!body.productId) {
@@ -98,7 +98,7 @@ class ShoppingCartController extends Controller {
   }
   async deleteCard() { // 商品删除
     const { ctx, app } = this
-    const { service, state, params } = ctx
+    const { service, user, params } = ctx
     const { userId } = user
     if (!params.id) {
       ctx.body = { code: 201, msg: '参数不正确' }
@@ -129,7 +129,7 @@ class ShoppingCartController extends Controller {
   }
   async statusCard() {
     const { ctx, app } = this
-    const { service, state, request: req } = ctx
+    const { service, user, request: req } = ctx
     const { productId, status } = req.body
     const { userId } = user
 
@@ -179,7 +179,7 @@ class ShoppingCartController extends Controller {
   }
   async reduceCard() { // 购买数减少
     const { ctx, app } = this
-    const { service, state, request: req } = ctx
+    const { service, user, request: req } = ctx
     const { userId } = user
     if (!req.body.productId) {
       ctx.body = { code: 201, msg: '参数不正确', data: req.body }

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# rm -rf node_modules package-lock.json
+rm -rf node_modules package-lock.json
 
-# npm install --production --verb
+npm install --production --verb
 tar -zcvf ./release.tgz --exclude={.DS_Store,.git,.github,.vscode,logs,package-lock.json,README.md,release.tgz} .
 
 echo '\n删除原文件-------start \n\n'

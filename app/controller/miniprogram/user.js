@@ -267,7 +267,7 @@ class LoginController extends Controller {
       return
     }
 
-    const token = this.createToken({ extractId: agent.extractId })
+    const token = this.createToken(agent.extractId)
 
     ctx.body = { msg: '注册成功', code: 200, data: { agent, weAppTemp, contact, token }}
   }
@@ -292,7 +292,7 @@ class LoginController extends Controller {
       referrer,
       addressInfo
     } = body
-
+    console.log(user)
     const agented = await service.agent.findOne({ extractId: userId })
     if (agented === null) {
       ctx.body = { msg: '用户不存在！', code: 201 }

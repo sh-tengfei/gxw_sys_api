@@ -121,7 +121,7 @@ class AgentController extends Controller {
 
   async postWithdraw() {
     const { ctx } = this
-    const { service, request: req, state } = ctx
+    const { service, request: req, user } = ctx
     const { userId } = user
 
     let { amount } = req.body

@@ -10,13 +10,15 @@ class IndexController extends Controller {
 
     // 本地产品
     const localQuery = {
-      'supplyType': 1,
-      'state': 2,
+      supplyType: 1,
+      state: 2,
+      city: query.cityCode,
     }
 
     const sliderQuery = {
-      'state': 2,
-      'limit': 6
+      state: 2,
+      limit: 6,
+      city: query.cityCode,
     }
 
     // 存在地址代码
@@ -24,12 +26,6 @@ class IndexController extends Controller {
       ctx.body = { code: 201, msg: '参数错误', data: query }
       return
     }
-
-    localQuery.city = query.cityCode
-
-    const localHot = await service.product.find(localQuery, {
-      limit: 10,
-    })
 
     // 轮播图
     const slider = await service.slider.find(sliderQuery)
@@ -72,9 +68,9 @@ class IndexController extends Controller {
 
     // 本地产品
     const localQuery = {
-      'supplyType': 1,
-      'state': 2,
-      'city': query.cityCode
+      supplyType: 1,
+      state: 2,
+      city: query.cityCode
     }
 
     const option = {
@@ -94,7 +90,7 @@ class IndexController extends Controller {
   // 果仙网团长端接口
   async getIndexSales() {
     const { ctx, app } = this
-    const { service, state } = ctx
+    const { service, user } = ctx
     const { userId } = user
     const todayStart = moment().startOf('day')
     const todayEnd = moment().endOf('day')
