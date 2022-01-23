@@ -277,22 +277,19 @@ class LoginController extends Controller {
     const { ctx, app } = this
     const { request: { body }, service, user } = ctx
     const { userId } = user
-
     const {
-      applyName,
-      applyUrgentPhone,
+      addressInfo,
       areaId,
-      applyIdCard,
-      avatarUrl,
       communityName,
       communitySite,
-      detailSite,
-      location,
-      nickName,
       referrer,
-      addressInfo
+      location,
+      applyPhone,
+      applyName,
+      detailSite,
+      applyIdCard,
+      applyUrgentPhone,
     } = body
-    console.log(user)
     const agented = await service.agent.findOne({ extractId: userId })
     if (agented === null) {
       ctx.body = { msg: '用户不存在！', code: 201 }
@@ -300,18 +297,17 @@ class LoginController extends Controller {
     }
 
     const agent = await service.agent.updateOne(agented.extractId, {
-      applyName,
-      applyUrgentPhone,
+      addressInfo,
       areaId,
-      avatarUrl,
       communityName,
       communitySite,
-      detailSite,
-      location,
-      nickName,
       referrer,
+      location,
+      applyPhone,
+      applyName,
+      detailSite,
       applyIdCard,
-      addressInfo,
+      applyUrgentPhone,
       state: 1
     })
 
