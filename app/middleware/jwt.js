@@ -13,7 +13,6 @@ module.exports = options => {
       // 解码token
         decode = ctx.app.jwt.verify(token, options.secret)
         ctx.user = decode
-        await next()
       } catch (error) {
         ctx.status = 401
         ctx.body = {
@@ -21,6 +20,7 @@ module.exports = options => {
         }
         return
       }
+      await next()
     } else {
       ctx.status = 401
       ctx.body = {

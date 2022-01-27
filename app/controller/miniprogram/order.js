@@ -117,8 +117,8 @@ class OrderController extends Controller {
     let isogeny = true
     let isDelete = false
     for (const { productId } of products) {
-      const { salesTerritory, sellerOfType, state } = await service.product.findOne({ productId })
-      if (sellerOfType.code !== 101 && salesTerritory.id !== areaId) {
+      const { city, state } = await service.product.findOne({ productId })
+      if ( city !== areaId ) {
         isogeny = false
       }
       if (state !== 2) {
@@ -477,10 +477,10 @@ class OrderController extends Controller {
 
     const types = {}
     for (const i of products) {
-      if (!types[i.sellerType]) {
-        types[i.sellerType] = []
+      if (!types[i.city]) {
+        types[i.city] = []
       }
-      types[i.sellerType].push(i)
+      types[i.city].push(i)
     }
 
     const typeList = Object.keys(types)
@@ -488,9 +488,8 @@ class OrderController extends Controller {
     if (typeList.length === 1) {
       const product = products[0]
       // 产地直供 code为101
-      const orderType = product.sellerType === 101 ? 2 : 1
       const order = await service.order.updateOne(other.orderId, {
-        orderType,
+        city,
         parentId: other.orderId,
         state: 2,
       })

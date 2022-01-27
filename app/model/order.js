@@ -20,7 +20,7 @@ module.exports = app => {
         mallPrice: { type: SchemaTypes.Double, required: true },
         cover: { type: String, required: true },
         specs: { type: String, required: true },
-        sellerType: { type: Number, required: true },
+        city: { type: Number, required: true },
         total: { type: SchemaTypes.Double, required: true },
         reward: { type: SchemaTypes.Double, required: true }
       }
@@ -40,7 +40,7 @@ module.exports = app => {
     total: { type: SchemaTypes.Double, required: true },
     wxResult: { type: Object, default: {}},
     clientResult: { type: Object, default: {}},
-    orderType: { type: Number, required: true }, 
+    orderType: { type: Number, required: true },
     // 0.初始化订单拆单检查之前, 1.本地发货 2.产地直发  该字段代表发货是产地
     isExtractReceive: { type: Boolean, default: false },
     // 是否是收货点接货 收货点的话不用填收货地址信息  该字段代表收货是提货点地址
