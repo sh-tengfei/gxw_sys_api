@@ -9,7 +9,6 @@ class ActivityService extends Service {
     delete query.limit
     delete query.skip
 
-    
     if (query.name) {
       query.name = new RegExp(query.name, 'i')
     }

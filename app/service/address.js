@@ -27,7 +27,7 @@ class AddressService extends Service {
     return address
   }
   async create(data) {
-    const { model, state, service } = this.ctx
+    const { model, user, service } = this.ctx
     const { userId } = user
 
     let newAddress; const addressId = 'addressId'

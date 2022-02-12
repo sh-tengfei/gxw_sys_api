@@ -118,7 +118,7 @@ class OrderController extends Controller {
     let isDelete = false
     for (const { productId } of products) {
       const { city, state } = await service.product.findOne({ productId })
-      if ( city !== areaId ) {
+      if (city !== areaId) {
         isogeny = false
       }
       if (state !== 2) {
@@ -143,6 +143,7 @@ class OrderController extends Controller {
       city: areaId,
       remark,
     })
+
     if (code !== 200) {
       ctx.logger.error({ code: error.code, msg, data: error.productId })
       ctx.body = { code: error.code, msg, data: error.productId }
@@ -164,7 +165,7 @@ class OrderController extends Controller {
         userId,
         products: notSelects,
       })
-      ctx.logger.info({ msg: '购物车清空完成', userId })
+      ctx.logger.info({ msg: '购物车选择的清空完成', userId })
     }
     // 存入使用过的代理地址
     await service.user.setHistoryAgent({ userId, extractId })
@@ -173,7 +174,7 @@ class OrderController extends Controller {
   async payOrder() {
     const { ctx, app } = this
     const { service, request: req, user: { userId }, logger } = ctx
-    const { payType, orderId, acceptName, acceptPhone } = req.body
+    const { payType, orderId } = req.body
 
     if (['wx', 'zfb'].indexOf(payType) === -1) {
       logger.info({ msg: '订单创建失败，支付方式不正确', error: payType, code: 201 })
@@ -329,7 +330,8 @@ class OrderController extends Controller {
 
     // 0是支付失败 发送模板消息
     if (!isSuccess && order !== null) {
-      let res = await service.tempMsg.sendWxMsg({
+      await service.tempMsg.sendWxMsg({
+        userId: order.userId,
         openid: order.user.openid,
         template_id: weAppTemp.payment,
         data: {
@@ -341,7 +343,7 @@ class OrderController extends Controller {
         },
         page: `/pages/orderDetail/detail?orderId=${order.orderId}`,
       })
-      logger.info({ msg: '模板消息发送。', data: res })
+      logger.info({ msg: '模板消息发送完成', orderId: order.orderId })
       ctx.body = { code: 200, msg: '更新成功', data: order }
       return
     } else {
@@ -415,6 +417,7 @@ class OrderController extends Controller {
     }
 
     await service.tempMsg.sendWxMsg({
+      userId: order.userId,
       openid: retUser.openid,
       template_id: weAppTemp.paySuccess,
       data: {
@@ -477,24 +480,22 @@ class OrderController extends Controller {
 
     const types = {}
     for (const i of products) {
-      if (!types[i.city]) {
-        types[i.city] = []
+      if (!types[i.supplyType]) {
+        types[i.supplyType] = []
       }
-      types[i.city].push(i)
+      types[i.supplyType].push(i)
     }
 
     const typeList = Object.keys(types)
     // 单个类型商品不需要拆单 直接更新数据
     if (typeList.length === 1) {
-      const product = products[0]
-      // 产地直供 code为101
       const order = await service.order.updateOne(other.orderId, {
-        city,
+        city: other.city,
         parentId: other.orderId,
         state: 2,
       })
       orders.push(order.orderId)
-      return { code: 200, msg: '单个商品无需拆单', orders }
+      return { code: 200, msg: '单个类型商品无需拆单', orders }
     }
 
     // 遍历产品类型key 获得商品列表
@@ -505,7 +506,7 @@ class OrderController extends Controller {
       if (+index === 0) {
         // 更新订单需要手动创建ID
         const { id: orderId } = await service.counters.findAndUpdate('orderId') // 子订单Id
-        newOrder.orderId = `WXD${(Math.random() * 10000).toFixed(0)}${orderId}`
+        newOrder.orderId = `${orderId}${(Math.random() * 1000).toFixed(0)}`
         retOrder = await service.order.updateOne(newOrder.parentId, newOrder)
         orders.push(retOrder.orderId)
       } else {
@@ -525,22 +526,20 @@ class OrderController extends Controller {
   async getChildOrder(products, order) {
     let total = 0
     let reward = 0 // 当前订单总金额
-    let orderType = 0
+    let orderType = 1
     let code = null
 
     for (const product of products) {
-      code = product.sellerType
+      code = product.supplyType
       total = Number(new Decimal(total).add(product.total))
       reward = Number(new Decimal(reward).add(product.reward))
     }
-    // 产地直供 code为101
-    if (code === 101) {
+    // 产地直供 code为2
+    if (code === 2) {
       orderType = 2
-    } else {
-      orderType = 1
     }
     const newOrder = {
-      ...order,
+      ...JSON.parse(JSON.stringify(order)),
       parentId: order.orderId,
       products: products,
       orderType,
@@ -553,6 +552,7 @@ class OrderController extends Controller {
       newOrder.isExtractReceive = true
       newOrder.addressId = null
     }
+
     delete order.orderId
     return newOrder
   }

@@ -91,7 +91,7 @@ class OrderService extends Service {
         error = { code: 201, msg: '下单失败，商品库存不足', productId }
         break
       }
-      const { mallPrice, name, desc, cover, specs, city, rebate } = product
+      const { mallPrice, name, desc, cover, specs, city, rebate, supplyType } = product
       // 求订单总金额
       total = Decimal.add(total, new Decimal(mallPrice).mul(buyNum))
       reward = Decimal.add(reward, new Decimal(rebate).mul(buyNum))
@@ -106,6 +106,7 @@ class OrderService extends Service {
         city,
         total: new Decimal(mallPrice).mul(buyNum),
         reward: new Decimal(rebate).mul(buyNum),
+        supplyType
       })
     }
 

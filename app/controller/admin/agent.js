@@ -37,6 +37,7 @@ class AgentController extends Controller {
     }
     const opt = {
       openid: data.openid,
+      userId: params.id,
       template_id: weAppTemp.leaderCheck,
       tokenType: 'group',
       page: '/pages/agent/agent',

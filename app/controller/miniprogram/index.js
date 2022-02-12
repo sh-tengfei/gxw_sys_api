@@ -8,13 +8,6 @@ class IndexController extends Controller {
     const { ctx } = this
     const { service, query } = ctx
 
-    // 本地产品
-    const localQuery = {
-      supplyType: 1,
-      state: 2,
-      city: query.cityCode,
-    }
-
     const sliderQuery = {
       state: 2,
       limit: 6,
@@ -67,8 +60,7 @@ class IndexController extends Controller {
     }
 
     // 本地产品
-    const localQuery = {
-      supplyType: 1,
+    const hotQuery = {
       state: 2,
       city: query.cityCode
     }
@@ -78,7 +70,7 @@ class IndexController extends Controller {
       skip: (page - 1) * limit
     }
 
-    const { list, total } = await service.product.find(localQuery, option)
+    const { list, total } = await service.product.find(hotQuery, option)
 
     // 销售排序
     const hotList = list.sort((a, b) => {

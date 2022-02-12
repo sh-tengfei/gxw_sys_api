@@ -8,7 +8,7 @@ const formMail = {
 }
 
 class TempMsgService extends Service {
-  async sendWxMsg({ openid, template_id, data, page, tokenType }) {
+  async sendWxMsg({ openid, template_id, data, page, tokenType, userId }) {
     const { app, ctx } = this
     if (data.thing1) {
       data.thing1.value = data.thing1.value.replace(/\s/gi, '')
@@ -28,14 +28,16 @@ class TempMsgService extends Service {
       tokenType,
     }
 
-    return app.sendTempMsg(this, option).then((res)=>{
-      this.sendTempMail(res, option)
+    await ctx.model.TempMsg.create({ msg: option, userId })
+
+    app.sendTempMsg(this, option).then((res)=>{
+      this.sendErrorEmail(res, option)
     }).catch(async(err)=>{
       ctx.logger.warn(err)
     })
   }
 
-  async sendTempMail(res, option) {
+  async sendErrorEmail(res, option) {
     const { ctx } = this
     const {
       touser: openid,
