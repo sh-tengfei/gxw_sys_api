@@ -8,7 +8,7 @@ class SalesController extends Controller {
   async salesData() {
     const { ctx, app } = this
     const { service, query } = ctx
-    const opt = { state: [2,3,4,5] }
+    const opt = { state: [2,3,5] }
     const option = {}
     if (query.limit) {
       option.limit = query.limit
