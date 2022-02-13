@@ -493,6 +493,7 @@ class OrderController extends Controller {
         city: other.city,
         parentId: other.orderId,
         state: 2,
+        orderType: typeList[0]
       })
       orders.push(order.orderId)
       return { code: 200, msg: '单个类型商品无需拆单', orders }
